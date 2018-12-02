@@ -1,0 +1,43 @@
+
+
+<canvas id="gc" width="400" height="400"></canvas>
+
+<script>
+
+canv=document.getElementById("gc");
+ctx=canv.getContext("2d");
+ctx.fillStyle="LightGrey";
+ctx.fillRect(0,0,canv.width,canv.height);	
+
+var trooper1 = document.createElement("IMG");
+trooper1.setAttribute("src","./helicopter.png");
+ctx.drawImage(trooper1, 100, 100,100,100);
+
+
+
+class Entity{
+	
+	constructor(src,x,y,w,h){
+		this.image = document.createElement("IMG")
+		this.image.setAttribute("src", src);
+		this.x = x;
+		this.y = y;
+		this.width = w;
+		this.height = h;
+	}
+	
+	display(){
+		//ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
+	}
+	
+	fuck(){
+		console.log("fuck");
+	}
+}
+
+var trooper = new Entity("./trooper.png",100,100,100,100);
+trooper.display();
+//ctx.drawImage(trooper.image, trooper.x, trooper.y, trooper.w, trooper.h);
+trooper.fuck();
+
+</script>
