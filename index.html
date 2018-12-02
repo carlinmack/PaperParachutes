@@ -57,6 +57,7 @@ helicopter[3] = 50;
 helicopter[4] = 50;
 gameMap.push(helicopter);
 
+
 var heli = new Helicoptor();
 exists.push(heli);
 
@@ -140,6 +141,7 @@ function game(){
 
 function collision(){
 	console.log("HIT!");
+	//console.log(helicopter[0]);
 	//ctx.drawImage(helicopter[0],helicopter[1]-15,helicopter[2]-50,15,10);
 	ctx.drawImage(helicopter[0],100,100,100,100);
 }
