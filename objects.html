@@ -22,21 +22,24 @@ var bullet = document.createElement('IMG');
 bullet.setAttribute('src', './bullet.png');
 ctx.drawImage(bullet, 0, 0, 15, 10);
 console.log("draw");
+
+	trooper.display();
 }
 
 class Entity {
-  constructor(src, x, y, w, h) {
+  constructor(contx) {
     this.image = document.createElement('IMG');
-	this.image.setAttribute('src', "./helicopter_right.png");
-    this.x = x;
-    this.y = y;
-    this.width = w;
-    this.height = h;
+	this.image.setAttribute('src', "./helicopter.png");
+    this.x = 100;
+    this.y = 100;
+    this.width = 100;
+	this.height = 100;
+	this.ctx = contx
   }
 
   display() {
-    ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
-	ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
+    this.ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
+	this.ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
   }
 
   fuck() {
@@ -44,9 +47,7 @@ class Entity {
   }
 }
 
-// var trooper = new Entity('./helicopter_right.png', 100, 100, 100, 100);
-// trooper.display();
-// ctx.drawImage(trooper.image, trooper.x, trooper.y, trooper.w, trooper.h);
-// trooper.fuck();
+var trooper = new Entity(ctx);
+trooper.fuck();
 console.log('end');
 </script>
