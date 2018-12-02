@@ -34,14 +34,6 @@ helicopter[3] = 50;
 helicopter[4] = 50;
 gameMap.push(helicopter);
 
-turret = [];
-turret[0] = document.createElement("IMG");
-turret[0].setAttribute("src","./turret.png");
-turret[1] = 175;
-turret[2] = 340;
-turret[3] = 50;
-turret[4] = 150;
-gameMap.push(turret);
 
 bullet = [];
 bullet[0] = document.createElement("IMG"); 
@@ -54,6 +46,16 @@ var bullet_x = 192;
 var bullet_y = 340;
 gameMap.push(bullet);
 
+turret = [];
+turret[0] = document.createElement("IMG");
+turret[0].setAttribute("src","./turret.png");
+turret[1] = 175;
+turret[2] = 340;
+turret[3] = 50;
+turret[4] = 150;
+gameMap.push(turret); 
+
+var collisionq=false;
 var fire = false;
 var d = 0;
 
@@ -64,33 +66,41 @@ function game(){
 	// ctx.drawImage(turret,175,340,50,150);
 	// ctx.drawImage(gameMap[0][0], gameMap[0][1], gameMap[0][2], gameMap[0][3], gameMap[0][4]);
 	
+	// draw all entities
     for (row of gameMap) {
         ctx.drawImage(row[0], row[1], row[2], row[3], row[4]);
     } 
 
 	if (fire == true){
-		bullet_y -= 12;
-		if(bullet_y < 0){
+		bullet[2] -= 12;
+		if(bullet[2] < 0){
 			fire = false;
-			bullet_y = 340;
+			bullet[2] = 340;
 		}
 	}
+	
+	//helicopter[1]+=5;
 	
 	gameMap[0][1] += 5;
 	if (gameMap[0][1] >= 400){
 		gameMap[0][1] = -50;
 	}
 	
-	d = Math.sqrt(((heli_x+25-bullet_x-7)*2)+((heli_y-bullet_y+20)*2));
+	d = Math.sqrt(((helicopter[1]+25-bullet[1]-7)*2)+((helicopter[2]-bullet[2]+20)*2));
 	if(d<18){
-		collision();
+		collisionq=true;
 
     }
+	
+	if(collisionq == true){
+		collision();
+	}
 }
 
 function collision(){
 	console.log("HIT!");
-	ctx.drawImage(trooper,heli_x-15,heli_y-50,15,10);
+	//ctx.drawImage(helicopter[0],helicopter[1]-15,helicopter[2]-50,15,10);
+	ctx.drawImage(helicopter[0],100,100,100,100);
 }
 
 function keyPush(event) {
