@@ -9,6 +9,7 @@ window.onload=function() {
 }
 
 var gameMap = [];
+var exists = [];
 var heli_x =0;
 var heli_y =0;
 var heli_direction = 'r'
@@ -24,6 +25,28 @@ var heli_direction = 'r'
     // var bullet = document.createElement("IMG");
     // bullet.setAttribute("src", "./bullet.png");;
     //     ctx.drawImage(bullet, bullet_x, bullet_y, 15, 10);
+class Helicoptor {
+    constructor() {
+        this.img = document.createElement("IMG");
+        this.img.setAttribute("src", "./helicopter_right.png");
+        this.xPosition = heli_x;
+        this.yPosition = 75;
+        this.width = 50;
+        this.height = 50;
+    }
+    
+    move() {
+        this.xPosition += 5;
+        if (this.xPosition >= 400) {
+            this.xPosition = -50;
+        }
+    }
+
+    display() {
+        ctx.drawImage(this.img, this.xPosition, this.yPosition, this.width, this.height);
+    }
+
+}
 
 var helicopter =[];
 helicopter[0] = document.createElement("IMG");
@@ -34,6 +57,18 @@ helicopter[3] = 50;
 helicopter[4] = 50;
 gameMap.push(helicopter);
 
+
+var heli = new Helicoptor();
+exists.push(heli);
+
+turret = [];
+turret[0] = document.createElement("IMG");
+turret[0].setAttribute("src","./turret.png");
+turret[1] = 175;
+turret[2] = 340;
+turret[3] = 50;
+turret[4] = 150;
+gameMap.push(turret);
 
 bullet = [];
 bullet[0] = document.createElement("IMG"); 
@@ -71,6 +106,10 @@ function game(){
         ctx.drawImage(row[0], row[1], row[2], row[3], row[4]);
     } 
 
+    for (obj of exists) {
+        obj.display();
+    }
+
 	if (fire == true){
 		bullet[2] -= 12;
 		if(bullet[2] < 0){
@@ -78,9 +117,10 @@ function game(){
 			bullet[2] = 340;
 		}
 	}
-	
-	//helicopter[1]+=5;
-	
+    
+    heli.move();
+
+
 	gameMap[0][1] += 5;
 	if (gameMap[0][1] >= 400){
 		gameMap[0][1] = -50;
