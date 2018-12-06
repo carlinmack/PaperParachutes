@@ -1,0 +1,53 @@
+<canvas id="gc" width="400" height="400"></canvas>
+
+<script>
+var canv, ctx;
+
+	window.onload = function () {
+		canv = document.getElementById("gc");
+		ctx = canv.getContext("2d");
+		// document.addEventListener("keydown", keyPush);
+		setTimeout(game, 1000);
+		setTimeout(game, 2000);
+		setTimeout(game, 3000);
+		setTimeout(game, 4000);
+		setTimeout(game, 5000);
+		// game();
+	}
+function game() {
+	ctx.fillStyle = 'LightGrey';
+	ctx.fillRect(0, 0, canv.width, canv.height);
+
+var bullet = document.createElement('IMG');
+bullet.setAttribute('src', './bullet.png');
+ctx.drawImage(bullet, 0, 0, 15, 10);
+console.log("draw");
+
+	trooper.display();
+}
+
+class Entity {
+  constructor(contx) {
+    this.image = document.createElement('IMG');
+	this.image.setAttribute('src', "./helicopter.png");
+    this.x = 100;
+    this.y = 100;
+    this.width = 100;
+	this.height = 100;
+	this.ctx = contx
+  }
+
+  display() {
+    this.ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
+	this.ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
+  }
+
+  fuck() {
+    console.log('fuck');
+  }
+}
+
+var trooper = new Entity(ctx);
+trooper.fuck();
+console.log('end');
+</script>
