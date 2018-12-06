@@ -12,6 +12,7 @@ var canv, ctx;
 function game() {
 	ctx.fillStyle = 'LightGrey';
 	ctx.fillRect(0, 0, canv.width, canv.height);
+<<<<<<< HEAD
 	
 	var trooper = new Entity('./helicopter_right.png', 100, 100, 100, 100);
 	trooper.display();
@@ -33,8 +34,39 @@ class Entity {
 	//this.image.onload = function(){
 	ctx.drawImage(this.image, 0, 0, 100, 100);
     //ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
+=======
+
+var bullet = document.createElement('IMG');
+bullet.setAttribute('src', './bullet.png');
+ctx.drawImage(bullet, 0, 0, 15, 10);
+console.log("draw");
+
+	trooper.display();
+}
+
+class Entity {
+  constructor(contx) {
+    this.image = document.createElement('IMG');
+	this.image.setAttribute('src', "./helicopter.png");
+    this.x = 100;
+    this.y = 100;
+    this.width = 100;
+	this.height = 100;
+	this.ctx = contx
+  }
+
+  display() {
+    this.ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
+	this.ctx.drawImage(this.image, this.x, this.y, this.w, this.h);
+>>>>>>> 7458daff4a056ce9b406e70a1eaf850542655430
   }
 
 }
 
+<<<<<<< HEAD
+=======
+var trooper = new Entity(ctx);
+trooper.fuck();
+console.log('end');
+>>>>>>> 7458daff4a056ce9b406e70a1eaf850542655430
 </script>
