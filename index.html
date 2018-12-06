@@ -1,106 +1,91 @@
 <canvas id="gc" width="400" height="400"></canvas>
 
 <script>
-window.onload=function() {
-    canv=document.getElementById("gc");
-    ctx=canv.getContext("2d");
-    document.addEventListener("keydown",keyPush);
-    setInterval(game,1000/15);
+
+//classes and global functions and variables
+
+function drawGame(){
+	for(e of entitiesArray){
+			e.display();
+		}
 }
 
-var gameMap = [];
-var heli_x =0;
-var heli_y =0;
-var heli_direction = 'r'
+function moveEntities(){
+	for(e of entitiesArray){
+			e.move();
+		}
+}
+	
+class Entity {
+	constructor(src, x, y, w, h) {
+		this.image = new Image();
+		this.image.src = src;
+		this.x = x;
+		this.y = y;
+		this.xSpeed = 0;
+		this.ySpeed = 0;
+		this.width = w;
+		this.height = h;
+		//entitiesArray.push(this);
+	}
 
-// var trooper = []
-// trooper[0] = document.createElement("IMG");
-// trooper[0].setAttribute("src", "./trooper.png");
-// gameMap.push(trooper);
+	display(){
+		ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+	}
+	
+	move(){
+		this.x += this.xSpeed;
+		this.y += this.ySpeed;
+	}
+}
+
+class Helicopter extends Entity{
+	constructor(src, x, y, w, h) {
+		super(src, x, y, w, h);
+		this.xSpeed = 2;
+	}
+}
+
+class Trooper extends Entity{
+	constructor(src, x, y, w, h) {
+		super(src, x, y, w, h);
+		this.ySpeed = 5;
+	}
+}
+
+class Bullet extends Entity{
+	constructor(src, x, y, w, h) {
+		super(src, x, y, w, h);
+		this.ySpeed = -5;
+	}
+	
+}
+
+class Turret extends Entity{
+	constructor(src, x, y, w, h) {
+		super(src, x, y, w, h);
+	}
+}
 
 
-    // var bullet_x = 192;
-    // var bullet_y = 340;
-    // var bullet = document.createElement("IMG");
-    // bullet.setAttribute("src", "./bullet.png");;
-    //     ctx.drawImage(bullet, bullet_x, bullet_y, 15, 10);
-
-var helicopter =[];
-helicopter[0] = document.createElement("IMG");
-helicopter[0].setAttribute("src","./helicopter_right.png");
-helicopter[1] = heli_x;
-helicopter[2] = heli_y;
-helicopter[3] = 50;
-helicopter[4] = 50;
-gameMap.push(helicopter);
-
-
-bullet = [];
-bullet[0] = document.createElement("IMG"); 
-bullet[0].setAttribute("src", "./bullet.png");
-bullet[1] = 192;
-bullet[2] = 340;
-bullet[3] = 15;
-bullet[4] = 10;
-var bullet_x = 192;
-var bullet_y = 340;
-gameMap.push(bullet);
-
-turret = [];
-turret[0] = document.createElement("IMG");
-turret[0].setAttribute("src","./turret.png");
-turret[1] = 175;
-turret[2] = 340;
-turret[3] = 50;
-turret[4] = 150;
-gameMap.push(turret); 
-
-var collisionq=false;
-var fire = false;
-var d = 0;
+// game loop
+window.onload=function() {
+    
+	canv=document.getElementById("gc");
+	ctx=canv.getContext("2d");
+	entitiesArray = [];
+	entitiesArray.push(new Helicopter('./helicopter_right.png',-75,5,75,70));
+	entitiesArray.push(new Turret('./turret.png',165,360,50,80));
+	document.addEventListener("keydown",keyPush);
+    setInterval(game,1000/100);
+	
+}
 
 function game(){
 	ctx.fillStyle="LightGrey";
-    ctx.fillRect(0,0,canv.width,canv.height);	
-	// ctx.drawImage(bullet,bullet_x,bullet_y,15,10)
-	// ctx.drawImage(turret,175,340,50,150);
-	// ctx.drawImage(gameMap[0][0], gameMap[0][1], gameMap[0][2], gameMap[0][3], gameMap[0][4]);
-	
-	// draw all entities
-    for (row of gameMap) {
-        ctx.drawImage(row[0], row[1], row[2], row[3], row[4]);
-    } 
-
-	if (fire == true){
-		bullet[2] -= 12;
-		if(bullet[2] < 0){
-			fire = false;
-			bullet[2] = 340;
-		}
-	}
-	
-	//helicopter[1]+=5;
-	
-	gameMap[0][1] += 5;
-	if (gameMap[0][1] >= 400){
-		gameMap[0][1] = -50;
-	}
-	
-	d = Math.sqrt(((helicopter[1]+25-bullet[1]-7)*2)+((helicopter[2]-bullet[2]+20)*2));
-	if(d<18){
-		collisionq=true;
-
-    }
-	
-	if(collisionq == true){
-		collision();
-	}
-}
-
-function collision(){
-	console.log("HIT!");
-	//ctx.drawImage(helicopter[0],helicopter[1]-15,helicopter[2]-50,15,10);
-	ctx.drawImage(helicopter[0],100,100,100,100);
+    ctx.fillRect(0,0,canv.width,canv.height);
+	moveEntities();
+	drawGame();
 }
 
 function keyPush(event) {
@@ -112,7 +97,7 @@ function keyPush(event) {
             alert("left");
             break;
         case 32:
-            fire = true;
+			entitiesArray.push(new Bullet('./bullet.png',186,360,10,10));
             break;
     }
 }
