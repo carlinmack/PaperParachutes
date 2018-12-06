@@ -2,6 +2,7 @@
 
 <script>
     //classes and global functions and variables
+	var entitiesArray, keys;
 
     function drawGame() {
         for (e of entitiesArray) {
@@ -9,7 +10,7 @@
         }
     }
 
-    function moveEntities() {
+    function moveEntities() {	
         for (e of entitiesArray) {
             e.move();
         }
@@ -41,14 +42,14 @@
     class Helicopter extends Entity {
         constructor(src, x, y, w, h) {
             super(src, x, y, w, h);
-            this.xSpeed = 2;
-        }
+            this.xSpeed = 1;
+		}
     }
 
     class Trooper extends Entity {
         constructor(src, x, y, w, h) {
             super(src, x, y, w, h);
-            this.ySpeed = 3;
+            this.ySpeed = 1.5;
         }
 
         move() {
@@ -62,51 +63,106 @@
     class Bullet extends Entity {
         constructor(src, x, y, w, h) {
             super(src, x, y, w, h);
-            this.ySpeed = -5;
+            this.ySpeed = -2.5;
         }
 
     }
 
     class Turret extends Entity {
         constructor(src, x, y, w, h) {
-            super(src, x, y, w, h);
-        }
+			super(src, x, y, w, h);
+			this.rotation = 0;
+		}
+		
+		display() {
+			drawImageRot(this.image, this.x, this.y, this.width, this.height, this.rotation);
+		}
+
+		rotate(x) {
+			this.rotation += x;
+		}
     }
 
 
-    // game loop
     window.onload = function() {
-
         canv = document.getElementById("gc");
         ctx = canv.getContext("2d");
         entitiesArray = [];
-        entitiesArray.push(new Helicopter('./helicopter_right.png', -75, 5, 75, 70));
         entitiesArray.push(new Turret('./turret.png', 165, 360, 50, 80));
+		entitiesArray.push(new Helicopter('./helicopter_right.png', -75, 5, 75, 70));
         entitiesArray.push(new Trooper('./para.png', 10, 10, 40, 40));
-        document.addEventListener("keydown", keyPush);
-        setInterval(game, 1000 / 100);
-
+		// document.addEventListener("keydown", keyPush);
+		keys = [];
+		bulletFlag = true; // todo: find a place or way to set this privately
+		setInterval(game, 1000 / 200);
+		setInterval(keyPress, 1000 / 50);
     }
 
+    // game loop
     function game() {
+		// clear screen
         ctx.fillStyle = "LightGrey";
         ctx.fillRect(0, 0, canv.width, canv.height);
-        moveEntities();
+		moveEntities();
+		// draw in new positions
         drawGame();
+	}
+	
+    function keyPress() {	
+		let turr = entitiesArray[0];
+		if (keys[39]) {
+			if (turr.rotation < 90) {
+			turr.rotate(12);
+		}
+		}
+		if (keys[37]) {
+			if (turr.rotation > -90) {
+			turr.rotate(-12);
+			}
+		}
+		if (keys[32] && bulletFlag) {
+			entitiesArray.push(new Bullet('./bullet.png', 186, 360, 10, 10));
+			bulletFlag = false;
+			setTimeout(function(){bulletFlag = true}, 100);
+		}
     }
 
-    function keyPush(event) {
-        switch (event.keyCode) {
-            case 39:
-                alert("right");
-                break;
-            case 37:
-                alert("left");
-                break;
-            case 32:
-                entitiesArray.push(new Bullet('./bullet.png', 186, 360, 10, 10));
-                break;
-        }
-    }
+	onkeydown = onkeyup = function (e) {
+		//run on every interaction of a key, sets the keys state to an array value
+		keys[e.keyCode] = e.type === 'keydown';
+	};
+	
+    // function keyPush(event) {
+    //     switch (event.keyCode) {
+    //         case 39:
+	// 			entitiesArray[0].rotate(12);
+    //             break;
+	// 		case 37:
+	// 			entitiesArray[0].rotate(-12);
+    //             break;
+    //         case 32:
+    //             entitiesArray.push(new Bullet('./bullet.png', 186, 360, 10, 10));
+    //             break;
+    //     }
+	// }
+	
+	// Credit: https://stackoverflow.com/a/11985464
+	function drawImageRot(img, x, y, width, height, deg) {
+			//Convert degrees to radian 
+			var rad = deg * Math.PI / 180;
+
+			//Set the origin to the center of the image
+			ctx.translate(x + width / 2, y + height / 2);
+
+			//Rotate the canvas around the origin
+			ctx.rotate(rad);
+
+			//draw the image    
+			ctx.drawImage(img, width / 2 * (-1), height / 2 * (-1), width, height);
+
+			//reset the canvas  
+			ctx.rotate(rad * (-1));
+			ctx.translate((x + width / 2) * (-1), (y + height / 2) * (-1));
+		}
 
 </script>
