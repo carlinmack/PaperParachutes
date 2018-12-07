@@ -118,11 +118,11 @@
     function keyPress() {
         let turr = entitiesArray[0];
         if (keys[39] && turr.rotation < 72) { // turn right with right arrow
-            turr.rotate(12);
+            turr.rotate(3);
 		}
 		
         if (keys[37] && turr.rotation > -72) { // turn left with left arrow
-            turr.rotate(-12);
+            turr.rotate(-3);
 		}
 		
         if (keys[32] && bulletFlag) { // fire a bullet when space is pressed
@@ -144,7 +144,7 @@
             bulletFlag = false; // set delay so that a stream of bullets isn't fired
             setTimeout(function() {
                 bulletFlag = true
-            }, 100);
+            }, 150);
         }
     }
 
