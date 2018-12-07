@@ -12,6 +12,7 @@ Carlin 2018.12.07 10.45
 - [ ] Scroll wheel controls
 - [ ] investigate how things are drawn frame by frame and see if we need to do .onload for each image
 - [ ] Have turret extend from bullet maybe since they have the same display method ? [I might investigate how to do the conservatory thing where you just use that method]
+- [ ] Find a way to flip helicoptor sprite with the same file
 
 ---
 
