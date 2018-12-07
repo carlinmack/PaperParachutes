@@ -26,7 +26,6 @@
             this.ySpeed = 0;
             this.width = w;
             this.height = h;
-            //entitiesArray.push(this);
         }
 
         display() {
@@ -40,15 +39,15 @@
     }
 
     class Helicopter extends Entity {
-        constructor(src, x, y, w, h) {
-            super(src, x, y, w, h);
+        constructor() {
+            super('./helicopter_right.png', -75, 5, 75, 70);
             this.xSpeed = 1;
         }
     }
 
     class Trooper extends Entity {
         constructor(src, x, y, w, h) {
-            super(src, x, y, w, h);
+            super('./para.png', 10, 10, 40, 40);
             this.ySpeed = 1.5;
         }
 
@@ -61,21 +60,21 @@
     }
 
     class Bullet extends Entity {
-        constructor(src, x, y, xVec, yVec, rotation) {
-            super(src, x, y, 10, 10);
+        constructor(x, y, xVec, yVec, rotation) {
+            super('./bullet.png', x, y, 10, 10);
             this.xSpeed = xVec * 2.5;
-			this.ySpeed = yVec * 2.5;
-			this.rotation = rotation;
-		}
-		
-		display() {
-			drawImageRot(this.image, this.x, this.y, this.width, this.height, this.rotation);
-		}
+            this.ySpeed = yVec * 2.5;
+            this.rotation = rotation;
+        }
+
+        display() {
+            drawImageRot(this.image, this.x, this.y, this.width, this.height, this.rotation);
+        }
     }
 
     class Turret extends Entity {
         constructor(src, x, y, w, h) {
-            super(src, x, y, w, h);
+            super('./turret.png', 165, 350, 50, 120);
             this.rotation = 0;
         }
 
@@ -88,17 +87,19 @@
         }
     }
 
-
+	// initialise game
     window.onload = function() {
         canv = document.getElementById("gc");
-        ctx = canv.getContext("2d");
+		ctx = canv.getContext("2d");
+		
         entitiesArray = [];
-        entitiesArray.push(new Turret('./turret.png', 165, 350, 50, 120));
-        entitiesArray.push(new Helicopter('./helicopter_right.png', -75, 5, 75, 70));
-        entitiesArray.push(new Trooper('./para.png', 10, 10, 40, 40));
-        // document.addEventListener("keydown", keyPush);
+        entitiesArray.push(new Turret());
+        entitiesArray.push(new Helicopter());
+		entitiesArray.push(new Trooper());
+		
         keys = [];
-        bulletFlag = true; // todo: find a place or way to set this privately
+		bulletFlag = true; // todo: find a place or way to set this privately
+		
         setInterval(game, 1000 / 200);
         setInterval(keyPress, 1000 / 50);
     }
@@ -113,29 +114,34 @@
         drawGame();
     }
 
+	// keypress loop
     function keyPress() {
         let turr = entitiesArray[0];
-        if (keys[39]) {
-            if (turr.rotation < 72) {
-                turr.rotate(12);
-            }
-        }
-        if (keys[37]) {
-            if (turr.rotation > -72) {
-                turr.rotate(-12);
-            }
-        }
-        if (keys[32] && bulletFlag) {
-            // X:= originX + cos(angle) * radius;
-            // Y:= originY + sin(angle) * radius;
+        if (keys[39] && turr.rotation < 72) { // turn right with right arrow
+            turr.rotate(12);
+		}
+		
+        if (keys[37] && turr.rotation > -72) { // turn left with left arrow
+            turr.rotate(-12);
+		}
+		
+        if (keys[32] && bulletFlag) { // fire a bullet when space is pressed
+            // calculate radians as thats what the Math lib uses
             var rad = -turr.rotation * Math.PI / 180 + Math.PI / 2;
+
+            // the vectors that the bullets will fire on
             var xVec = Math.cos(rad);
             var yVec = -Math.sin(rad);
+
+            // finding the point in the arc that the bullet will spawn
+            // X:= originX + cos(angle) * radius;
+            // Y:= originY + sin(angle) * radius;
             var x = 186 + xVec * 44;
             var y = 404 + yVec * 44;
 
-            entitiesArray.push(new Bullet('./bullet.png', x, y, xVec, yVec, turr.rotation));
-            bulletFlag = false;
+            // create bullet
+            entitiesArray.push(new Bullet(x, y, xVec, yVec, turr.rotation));
+            bulletFlag = false; // set delay so that a stream of bullets isn't fired
             setTimeout(function() {
                 bulletFlag = true
             }, 100);
@@ -146,20 +152,6 @@
         //run on every interaction of a key, sets the keys state to an array value
         keys[e.keyCode] = e.type === 'keydown';
     };
-
-    // function keyPush(event) {
-    //     switch (event.keyCode) {
-    //         case 39:
-    // 			entitiesArray[0].rotate(12);
-    //             break;
-    // 		case 37:
-    // 			entitiesArray[0].rotate(-12);
-    //             break;
-    //         case 32:
-    //             entitiesArray.push(new Bullet('./bullet.png', 186, 360, 10, 10));
-    //             break;
-    //     }
-    // }
 
     // Credit: https://stackoverflow.com/a/11985464
     function drawImageRot(img, x, y, width, height, deg) {
