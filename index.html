@@ -13,7 +13,8 @@
 	}
 	
 	function checkCollisions(){
-		let tempArray = Array.from(entitiesSet);
+	//performance issues caused here!!
+		/*let tempArray = Array.from(entitiesSet);
 		let bulletsArray = tempArray.filter(val => {return (val instanceof Bullet)});
 		let troopersAndHelisArray = tempArray.filter(val => {return (val instanceof Trooper) || (val instanceof Helicopter)});
 		for (b of bulletsArray) {
@@ -26,8 +27,27 @@
 				}
 			}
         }
+		*/
 	}
 
+	function spawn_heli(){
+		// can improve by having helis spawn on 2 levels and have going left and right
+		let direction = 'r';
+		let y = -5;
+		if(Math.round(Math.random())){
+			direction = 'l';
+		}
+		if(Math.round(Math.random())){
+			y = 30;
+		}
+	
+		entitiesSet.add(new Helicopter(direction,y));
+		// can play around with time out values and use variables to make them spawn 
+		// faster as game progresses
+		setTimeout(spawn_heli,Math.floor(2000+(Math.random() * 9000) + 1));
+		
+	}
+	
     function drawGame() {
         for (e of entitiesSet) {
             e.display();
@@ -66,8 +86,20 @@
 
     class Helicopter extends Entity {
         constructor() {
-            super('./helicopter_right.png', -75, 5, 75, 70);
-            this.xSpeed = 0.5;
+			if(arguments.length == 2){
+				if(arguments[0]=='r'){
+					super('./helicopter_right.png', -75, arguments[1], 75, 70);
+					this.xSpeed = 0.5;
+				}else{
+					super('./helicopter_left.png', 475, arguments[1], 75, 70);
+					this.xSpeed = -0.5;
+				}
+				
+			}else{
+				super('./helicopter_right.png', -75, -5, 75, 70);
+				this.xSpeed = 0.5;
+			}
+			
         }
 		hit(){
 			this.image.src = './helicopter_right_red.png';
@@ -137,6 +169,7 @@
         keys = [];
 		bulletFlag = true; // todo: find a place or way to set this privately
 		
+		setTimeout(spawn_heli,3000);
         setInterval(game, 1000 / 200);
         setInterval(keyPress, 1000 / 50);
     }
