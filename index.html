@@ -117,11 +117,11 @@
 	// keypress loop
     function keyPress() {
         let turr = entitiesArray[0];
-        if (keys[39] && turr.rotation < 72) { // turn right with right arrow
+        if (keys[39] && turr.rotation < 80) { // turn right with right arrow
             turr.rotate(3);
 		}
 		
-        if (keys[37] && turr.rotation > -72) { // turn left with left arrow
+        if (keys[37] && turr.rotation > -80) { // turn left with left arrow
             turr.rotate(-3);
 		}
 		
