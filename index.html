@@ -4,6 +4,7 @@
     //classes and global functions and variables
     var bulletsSet, helisSet, troopersSet, keys, entitiesSet;
 
+    // parent class, every object must implement this to be drawn
     class Entity {
         constructor(src, x, y, w, h) {
             this.image = new Image();
@@ -24,8 +25,6 @@
             this.x += this.xSpeed;
             this.y += this.ySpeed;
         }
-
-
     }
 
     class Helicopter extends Entity {
@@ -33,7 +32,7 @@
             // changed it around so that helicoptors spawn themselves randomly
             if (Math.round(Math.random())) {
                 if (Math.round(Math.random())) {
-                super('./resources/helicopter.png', 475, 30, 75, 70);
+                    super('./resources/helicopter.png', 475, 30, 75, 70);
                 } else {
                     super('./resources/helicopter.png', 475, -5, 75, 70);
                 }
@@ -65,10 +64,8 @@
             if (this.direction == 'l') {
                 ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
             } else {
-                // ctx.translate(this.w, 0);
                 ctx.scale(-1, 1);
                 ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-                // ctx.translate(-this.w, 0);
                 ctx.scale(-1, 1);
             }
         }
@@ -165,21 +162,19 @@
                     b.x + b.width > t.x &&
                     b.y < t.y + t.height &&
                     b.height + b.y > t.y) {
-                    t.hit(); //include set timeout here?
+                    t.hit(); //include set timeout here? Not sure, I'm doing it 
+                    // in helicoptor but might be good to have a flag per t in troopers..
                 }
             }
         }
-
     }
 
     function spawn_heli() {
         // can improve by having helis spawn on 2 levels and have going left and right
-
         entitiesSet.add(new Helicopter());
         // can play around with time out values and use variables to make them spawn 
         // faster as game progresses
         setTimeout(spawn_heli, Math.floor(2000 + (Math.random() * 9000) + 1));
-
     }
 
     function drawGame() {
@@ -216,15 +211,18 @@
         // clear screen
         ctx.fillStyle = "LightGrey";
         ctx.fillRect(0, 0, canv.width, canv.height);
+
         moveEntities();
         checkCollisions();
         drawGame();
-        deleteEntities();
+        deleteEntities(); // maybe put this in keyPress as it doesn't need to run 200 times a second
     }
 
     // keypress loop
     function keyPress() {
-        let turr = entitiesSet.values().next().value; // better way to access elements in set?
+        // better way to access elements in set? Unsure how set indexing works, 
+        // if it works thats good enough for now
+        let turr = entitiesSet.values().next().value;
         if (keys[39] && turr.rotation < 80) { // turn right with right arrow
             turr.rotate(3);
         }
