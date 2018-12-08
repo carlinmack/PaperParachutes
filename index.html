@@ -4,66 +4,6 @@
     //classes and global functions and variables
     var bulletsSet, helisSet, troopersSet, keys, entitiesSet;
 
-    function deleteEntities() {
-        for (e of entitiesSet) {
-            if (e.y < (0 - this.height) || e.x < (0 - this.width) || e.x > (400 + this.width)) {
-                entitiesSet.delete(this);
-            }
-        }
-    }
-
-    function checkCollisions() {
-        //performance issues caused here!!
-        let tempArray = Array.from(entitiesSet);
-        let bulletsArray = tempArray.filter(val => {
-            return (val instanceof Bullet)
-        });
-        let troopersAndHelisArray = tempArray.filter(val => {
-            return (val instanceof Trooper) || (val instanceof Helicopter)
-        });
-        for (b of bulletsArray) {
-            for (t of troopersAndHelisArray) {
-                if (b.x < t.x + t.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
-                    b.x + b.width > t.x &&
-                    b.y < t.y + t.height &&
-                    b.height + b.y > t.y) {
-                    t.hit(); //include set timeout here?
-                }
-            }
-        }
-
-    }
-
-    function spawn_heli() {
-        // can improve by having helis spawn on 2 levels and have going left and right
-        let direction = 'r';
-        let y = -5;
-        if (Math.round(Math.random())) {
-            direction = 'l';
-        }
-        if (Math.round(Math.random())) {
-            y = 30;
-        }
-
-        entitiesSet.add(new Helicopter(direction, y));
-        // can play around with time out values and use variables to make them spawn 
-        // faster as game progresses
-        setTimeout(spawn_heli, Math.floor(2000 + (Math.random() * 9000) + 1));
-
-    }
-
-    function drawGame() {
-        for (e of entitiesSet) {
-            e.display();
-        }
-    }
-
-    function moveEntities() {
-        for (e of entitiesSet) {
-            e.move();
-        }
-    }
-
     class Entity {
         constructor(src, x, y, w, h) {
             this.image = new Image();
@@ -90,27 +30,46 @@
 
     class Helicopter extends Entity {
         constructor() {
-            if (arguments.length == 2) {
-                if (arguments[0] == 'r') {
-                    super('./resources/helicopter_right.png', -75, arguments[1], 75, 70);
-                    this.xSpeed = 0.5;
+            // changed it around so that helicoptors spawn themselves randomly
+            if (Math.round(Math.random())) {
+                if (Math.round(Math.random())) {
+                super('./resources/helicopter.png', 475, 30, 75, 70);
                 } else {
-                    super('./resources/helicopter_left.png', 475, arguments[1], 75, 70);
-                    this.xSpeed = -0.5;
+                    super('./resources/helicopter.png', 475, -5, 75, 70);
                 }
-
+                this.xSpeed = -0.5;
+                this.direction = 'l';
             } else {
-                super('./resources/helicopter_right.png', -75, -5, 75, 70);
-                this.xSpeed = 0.5;
+                if (Math.round(Math.random())) {
+                    super('./resources/helicopter.png', 75, 30, 75, 70);
+                } else {
+                    super('./resources/helicopter.png', 75, -5, 75, 70);
+                }
+                this.xSpeed = -0.5; // maybe a bug IDK but the way I'm flipping 
+                // it means the speed is negative
+                this.direction = 'r';
             }
+
             this.alive = true;
         }
 
         hit() {
             if (this.alive) {
                 entitiesSet.add(new Trooper(this.x, this.y));
-                this.image.src = './resources/helicopter_right_red.png';
+                this.image.src = './resources/helicopter_red.png';
                 this.alive = false;
+            }
+        }
+
+        display() {
+            if (this.direction == 'l') {
+                ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+            } else {
+                // ctx.translate(this.w, 0);
+                ctx.scale(-1, 1);
+                ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+                // ctx.translate(-this.w, 0);
+                ctx.scale(-1, 1);
             }
         }
     }
@@ -137,7 +96,7 @@
 
         display() {
             if (!this.opaque && this.alpha > 0) {
-                this.alpha -= 0.01; 
+                this.alpha -= 0.01;
             }
             if (this.alpha < 0) {
                 return;
@@ -180,6 +139,58 @@
 
         rotate(x) {
             this.rotation += x;
+        }
+    }
+
+    function deleteEntities() {
+        for (e of entitiesSet) {
+            if (e.y < (0 - this.height) || e.x < (0 - this.width) || e.x > (400 + this.width)) {
+                entitiesSet.delete(this);
+            }
+        }
+    }
+
+    function checkCollisions() {
+        //performance issues caused here!!
+        let tempArray = Array.from(entitiesSet);
+        let bulletsArray = tempArray.filter(val => {
+            return (val instanceof Bullet)
+        });
+        let troopersAndHelisArray = tempArray.filter(val => {
+            return (val instanceof Trooper) || (val instanceof Helicopter)
+        });
+        for (b of bulletsArray) {
+            for (t of troopersAndHelisArray) {
+                if (b.x < t.x + t.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
+                    b.x + b.width > t.x &&
+                    b.y < t.y + t.height &&
+                    b.height + b.y > t.y) {
+                    t.hit(); //include set timeout here?
+                }
+            }
+        }
+
+    }
+
+    function spawn_heli() {
+        // can improve by having helis spawn on 2 levels and have going left and right
+
+        entitiesSet.add(new Helicopter());
+        // can play around with time out values and use variables to make them spawn 
+        // faster as game progresses
+        setTimeout(spawn_heli, Math.floor(2000 + (Math.random() * 9000) + 1));
+
+    }
+
+    function drawGame() {
+        for (e of entitiesSet) {
+            e.display();
+        }
+    }
+
+    function moveEntities() {
+        for (e of entitiesSet) {
+            e.move();
         }
     }
 
