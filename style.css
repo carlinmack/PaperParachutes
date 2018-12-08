@@ -1,0 +1,12 @@
+body {
+    background-color: #d6dbeb;
+    min-width: 440px;
+}
+
+canvas {
+    margin: 5% auto;
+    display: block;
+    border: #596967 10px solid;
+    border-style: outset;
+    border-radius: 1%;
+}
