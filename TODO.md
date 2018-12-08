@@ -4,6 +4,7 @@ Carlin 2018.12.08 1.28
 - [ ] Fix removing elements from the array
 - [ ] I've maybe found a better way to do the classes... If you do some research on prototype vs class methods in js you'll see that we should probably be doing prototype. This is a big boring shift we'll make at some point but it's not urgent as the game is still nippy
 - [ ] Low Priority - Might be nicer to change the turret rotation coordinate system to match the unit circle. No game impact but may make further developments easier. I'll think about it
+- [ ] Things shouldn't be allowed to be hit off screen !
 
 ---
 Carlin 2018.12.07 10.45
