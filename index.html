@@ -14,7 +14,7 @@
 	
 	function checkCollisions(){
 	//performance issues caused here!!
-		/*let tempArray = Array.from(entitiesSet);
+		let tempArray = Array.from(entitiesSet);
 		let bulletsArray = tempArray.filter(val => {return (val instanceof Bullet)});
 		let troopersAndHelisArray = tempArray.filter(val => {return (val instanceof Trooper) || (val instanceof Helicopter)});
 		for (b of bulletsArray) {
@@ -27,7 +27,7 @@
 				}
 			}
         }
-		*/
+		
 	}
 
 	function spawn_heli(){
@@ -88,27 +88,27 @@
         constructor() {
 			if(arguments.length == 2){
 				if(arguments[0]=='r'){
-					super('./helicopter_right.png', -75, arguments[1], 75, 70);
+					super('./resources/helicopter_right.png', -75, arguments[1], 75, 70);
 					this.xSpeed = 0.5;
 				}else{
-					super('./helicopter_left.png', 475, arguments[1], 75, 70);
+					super('./resources/helicopter_left.png', 475, arguments[1], 75, 70);
 					this.xSpeed = -0.5;
 				}
 				
 			}else{
-				super('./helicopter_right.png', -75, -5, 75, 70);
+				super('./resources/helicopter_right.png', -75, -5, 75, 70);
 				this.xSpeed = 0.5;
 			}
 			
         }
 		hit(){
-			this.image.src = './helicopter_right_red.png';
+			this.image.src = './resources/helicopter_right_red.png';
 		}
     }
 
     class Trooper extends Entity {
         constructor(src, x, y, w, h) {
-            super('./para.png', 10, 10, 40, 40);
+            super('./resources/para.png', 10, 10, 40, 40);
             this.ySpeed = 1.5;
         }
 
@@ -120,13 +120,13 @@
         }
 		
 		hit(){
-			this.image.src = './para_red.png';
+			this.image.src = './resources/para_red.png';
 		}
     }
 
     class Bullet extends Entity {
         constructor(x, y, xVec, yVec, rotation) {
-            super('./bullet.png', x, y, 10, 10);
+            super('./resources/bullet.png', x, y, 10, 10);
             this.xSpeed = xVec * 2.5;
             this.ySpeed = yVec * 2.5;
             this.rotation = rotation;
@@ -141,7 +141,7 @@
 
     class Turret extends Entity {
         constructor(src, x, y, w, h) {
-            super('./turret.png', 165, 350, 50, 120);
+            super('./resources/turret.png', 165, 350, 50, 120);
             this.rotation = 0;
         }
 
