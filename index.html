@@ -6,11 +6,16 @@
 </head>
 
 <body>
+	<div id="scoreboard">0</div>
     <canvas id="gc" width="400" height="400"></canvas>
 
     <script>
         //classes and global functions and variables
         var bulletsSet, helisSet, troopersSet, keys, entitiesSet;
+		bulletsSet = new Set();
+		helisSet = new Set();
+		troopersSet = new Set();
+		var score = 0;
 
         // parent class, every object must implement this to be drawn
         class Entity {
@@ -63,7 +68,6 @@
 
             hit() {
                 if (this.alive) {
-                    entitiesSet.add(new Trooper(this.x, this.y));
                     if (this.direction == 'l') {
                         this.image.src = './resources/helicopter_red.png';
                     } else {
@@ -82,6 +86,17 @@
                     // ctx.scale(-1, 1);
                 }
             }
+			
+			deleteSelf(){
+				entitiesSet.delete(this);
+				helisSet.delete(this);
+			}
+			
+			spawnTrooper(){
+				let t = new Trooper(this.x, this.y);
+				troopersSet.add(t);
+                entitiesSet.add(t);
+			}
         }
 
         class Trooper extends Entity {
@@ -90,38 +105,36 @@
                 this.ySpeed = 1.5;
                 this.alpha = 1;
                 this.opaque = true;
-                this.init();
+                //this.init();
+				this.wounded = false;
             }
 
             move() {
                 this.y += this.ySpeed;
-                if (this.y > 355) {
-                    this.ySpeed = 0;
+                if (this.y > 360) {
+                    this.ySpeed = 0  ;
                 }
             }
 
             hit() {
                 this.image.src = './resources/para_red.png';
+				 this.wounded = true;
             }
 
             display() {
-                if (!this.opaque && this.alpha > 0) {
-                    this.alpha -= 0.01;
-                }
-                if (this.alpha < 0) {
-                    return;
-                }
-                ctx.globalAlpha = this.alpha;
-                ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-                ctx.globalAlpha = 1;
+                if(this.wounded && this.y > 360){
+					this.deleteSelf();
+				}else{
+					ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+				}
+                
+           
             }
-
-            init() {
-                let that = this;
-                setTimeout(function() {
-                    that.opaque = false;
-                }, 4000);
-            };
+			
+			deleteSelf(){
+				entitiesSet.delete(this);
+				troopersSet.delete(this);
+			}
         }
 
         class Bullet extends Entity {
@@ -135,6 +148,11 @@
             display() {
                 drawImageRot(this.image, this.x, this.y, this.width, this.height, this.rotation);
             }
+			
+			deleteSelf(){
+			entitiesSet.delete(this);
+			bulletsSet.delete(this);
+			}
         }
 
         class Turret extends Entity {
@@ -154,40 +172,50 @@
 
         function deleteEntities() {
             for (e of entitiesSet) {
-                if (e.y < (0 - this.height) || e.x < (0 - this.width) || e.x > (400 + this.width)) {
-                    entitiesSet.delete(this);
+                if (e.y < (0 - e.height) || e.x < (0 - e.width) || e.x > (400 + e.width)) {
+                    e.deleteSelf(this);
                 }
             }
         }
 
         function checkCollisions() {
-            //performance issues caused here!!
-            let tempArray = Array.from(entitiesSet);
-            let bulletsArray = tempArray.filter(val => {
-                return (val instanceof Bullet)
-            });
-            let troopersAndHelisArray = tempArray.filter(val => {
-                return (val instanceof Trooper) || (val instanceof Helicopter)
-            });
-            for (b of bulletsArray) {
-                for (t of troopersAndHelisArray) {
+            
+            for (b of bulletsSet) {
+                for (t of new Set([...troopersSet, ...helisSet])) {
                     if (b.x < t.x + t.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
                         b.x + b.width > t.x &&
                         b.y < t.y + t.height &&
                         b.height + b.y > t.y) {
-                        t.hit(); //include set timeout here? Not sure, I'm doing it 
-                        // in helicoptor but might be good to have a flag per t in troopers..
-                    }
+                        t.hit(); 
+                        b.deleteSelf();
+						updateScore(2);
+					}
                 }
             }
         }
 
         function spawn_heli() {
             // can improve by having helis spawn on 2 levels and have going left and right
-            entitiesSet.add(new Helicopter());
+            let h = new Helicopter();
+			helisSet.add(h);
+			entitiesSet.add(h);
             // can play around with time out values and use variables to make them spawn 
             // faster as game progresses
-            setTimeout(spawn_heli, Math.floor(2000 + (Math.random() * 9000) + 1));
+            setTimeout(spawn_heli, Math.floor(2000 + (Math.random() * 9000)));
+        }
+		
+		function spawn_troopers() {
+            
+			for(h of helisSet){
+				if(h.x>0 && h.x<(400-h.width)){
+					let s = Math.floor(Math.random()*10);
+					if(s>2){ //70% chance a heli will spawn trooper
+						h.spawnTrooper();
+					}
+				}
+			}
+			
+            setTimeout(spawn_troopers, Math.floor(2000 + (Math.random() * 1000)));
         }
 
         function drawGame() {
@@ -196,16 +224,24 @@
             }
         }
 
-        function moveEntities() {
+         function moveEntities() {
             for (e of entitiesSet) {
                 e.move();
             }
         }
+		
+		function updateScore(x){
+			//when score =0 then it adds 2 to score upon collision :(
+			score += x;
+			scoreboard.innerHTML=score;
+		}
 
         // initialise game
         window.onload = function() {
             canv = document.getElementById("gc");
             ctx = canv.getContext("2d");
+			var scoreboard = document.getElementById('scoreboard');
+			scoreboard.innerHTML=score;
 
             entitiesSet = new Set();
             entitiesSet.add(new Turret());
@@ -213,8 +249,9 @@
 
             keys = [];
             bulletFlag = true; // todo: find a place or way to set this privately
-
-            setTimeout(spawn_heli, 3000);
+ 
+            spawn_heli();
+			spawn_troopers();
             setInterval(game, 1000 / 200);
             setInterval(keyPress, 1000 / 50);
         }
@@ -227,8 +264,10 @@
 
             moveEntities();
             checkCollisions();
-            drawGame();
+			drawGame();
             deleteEntities(); // maybe put this in keyPress as it doesn't need to run 200 times a second
+			
+            
         }
 
         // keypress loop
@@ -259,8 +298,11 @@
                 var y = 404 + yVec * 44;
 
                 // create bullet
-                entitiesSet.add(new Bullet(x, y, xVec, yVec, turr.rotation));
-                bulletFlag = false; // set delay so that a stream of bullets isn't fired
+				let b = new Bullet(x, y, xVec, yVec, turr.rotation);
+				bulletsSet.add(b);
+                entitiesSet.add(b);
+				if(score!=0){updateScore(-1)};
+                bulletFlag = false; // set d elay so that a stream of bullets isn't fired
                 setTimeout(function() {
                     bulletFlag = true
                 }, 150);

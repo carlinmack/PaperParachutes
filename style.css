@@ -3,6 +3,12 @@ body {
     min-width: 440px;
 }
 
+div {
+	font-size:200%;
+	font-weight: bold;
+	
+}
+
 canvas {
     margin: 5% auto;
     display: block;
