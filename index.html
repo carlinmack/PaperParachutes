@@ -108,9 +108,9 @@
 
         hit() {
             if (this.alive) {
-            entitiesSet.add(new Trooper(this.x, this.y));
-            this.image.src = './resources/helicopter_right_red.png';
-            this.alive = false;
+                entitiesSet.add(new Trooper(this.x, this.y));
+                this.image.src = './resources/helicopter_right_red.png';
+                this.alive = false;
             }
         }
     }
@@ -119,6 +119,9 @@
         constructor(x, y) {
             super('./resources/para.png', x, y, 40, 40);
             this.ySpeed = 1.5;
+            this.alpha = 1;
+            this.opaque = true;
+            this.init();
         }
 
         move() {
@@ -131,6 +134,25 @@
         hit() {
             this.image.src = './resources/para_red.png';
         }
+
+        display() {
+            if (!this.opaque && this.alpha > 0) {
+                this.alpha -= 0.01; 
+            }
+            if (this.alpha < 0) {
+                return;
+            }
+            ctx.globalAlpha = this.alpha;
+            ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+            ctx.globalAlpha = 1;
+        }
+
+        init() {
+            let that = this;
+            setTimeout(function() {
+                that.opaque = false;
+            }, 4000);
+        };
     }
 
     class Bullet extends Entity {
@@ -144,8 +166,6 @@
         display() {
             drawImageRot(this.image, this.x, this.y, this.width, this.height, this.rotation);
         }
-
-
     }
 
     class Turret extends Entity {
@@ -161,7 +181,6 @@
         rotate(x) {
             this.rotation += x;
         }
-
     }
 
     // initialise game
