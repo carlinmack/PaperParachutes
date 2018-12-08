@@ -40,12 +40,13 @@
                 this.direction = 'l';
             } else {
                 if (Math.round(Math.random())) {
-                    super('./resources/helicopter.png', 75, 30, 75, 70);
+                    super('./resources/helicopter_r.png', -75, 30, 75, 70);
                 } else {
-                    super('./resources/helicopter.png', 75, -5, 75, 70);
+                    super('./resources/helicopter_r.png', -75, -5, 75, 70);
                 }
-                this.xSpeed = -0.5; // maybe a bug IDK but the way I'm flipping 
+                // this.xSpeed = -0.5; // maybe a bug IDK but the way I'm flipping 
                 // it means the speed is negative
+                this.xSpeed = 0.5;
                 this.direction = 'r';
             }
 
@@ -55,7 +56,11 @@
         hit() {
             if (this.alive) {
                 entitiesSet.add(new Trooper(this.x, this.y));
-                this.image.src = './resources/helicopter_red.png';
+                if (this.direction == 'l') {
+                    this.image.src = './resources/helicopter_red.png';
+                } else {
+                    this.image.src = './resources/helicopter_red_r.png';
+                }
                 this.alive = false;
             }
         }
@@ -64,9 +69,9 @@
             if (this.direction == 'l') {
                 ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
             } else {
-                ctx.scale(-1, 1);
+                // ctx.scale(-1, 1);
                 ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-                ctx.scale(-1, 1);
+                // ctx.scale(-1, 1);
             }
         }
     }
