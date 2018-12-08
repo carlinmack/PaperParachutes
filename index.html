@@ -2,52 +2,56 @@
 
 <script>
     //classes and global functions and variables
-    var bulletsSet, helisSet, troopersSet, keys;
-	
-	function deleteEntities(){
-		for (e of entitiesSet) {
-            if(e.y < (0 - this.height) || e.x <(0-this.width) || e.x >(400 + this.width)){
-				entitiesSet.delete(this);
-			}
-        }
-	}
-	
-	function checkCollisions(){
-	//performance issues caused here!!
-		let tempArray = Array.from(entitiesSet);
-		let bulletsArray = tempArray.filter(val => {return (val instanceof Bullet)});
-		let troopersAndHelisArray = tempArray.filter(val => {return (val instanceof Trooper) || (val instanceof Helicopter)});
-		for (b of bulletsArray) {
-			for(t of troopersAndHelisArray){
-				if (b.x < t.x + t.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
-					b.x + b.width > t.x &&
-					b.y < t.y + t.height &&
-					b.height + b.y > t.y) {
-					t.hit();               //include set timeout here?
-				}
-			}
-        }
-		
-	}
+    var bulletsSet, helisSet, troopersSet, keys, entitiesSet;
 
-	function spawn_heli(){
-		// can improve by having helis spawn on 2 levels and have going left and right
-		let direction = 'r';
-		let y = -5;
-		if(Math.round(Math.random())){
-			direction = 'l';
-		}
-		if(Math.round(Math.random())){
-			y = 30;
-		}
-	
-		entitiesSet.add(new Helicopter(direction,y));
-		// can play around with time out values and use variables to make them spawn 
-		// faster as game progresses
-		setTimeout(spawn_heli,Math.floor(2000+(Math.random() * 9000) + 1));
-		
-	}
-	
+    function deleteEntities() {
+        for (e of entitiesSet) {
+            if (e.y < (0 - this.height) || e.x < (0 - this.width) || e.x > (400 + this.width)) {
+                entitiesSet.delete(this);
+            }
+        }
+    }
+
+    function checkCollisions() {
+        //performance issues caused here!!
+        let tempArray = Array.from(entitiesSet);
+        let bulletsArray = tempArray.filter(val => {
+            return (val instanceof Bullet)
+        });
+        let troopersAndHelisArray = tempArray.filter(val => {
+            return (val instanceof Trooper) || (val instanceof Helicopter)
+        });
+        for (b of bulletsArray) {
+            for (t of troopersAndHelisArray) {
+                if (b.x < t.x + t.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
+                    b.x + b.width > t.x &&
+                    b.y < t.y + t.height &&
+                    b.height + b.y > t.y) {
+                    t.hit(); //include set timeout here?
+                }
+            }
+        }
+
+    }
+
+    function spawn_heli() {
+        // can improve by having helis spawn on 2 levels and have going left and right
+        let direction = 'r';
+        let y = -5;
+        if (Math.round(Math.random())) {
+            direction = 'l';
+        }
+        if (Math.round(Math.random())) {
+            y = 30;
+        }
+
+        entitiesSet.add(new Helicopter(direction, y));
+        // can play around with time out values and use variables to make them spawn 
+        // faster as game progresses
+        setTimeout(spawn_heli, Math.floor(2000 + (Math.random() * 9000) + 1));
+
+    }
+
     function drawGame() {
         for (e of entitiesSet) {
             e.display();
@@ -80,35 +84,40 @@
             this.x += this.xSpeed;
             this.y += this.ySpeed;
         }
-		
+
 
     }
 
     class Helicopter extends Entity {
         constructor() {
-			if(arguments.length == 2){
-				if(arguments[0]=='r'){
-					super('./resources/helicopter_right.png', -75, arguments[1], 75, 70);
-					this.xSpeed = 0.5;
-				}else{
-					super('./resources/helicopter_left.png', 475, arguments[1], 75, 70);
-					this.xSpeed = -0.5;
-				}
-				
-			}else{
-				super('./resources/helicopter_right.png', -75, -5, 75, 70);
-				this.xSpeed = 0.5;
-			}
-			
+            if (arguments.length == 2) {
+                if (arguments[0] == 'r') {
+                    super('./resources/helicopter_right.png', -75, arguments[1], 75, 70);
+                    this.xSpeed = 0.5;
+                } else {
+                    super('./resources/helicopter_left.png', 475, arguments[1], 75, 70);
+                    this.xSpeed = -0.5;
+                }
+
+            } else {
+                super('./resources/helicopter_right.png', -75, -5, 75, 70);
+                this.xSpeed = 0.5;
+            }
+            this.alive = true;
         }
-		hit(){
-			this.image.src = './resources/helicopter_right_red.png';
-		}
+
+        hit() {
+            if (this.alive) {
+            entitiesSet.add(new Trooper(this.x, this.y));
+            this.image.src = './resources/helicopter_right_red.png';
+            this.alive = false;
+            }
+        }
     }
 
     class Trooper extends Entity {
-        constructor(src, x, y, w, h) {
-            super('./resources/para.png', 10, 10, 40, 40);
+        constructor(x, y) {
+            super('./resources/para.png', x, y, 40, 40);
             this.ySpeed = 1.5;
         }
 
@@ -118,10 +127,10 @@
                 this.ySpeed = 0;
             }
         }
-		
-		hit(){
-			this.image.src = './resources/para_red.png';
-		}
+
+        hit() {
+            this.image.src = './resources/para_red.png';
+        }
     }
 
     class Bullet extends Entity {
@@ -135,8 +144,8 @@
         display() {
             drawImageRot(this.image, this.x, this.y, this.width, this.height, this.rotation);
         }
-		
-				
+
+
     }
 
     class Turret extends Entity {
@@ -155,21 +164,19 @@
 
     }
 
-	// initialise game
+    // initialise game
     window.onload = function() {
         canv = document.getElementById("gc");
-		ctx = canv.getContext("2d");
-		
+        ctx = canv.getContext("2d");
+
         entitiesSet = new Set();
-		entitiesSet.add(new Turret());
-		entitiesSet.add(new Helicopter());
-		entitiesSet.add(new Trooper());
-		
-		
+        entitiesSet.add(new Turret());
+        entitiesSet.add(new Helicopter());
+
         keys = [];
-		bulletFlag = true; // todo: find a place or way to set this privately
-		
-		setTimeout(spawn_heli,3000);
+        bulletFlag = true; // todo: find a place or way to set this privately
+
+        setTimeout(spawn_heli, 3000);
         setInterval(game, 1000 / 200);
         setInterval(keyPress, 1000 / 50);
     }
@@ -182,20 +189,20 @@
         moveEntities();
         checkCollisions();
         drawGame();
-		deleteEntities();
+        deleteEntities();
     }
 
-	// keypress loop
+    // keypress loop
     function keyPress() {
         let turr = entitiesSet.values().next().value; // better way to access elements in set?
         if (keys[39] && turr.rotation < 80) { // turn right with right arrow
             turr.rotate(3);
-		}
-		
+        }
+
         if (keys[37] && turr.rotation > -80) { // turn left with left arrow
             turr.rotate(-3);
-		}
-		
+        }
+
         if (keys[32] && bulletFlag) { // fire a bullet when space is pressed
             // calculate radians as thats what the Math lib uses
             var rad = -turr.rotation * Math.PI / 180 + Math.PI / 2;
