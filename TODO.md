@@ -1,6 +1,6 @@
 Carlin 2018.12.09 1.08
 
-- [ ] Serious bug fixing on why the troopers array isn't cleared on restart. I don't think I necessarily have to do it bc there's not that much new code. I suspect the bug is in not clearing everything fully
+- [ ] Serious bug fixing on why the troopers array isn't cleared on restart. I don't think I necessarily have to do it bc there's not that much new code. I suspect the bug is in not clearing everything fully.
 - [ ] Secondary to this it is now really important that the troopersSet is always current, otherwise the game will end prematurely. I'm not sure theres a workaround for this problem.
 - [ ] Stacking would be really cool and probably not too hard - it might be very similar to the collision code.
 - [ ] Parachute falling speed should be slower, but not so slow that you can go from right to left and always hit it you know. There'll be a sweet spot
