@@ -110,13 +110,15 @@ class Trooper extends Entity {
     }
 
     display() {
-        if (this.wounded && this.y > 360) {
-            this.deleteSelf();
-        } else {
-            ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        if (this.wounded && this.y > 360 && this.alpha > 0) {
+            this.alpha -= 0.01;
         }
-
-
+        if (this.alpha < 0) {
+            this.deleteSelf()
+        }
+        ctx.globalAlpha = this.alpha;
+        ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
+        ctx.globalAlpha = 1;
     }
 
     deleteSelf() {
@@ -170,7 +172,8 @@ function checkCollisions() {
 
     for (b of bulletsSet) {
         for (t of new Set([...troopersSet, ...helisSet])) {
-            if (b.x < t.x + t.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
+            if (b.x > 0 && b.x < 400 &&
+                b.x < t.x + t.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
                 b.x + b.width > t.x &&
                 b.y < t.y + t.height &&
                 b.height + b.y > t.y) {
