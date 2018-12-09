@@ -1,9 +1,5 @@
 //classes and global functions and variables
-var bulletsSet, helisSet, troopersSet, keys, entitiesSet;
-bulletsSet = new Set();
-helisSet = new Set();
-troopersSet = new Set();
-var score = 0;
+var bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score;
 
 // parent class, every object must implement this to be drawn
 class Entity {
@@ -93,14 +89,25 @@ class Trooper extends Entity {
         this.ySpeed = 1.5;
         this.alpha = 1;
         this.opaque = true;
-        //this.init();
         this.wounded = false;
     }
 
     move() {
         this.y += this.ySpeed;
-        if (this.y > 360) {
+        if (this.y > 360 && this.ySpeed != 0) {
             this.ySpeed = 0;
+            // if it lands unharmed, count how many others there are, if 5 end game
+            if (this.wounded === false) {
+                let count = 0;
+                for (let t of troopersSet) {
+                    if (t.ySpeed === 0 && t.wounded === false) {
+                        count++;
+                    }
+                }
+                if (count >= 5) {
+                    endGame();
+                }
+            }
         }
     }
 
@@ -169,7 +176,6 @@ function deleteEntities() {
 }
 
 function checkCollisions() {
-
     for (b of bulletsSet) {
         for (t of new Set([...troopersSet, ...helisSet])) {
             if (b.x > 0 && b.x < 400 &&
@@ -186,20 +192,21 @@ function checkCollisions() {
 }
 
 function spawn_heli() {
-    // can improve by having helis spawn on 2 levels and have going left and right
+    // for reference helis take 6100ms to cross screen
+    // they should spawn a max of two if they aren't hit at first
     let h = new Helicopter();
     helisSet.add(h);
     entitiesSet.add(h);
     // can play around with time out values and use variables to make them spawn 
     // faster as game progresses
-    setTimeout(spawn_heli, Math.floor(2000 + (Math.random() * 9000)));
+    var time = Math.floor(1000 + (Math.random() * 8000)); // 1000 - 9000
+    setTimeout(spawn_heli, time);
 }
 
 function spawn_troopers() {
-
     for (h of helisSet) {
         if (h.x > 0 && h.x < (400 - h.width)) {
-            let s = Math.floor(Math.random() * 10);
+            let s = Math.floor(Math.random() * 10); // random between 0,9
             if (s > 2) { //70% chance a heli will spawn trooper
                 h.spawnTrooper();
             }
@@ -228,23 +235,35 @@ function updateScore(x) {
 }
 
 // initialise game
-window.onload = function () {
+window.onload = startGame = function () {
     canv = document.getElementById("gc");
     ctx = canv.getContext("2d");
     var scoreboard = document.getElementById('scoreboard');
-    scoreboard.innerHTML = score;
+    scoreboard.innerHTML = 0;
 
     entitiesSet = new Set();
-    entitiesSet.add(new Turret());
-    entitiesSet.add(new Helicopter());
-
+    bulletsSet = new Set();
+    helisSet = new Set();
+    console.log(troopersSet);
+    troopersSet = new Set();
+    console.log(troopersSet);
     keys = [];
+
+    entitiesSet.add(new Turret());
+    helisSet.add(new Helicopter());
+    score = 0;
     bulletFlag = true; // todo: find a place or way to set this privately
 
     spawn_heli();
     spawn_troopers();
-    setInterval(game, 1000 / 200);
-    setInterval(keyPress, 1000 / 50);
+    gameLoop = setInterval(game, 1000 / 200);
+    var keyLoop = setInterval(keyPress, 1000 / 50);
+}
+
+// end game
+function endGame() {
+    clearInterval(gameLoop);
+    gameLoop = 0;
 }
 
 // game loop
@@ -299,6 +318,10 @@ function keyPress() {
         setTimeout(function () {
             bulletFlag = true
         }, 150);
+    }
+
+    if (keys[82] && gameLoop == 0) {
+        startGame();
     }
 }
 
