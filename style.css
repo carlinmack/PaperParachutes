@@ -1,18 +1,25 @@
 body {
     background-color: #d6dbeb;
     min-width: 440px;
+    font-size: 200%;
+    font-weight: bold;
+    font-family: sans-serif;
 }
 
-div {
-	font-size:200%;
-	font-weight: bold;
-	
+main {
+    margin: 5% auto;
+    display: block;
+    text-align: center;
+    width: 410px;
 }
 
 canvas {
-    margin: 5% auto;
-    display: block;
     border: #596967 10px solid;
     border-style: outset;
     border-radius: 1%;
+}
+
+#scoreboard {
+    margin: 2% auto;
+    text-align: right;
 }
