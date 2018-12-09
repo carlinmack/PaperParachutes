@@ -6,6 +6,7 @@ Carlin 2018.12.09 1.08
 - [ ] Parachute falling speed should be slower, but not so slow that you can go from right to left and always hit it you know. There'll be a sweet spot
 - [ ] Helis should stop spawing paras when they're hit
 - [ ] Press R to restart message should appear
+- [ ] If a trooper hits the turret it should be KO, which actually makes the game quite hard bc the turret has such a long sweep. any thoughts?
 
 ---
 Carlin 2018.12.08 1.28
