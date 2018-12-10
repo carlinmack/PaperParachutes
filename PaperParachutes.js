@@ -121,7 +121,7 @@ class Trooper extends Entity {
             this.alpha -= 0.01;
         }
         if (this.alpha < 0) {
-            this.deleteSelf()
+            this.deleteSelf();
         }
         ctx.globalAlpha = this.alpha;
         ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
@@ -168,7 +168,7 @@ class Turret extends Entity {
 }
 
 function deleteEntities() {
-    for (e of entitiesSet) {
+    for (let e of entitiesSet) {
         if (e.y < (0 - e.height) || e.x < (0 - e.width) || e.x > (400 + e.width)) {
             e.deleteSelf(this);
         }
@@ -176,8 +176,8 @@ function deleteEntities() {
 }
 
 function checkCollisions() {
-    for (b of bulletsSet) {
-        for (t of new Set([...troopersSet, ...helisSet])) {
+    for (let b of bulletsSet) {
+        for (let t of new Set([...troopersSet, ...helisSet])) {
             if (b.x > 0 && b.x < 400 &&
                 b.x < t.x + t.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
                 b.x + b.width > t.x &&
@@ -204,7 +204,7 @@ function spawn_heli() {
 }
 
 function spawn_troopers() {
-    for (h of helisSet) {
+    for (let h of helisSet) {
         if (h.x > 0 && h.x < (400 - h.width)) {
             let s = Math.floor(Math.random() * 10); // random between 0,9
             if (s > 2) { //70% chance a heli will spawn trooper
@@ -217,13 +217,13 @@ function spawn_troopers() {
 }
 
 function drawGame() {
-    for (e of entitiesSet) {
+    for (let e of entitiesSet) {
         e.display();
     }
 }
 
 function moveEntities() {
-    for (e of entitiesSet) {
+    for (let e of entitiesSet) {
         e.move();
     }
 }
@@ -256,9 +256,10 @@ window.onload = startGame = function () {
 
     spawn_heli();
     spawn_troopers();
-    gameLoop = setInterval(game, 1000 / 200);
-    var keyLoop = setInterval(keyPress, 1000 / 50);
-}
+    gameLoop = setInterval(game, 1000 / 200); // I think this should be 60fps max
+    // to save unecessary frame redraws but we'd need to change all the speeds and timeOuts
+    setInterval(keyPress, 1000 / 50);
+};
 
 // end game
 function endGame() {
@@ -276,8 +277,6 @@ function game() {
     checkCollisions();
     drawGame();
     deleteEntities(); // maybe put this in keyPress as it doesn't need to run 200 times a second
-
-
 }
 
 // keypress loop
@@ -312,11 +311,11 @@ function keyPress() {
         bulletsSet.add(b);
         entitiesSet.add(b);
         if (score != 0) {
-            updateScore(-1)
-        };
+            updateScore(-1);
+        }
         bulletFlag = false; // set d elay so that a stream of bullets isn't fired
         setTimeout(function () {
-            bulletFlag = true
+            bulletFlag = true;
         }, 150);
     }
 
