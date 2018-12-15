@@ -1,3 +1,15 @@
+Carlin 2018.12.10 22.12
+
+- [ ] add footer
+- [ ] change licence to be GNU
+- [ ] add touch controls
+- [ ] change sprites to free sprites
+- [ ] set countdown til game starts
+- [ ] research how to maintain a real game and a debug game
+- [ ] helicoptors should spawn troopers for themselves
+
+----
+
 Carlin 2018.12.09 1.08
 
 - [ ] Serious bug fixing on why the troopers array isn't cleared on restart. I don't think I necessarily have to do it bc there's not that much new code. I suspect the bug is in not clearing everything fully.
