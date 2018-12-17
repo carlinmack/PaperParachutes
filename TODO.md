@@ -1,6 +1,6 @@
 Carlin 2018.12.10 22.12
 
-- [ ] add footer
+- [x] add footer
 - [ ] change licence to be GNU
 - [ ] add touch controls
 - [ ] change sprites to free sprites

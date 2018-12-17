@@ -33,7 +33,7 @@ class Helicopter extends Entity {
             } else {
                 super('./resources/helicopter.png', 475, -5, 75, 70);
             }
-            this.xSpeed = -0.5;
+            this.xSpeed = -0.75;
             this.direction = 'l';
         } else {
             if (Math.round(Math.random())) {
@@ -41,9 +41,9 @@ class Helicopter extends Entity {
             } else {
                 super('./resources/helicopter_r.png', -75, -5, 75, 70);
             }
-            // this.xSpeed = -0.5; // maybe a bug IDK but the way I'm flipping 
+            // this.xSpeed = -0.75; // maybe a bug IDK but the way I'm flipping 
             // it means the speed is negative
-            this.xSpeed = 0.5;
+            this.xSpeed = 0.75;
             this.direction = 'r';
         }
 
@@ -122,7 +122,7 @@ class Trooper extends Entity {
         if (this.wounded && this.y > 360 && this.alpha > 0) {
             this.alpha -= 0.01;
         }
-        if (this.alpha < 0) {
+        if (this.alpha <= 0) {
             this.deleteSelf();
         }
         ctx.globalAlpha = this.alpha;
@@ -237,6 +237,34 @@ function updateScore(x) {
     scoreboard.innerHTML = score;
 }
 
+
+function countdown() {
+    console.log("countdown");
+    let num = 3;
+    setTimeout(function running() {
+        ctx.fillStyle = "LightGrey";
+        ctx.fillRect(0, 0, canv.width, canv.height);
+
+        ctx.fillStyle = "Black";
+        setTimeout(function () {
+            ctx.fillText(num, 50, 50);
+            num--;
+        }, 200);
+
+        if (num > 0) {
+            setTimeout(running, 1000);
+        } else {
+            startLoops();
+        }
+    }, 100);
+}
+
+function startLoops() {
+    gameLoop = setInterval(game, 1000 / 200); // I think this should be 60fps max
+    // to save unecessary frame redraws but we'd need to change all the speeds and timeOuts
+    setInterval(keyPress, 1000 / 50);
+}
+
 // initialise game
 window.onload = startGame = function () {
     canv = document.getElementById("gc");
@@ -259,9 +287,11 @@ window.onload = startGame = function () {
 
     spawn_heli();
     spawn_troopers();
-    gameLoop = setInterval(game, 1000 / 200); // I think this should be 60fps max
-    // to save unecessary frame redraws but we'd need to change all the speeds and timeOuts
-    setInterval(keyPress, 1000 / 50);
+
+    console.log("go");
+
+    countdown();
+    console.log("done");
 };
 
 // end game
