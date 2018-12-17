@@ -89,6 +89,7 @@ class Trooper extends Entity {
         this.ySpeed = 1.5;
         this.alpha = 1;
         this.opaque = true;
+        this.alive = true;
         this.wounded = false;
     }
 
@@ -113,6 +114,7 @@ class Trooper extends Entity {
 
     hit() {
         this.image.src = './resources/para_red.png';
+        this.alive = false;
         this.wounded = true;
     }
 
@@ -137,8 +139,8 @@ class Trooper extends Entity {
 class Bullet extends Entity {
     constructor(x, y, xVec, yVec, rotation) {
         super('./resources/bullet.png', x, y, 10, 10);
-        this.xSpeed = xVec * 2.5;
-        this.ySpeed = yVec * 2.5;
+        this.xSpeed = xVec * 4.5;
+        this.ySpeed = yVec * 4.5;
         this.rotation = rotation;
     }
 
@@ -178,7 +180,8 @@ function deleteEntities() {
 function checkCollisions() {
     for (let b of bulletsSet) {
         for (let t of new Set([...troopersSet, ...helisSet])) {
-            if (b.x > 0 && b.x < 400 &&
+            if (t.alive &&
+                b.x > 0 && b.x < 400 &&
                 b.x < t.x + t.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
                 b.x + b.width > t.x &&
                 b.y < t.y + t.height &&
@@ -205,7 +208,7 @@ function spawn_heli() {
 
 function spawn_troopers() {
     for (let h of helisSet) {
-        if (h.x > 0 && h.x < (400 - h.width)) {
+        if (h.alive && h.x > 0 && h.x < (400 - h.width)) {
             let s = Math.floor(Math.random() * 10); // random between 0,9
             if (s > 2) { //70% chance a heli will spawn trooper
                 h.spawnTrooper();
@@ -244,15 +247,15 @@ window.onload = startGame = function () {
     entitiesSet = new Set();
     bulletsSet = new Set();
     helisSet = new Set();
-    console.log(troopersSet);
     troopersSet = new Set();
-    console.log(troopersSet);
     keys = [];
 
     entitiesSet.add(new Turret());
     helisSet.add(new Helicopter());
     score = 0;
     bulletFlag = true; // todo: find a place or way to set this privately
+
+    document.getElementById("restart").classList.add("hidden");
 
     spawn_heli();
     spawn_troopers();
@@ -265,6 +268,7 @@ window.onload = startGame = function () {
 function endGame() {
     clearInterval(gameLoop);
     gameLoop = 0;
+    document.getElementById("restart").classList.remove("hidden");
 }
 
 // game loop
