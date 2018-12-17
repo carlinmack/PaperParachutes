@@ -1,6 +1,9 @@
 //classes and global functions and variables
 var bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score;
 
+// html elements
+var currentScore;
+
 // parent class, every object must implement this to be drawn
 class Entity {
     constructor(src, x, y, w, h) {
@@ -234,7 +237,7 @@ function moveEntities() {
 function updateScore(x) {
     //when score =0 then it adds 2 to score upon collision :(
     score += x;
-    scoreboard.innerHTML = score;
+    currentScore.innerHTML = score;
 }
 
 
@@ -269,8 +272,8 @@ function startLoops() {
 window.onload = startGame = function () {
     canv = document.getElementById("gc");
     ctx = canv.getContext("2d");
-    var scoreboard = document.getElementById('scoreboard');
-    scoreboard.innerHTML = 0;
+    currentScore = document.getElementById('score');
+    currentScore.innerHTML = 0;
 
     entitiesSet = new Set();
     bulletsSet = new Set();
@@ -354,6 +357,12 @@ function keyPress() {
     }
 
     if (keys[82] && gameLoop == 0) {
+        highScore = document.getElementById('highscore');
+
+        if (highScore.innerHTML < score) {
+            highScore.innerHTML = score
+        }
+
         startGame();
     }
 }

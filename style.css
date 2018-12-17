@@ -23,9 +23,17 @@ canvas {
     background-color: lightgray;
 }
 
-#scoreboard {
-    margin: 2% auto;
+#score {
+    margin: 2% 10%;
     text-align: right;
+    display: inline;
+}
+
+#highscore {
+    margin: 2% 10%;
+    text-align: left;
+    display: inline;
+
 }
 
 .hidden {
