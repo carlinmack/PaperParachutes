@@ -1,3 +1,9 @@
+Michael 2018.28.12 
+
+[ ] figure out best mechanics for rotating the turret with mouse wheel (not too hard / easy)
+
+-----------------
+
 Carlin 2018.12.10 22.12
 
 - [x] add footer
@@ -39,7 +45,7 @@ Carlin 2018.12.07 10.45
 - [ ] Add error handling for the turret movement to restrict movement - I think it maybe possible to jump over the boundary so I want to write a condition that it will go back within the range
 - [x] Sort file structure so that pictures are in a directory
 - [x] Extract js to a different file
-- [ ] Scroll wheel controls
+- [x] Scroll wheel controls
 - [ ] investigate how things are drawn frame by frame and see if we need to do .onload for each image
 - [ ] Have turret extend from bullet maybe since they have the same display method ? [I might investigate how to do the conservatory thing where you just use that method]
 - [x] Find a way to flip helicopter sprite with the same file

@@ -1,5 +1,5 @@
 //classes and global functions and variables
-var bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score;
+var bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score, mouseOverCanvas;
 
 // html elements
 var currentScore;
@@ -268,9 +268,40 @@ function startLoops() {
     setInterval(keyPress, 1000 / 50);
 }
 
+function noscroll() {
+    if(mouseOverCanvas){ //only prevent scrolling if cursor over canvas
+        window.scrollTo( 0, 0 );
+    }
+    
+  }
+  
+function rotateTurret(e){
+    let turr = entitiesSet.values().next().value;
+    if(e.deltaY>0 && turr.rotation < 80){
+        turr.rotate(3);
+    }else if(e.deltaY<0 && turr.rotation > -80){
+        turr.rotate(-3);
+    }
+    
+
+}
+
 // initialise game
 window.onload = startGame = function () {
     canv = document.getElementById("gc");
+    canv.onclick = function(){//fire bullet on click of canvas
+        fireBullet();
+    };
+    canv.addEventListener("wheel", rotateTurret); 
+    canv.addEventListener("mouseover",()=>{
+        mouseOverCanvas= true;
+    });
+    canv.addEventListener("mouseleave",()=>{
+        mouseOverCanvas= false;
+    });
+    
+    window.addEventListener('scroll', noscroll); //prevents window scrolling, think this is the only way cause it's buggy on canvas ;
+    
     ctx = canv.getContext("2d");
     currentScore = document.getElementById('score');
     currentScore.innerHTML = 0;
@@ -330,30 +361,8 @@ function keyPress() {
     }
 
     if (keys[32] && bulletFlag) { // fire a bullet when space is pressed
-        // calculate radians as thats what the Math lib uses
-        var rad = -turr.rotation * Math.PI / 180 + Math.PI / 2;
-
-        // the vectors that the bullets will fire on
-        var xVec = Math.cos(rad);
-        var yVec = -Math.sin(rad);
-
-        // finding the point in the arc that the bullet will spawn
-        // X:= originX + cos(angle) * radius;
-        // Y:= originY + sin(angle) * radius;
-        var x = 186 + xVec * 44;
-        var y = 404 + yVec * 44;
-
-        // create bullet
-        let b = new Bullet(x, y, xVec, yVec, turr.rotation);
-        bulletsSet.add(b);
-        entitiesSet.add(b);
-        if (score != 0) {
-            updateScore(-1);
-        }
-        bulletFlag = false; // set d elay so that a stream of bullets isn't fired
-        setTimeout(function () {
-            bulletFlag = true;
-        }, 150);
+        
+        fireBullet();
     }
 
     if (keys[82] && gameLoop == 0) {
@@ -366,6 +375,37 @@ function keyPress() {
         startGame();
     }
 }
+
+function fireBullet(){
+    let turr = entitiesSet.values().next().value;
+    // calculate radians as thats what the Math lib uses
+    var rad = -turr.rotation * Math.PI / 180 + Math.PI / 2;
+
+    // the vectors that the bullets will fire on
+    var xVec = Math.cos(rad);
+    var yVec = -Math.sin(rad);
+
+    // finding the point in the arc that the bullet will spawn
+    // X:= originX + cos(angle) * radius;
+    // Y:= originY + sin(angle) * radius;
+    var x = 186 + xVec * 44;
+    var y = 404 + yVec * 44;
+
+    // create bullet
+    let b = new Bullet(x, y, xVec, yVec, turr.rotation);
+    bulletsSet.add(b);
+    entitiesSet.add(b);
+    if (score != 0) {
+        updateScore(-1);
+    }
+    bulletFlag = false; // set d elay so that a stream of bullets isn't fired
+    setTimeout(function () {
+        bulletFlag = true;
+    }, 150);
+}
+
+
+
 
 onkeydown = onkeyup = function (e) {
     //run on every interaction of a key, sets the keys state to an array value
