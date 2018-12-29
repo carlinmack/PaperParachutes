@@ -244,13 +244,8 @@ function moveEntities() {
 }
 
 function updateScore(x) {
-
-    if(score>0){
-        score += x;
-    }else{
-        score++;
-    }
-    
+    //looks like original game contained this bug so we'll keep it :)
+    score += x;
     currentScore.innerHTML = score;
 }
 
