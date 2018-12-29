@@ -1,8 +1,8 @@
-// classes and global functions and variables
-var bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score, mouseOverCanvas;
+//classes and global functions and variables
+let bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score, cancelSpawning;
 
 // html elements
-var currentScore;
+let currentScore;
 
 // parent class, every object must implement this to be drawn
 class Entity {
@@ -200,26 +200,34 @@ function checkCollisions() {
 function spawnHeli() {
     // for reference helis take 6100ms to cross screen
     // they should spawn a max of two if they aren't hit at first
-    let h = new Helicopter();
-    helisSet.add(h);
-    entitiesSet.add(h);
-    // can play around with time out values and use variables to make them spawn
-    // faster as game progresses
-    var time = Math.floor(1000 + (Math.random() * 8000)); // 1000 - 9000
-    setTimeout(spawnHeli, time);
+    if (gameLoop !== 0) {
+        let h = new Helicopter();
+        helisSet.add(h);
+        entitiesSet.add(h);
+        // can play around with time out values and use constiables to make them spawn 
+        // faster as game progresses
+        const time = Math.floor(1000 + (Math.random() * 8000)); // 1000 - 9000
+        setTimeout(spawn_heli, time);
+        //issue here is we set multiple timeouts so hard to cancel them 
+        //issue here is we set multiple timeouts so hard to cancel them 
+        //issue here is we set multiple timeouts so hard to cancel them 
+        // store timeouts in an array which is cleared?
+    }
 }
 
-function spawnTroopers() {
-    for (let h of helisSet) {
-        if (h.alive && h.x > 0 && h.x < (400 - h.width)) {
-            let s = Math.floor(Math.random() * 10); // random between 0,9
-            if (s > 2) { // 70% chance a heli will spawn trooper
-                h.spawnTrooper();
+function spawn_troopers() {
+    if (gameLoop !== 0) {
+        for (let h of helisSet) {
+            if (h.alive && h.x > 0 && h.x < (400 - h.width)) {
+                let s = Math.floor(Math.random() * 10); // random between 0,9
+                if (s > 2) { //70% chance a heli will spawn trooper
+                    h.spawnTrooper();
+                }
             }
         }
-    }
 
-    setTimeout(spawnTroopers, Math.floor(2000 + (Math.random() * 1000)));
+        setTimeout(spawn_troopers, Math.floor(2000 + (Math.random() * 1000)));
+    }
 }
 
 function drawGame() {
@@ -235,13 +243,20 @@ function moveEntities() {
 }
 
 function updateScore(x) {
-    // when score =0 then it adds 2 to score upon collision :(
-    score += x;
+    //when score =0 then it adds 2 to score upon collision :(
+    if (score > 0) {
+        score += x;
+    } else {
+        score++;
+    }
+
     currentScore.innerHTML = score;
 }
 
 function countdown() {
-    console.log('countdown');
+    ctx.font = "3rem Arial";
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
     let num = 3;
     setTimeout(function running() {
         ctx.fillStyle = 'LightGrey';
@@ -249,7 +264,7 @@ function countdown() {
 
         ctx.fillStyle = 'Black';
         setTimeout(function () {
-            ctx.fillText(num, 50, 50);
+            ctx.fillText(num, canv.width / 2, canv.height / 2);
             num--;
         }, 200);
 
@@ -316,13 +331,9 @@ window.onload = startGame = function () {
 
     document.getElementById('restart').classList.add('hidden');
 
-    spawnHeli();
-    spawnTroopers();
-
-    console.log('go');
-
     countdown();
-    console.log('done');
+    spawn_heli();
+    spawn_troopers();
 };
 
 // end game
@@ -407,8 +418,8 @@ onkeydown = onkeyup = function (e) {
 
 // Credit: https://stackoverflow.com/a/11985464
 function drawImageRot(img, x, y, width, height, deg) {
-    // Convert degrees to radian
-    var rad = deg * Math.PI / 180;
+    //Convert degrees to radian 
+    const rad = deg * Math.PI / 180;
 
     // Set the origin to the center of the image
     ctx.translate(x + width / 2, y + height / 2);
