@@ -36,6 +36,11 @@ class Entity {
         this.x += this.xSpeed;
         this.y += this.ySpeed;
     }
+
+    clear() {
+        ctx.fillStyle = 'LightGrey';
+        ctx.fillRect(this.x - 10, this.y - 10, this.width + 10, this.height + 10);
+    }
 }
 
 class Helicopter extends Entity {
@@ -73,7 +78,6 @@ class Helicopter extends Entity {
             setTimeout(changeSprite = () => {
                 this.sprite = this.sprite + 1 % 6;
                 num--;
-                log(num);
 
                 if (num > 0) setTimeout(changeSprite, 150);
             }, 0);
@@ -81,23 +85,15 @@ class Helicopter extends Entity {
     }
 
     display() {
-        // save context
-        ctx.save();
-
         if (this.direction === 'r') {
-            // flip - https://eloquentjavascript.net/17_canvas.html#p_9a1O8aEtUA
-            ctx.translate(this.x, 0);
-            ctx.scale(-1, 1);
-            ctx.translate(-this.x, 0);
+            ctx.drawImage(this.image,
+                this.sprite * 208, 100, 208, 100,
+                this.x, this.y, this.width, this.height);
+        } else {
+            ctx.drawImage(this.image,
+                this.sprite * 208, 0, 208, 100,
+                this.x, this.y, this.width, this.height);
         }
-
-        // draw
-        ctx.drawImage(this.image,
-            this.sprite * 208, 0, 208, 100,
-            this.x, this.y, this.width, this.height);
-        // restore
-        ctx.restore();
-
     }
 
     deleteSelf() {
@@ -256,6 +252,14 @@ function spawn_troopers() {
     }
 }
 
+function clearCanvas() {
+    ctx.fillStyle = 'LightGrey';
+    ctx.fillRect(0, 0, canv.width, canv.height);
+    // for (let e of entitiesSet) {
+    //     e.clear();
+    // }
+}
+
 function drawGame() {
     for (let e of entitiesSet) {
         e.display();
@@ -270,11 +274,13 @@ function moveEntities() {
 
 function updateScore(x) {
     //when score =0 then it adds 2 to score upon collision :(
-    if (score > 0) {
-        score += x;
-    } else {
-        score++;
-    }
+    // if (score > 0) {
+    score += x;
+    log('x ', x);
+    log('score ', x);
+    // } else {
+    //     score++;
+    // }
 
     currentScore.innerHTML = score;
 }
@@ -371,10 +377,7 @@ function endGame() {
 
 // game loop
 function game() {
-    // clear screen
-    ctx.fillStyle = 'LightGrey';
-    ctx.fillRect(0, 0, canv.width, canv.height);
-
+    clearCanvas();
     moveEntities();
     checkCollisions();
     drawGame();
@@ -431,7 +434,7 @@ function fireBullet() {
     if (score !== 0) {
         updateScore(-1);
     }
-    bulletFlag = false; // set d elay so that a stream of bullets isn't fired
+    bulletFlag = false; // set delay so that a stream of bullets isn't fired
     setTimeout(function () {
         bulletFlag = true;
     }, 150);
