@@ -1,4 +1,4 @@
-//classes and global functions and variables
+// classes and global functions and variables
 var bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score, mouseOverCanvas;
 
 // html elements
@@ -44,7 +44,7 @@ class Helicopter extends Entity {
             } else {
                 super('./resources/helicopter_r.png', -75, -5, 75, 70);
             }
-            // this.xSpeed = -0.75; // maybe a bug IDK but the way I'm flipping 
+            // this.xSpeed = -0.75; // maybe a bug IDK but the way I'm flipping
             // it means the speed is negative
             this.xSpeed = 0.75;
             this.direction = 'r';
@@ -55,7 +55,7 @@ class Helicopter extends Entity {
 
     hit() {
         if (this.alive) {
-            if (this.direction == 'l') {
+            if (this.direction === 'l') {
                 this.image.src = './resources/helicopter_red.png';
             } else {
                 this.image.src = './resources/helicopter_red_r.png';
@@ -65,7 +65,7 @@ class Helicopter extends Entity {
     }
 
     display() {
-        if (this.direction == 'l') {
+        if (this.direction === 'l') {
             ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
         } else {
             // ctx.scale(-1, 1);
@@ -98,7 +98,7 @@ class Trooper extends Entity {
 
     move() {
         this.y += this.ySpeed;
-        if (this.y > 360 && this.ySpeed != 0) {
+        if (this.y > 360 && this.ySpeed !== 0) {
             this.ySpeed = 0;
             // if it lands unharmed, count how many others there are, if 5 end game
             if (this.wounded === false) {
@@ -197,29 +197,29 @@ function checkCollisions() {
     }
 }
 
-function spawn_heli() {
+function spawnHeli() {
     // for reference helis take 6100ms to cross screen
     // they should spawn a max of two if they aren't hit at first
     let h = new Helicopter();
     helisSet.add(h);
     entitiesSet.add(h);
-    // can play around with time out values and use variables to make them spawn 
+    // can play around with time out values and use variables to make them spawn
     // faster as game progresses
     var time = Math.floor(1000 + (Math.random() * 8000)); // 1000 - 9000
-    setTimeout(spawn_heli, time);
+    setTimeout(spawnHeli, time);
 }
 
-function spawn_troopers() {
+function spawnTroopers() {
     for (let h of helisSet) {
         if (h.alive && h.x > 0 && h.x < (400 - h.width)) {
             let s = Math.floor(Math.random() * 10); // random between 0,9
-            if (s > 2) { //70% chance a heli will spawn trooper
+            if (s > 2) { // 70% chance a heli will spawn trooper
                 h.spawnTrooper();
             }
         }
     }
 
-    setTimeout(spawn_troopers, Math.floor(2000 + (Math.random() * 1000)));
+    setTimeout(spawnTroopers, Math.floor(2000 + (Math.random() * 1000)));
 }
 
 function drawGame() {
@@ -235,19 +235,19 @@ function moveEntities() {
 }
 
 function updateScore(x) {
-    //when score =0 then it adds 2 to score upon collision :(
+    // when score =0 then it adds 2 to score upon collision :(
     score += x;
     currentScore.innerHTML = score;
 }
 
 function countdown() {
-    console.log("countdown");
+    console.log('countdown');
     let num = 3;
     setTimeout(function running() {
-        ctx.fillStyle = "LightGrey";
+        ctx.fillStyle = 'LightGrey';
         ctx.fillRect(0, 0, canv.width, canv.height);
 
-        ctx.fillStyle = "Black";
+        ctx.fillStyle = 'Black';
         setTimeout(function () {
             ctx.fillText(num, 50, 50);
             num--;
@@ -268,7 +268,7 @@ function startLoops() {
 }
 
 function noscroll() {
-    if (mouseOverCanvas) { //only prevent scrolling if cursor over canvas
+    if (mouseOverCanvas) { // only prevent scrolling if cursor over canvas
         window.scrollTo(0, 0);
     }
 }
@@ -285,21 +285,21 @@ function rotateTurret(e) {
 
 // initialise game
 window.onload = startGame = function () {
-    canv = document.getElementById("gc");
-    canv.onclick = function () { //fire bullet when canvas is clicked
+    canv = document.getElementById('gc');
+    canv.onclick = function () { // fire bullet when canvas is clicked
         fireBullet();
     };
-    canv.addEventListener("wheel", rotateTurret);
-    canv.addEventListener("mouseover", () => {
+    canv.addEventListener('wheel', rotateTurret);
+    canv.addEventListener('mouseover', () => {
         mouseOverCanvas = true;
     });
-    canv.addEventListener("mouseleave", () => {
+    canv.addEventListener('mouseleave', () => {
         mouseOverCanvas = false;
     });
 
-    window.addEventListener('scroll', noscroll); //prevents window scrolling, think this is the only way cause it's buggy on canvas
+    window.addEventListener('scroll', noscroll); // prevents window scrolling, think this is the only way cause it's buggy on canvas
 
-    ctx = canv.getContext("2d");
+    ctx = canv.getContext('2d');
     currentScore = document.getElementById('score');
     currentScore.innerHTML = 0;
 
@@ -314,28 +314,28 @@ window.onload = startGame = function () {
     score = 0;
     bulletFlag = true; // todo: find a place or way to set this privately
 
-    document.getElementById("restart").classList.add("hidden");
+    document.getElementById('restart').classList.add('hidden');
 
-    spawn_heli();
-    spawn_troopers();
+    spawnHeli();
+    spawnTroopers();
 
-    console.log("go");
+    console.log('go');
 
     countdown();
-    console.log("done");
+    console.log('done');
 };
 
 // end game
 function endGame() {
     clearInterval(gameLoop);
     gameLoop = 0;
-    document.getElementById("restart").classList.remove("hidden");
+    document.getElementById('restart').classList.remove('hidden');
 }
 
 // game loop
 function game() {
     // clear screen
-    ctx.fillStyle = "LightGrey";
+    ctx.fillStyle = 'LightGrey';
     ctx.fillRect(0, 0, canv.width, canv.height);
 
     moveEntities();
@@ -346,7 +346,7 @@ function game() {
 
 // keypress loop
 function keyPress() {
-    // better way to access elements in set? Unsure how set indexing works, 
+    // better way to access elements in set? Unsure how set indexing works,
     // if it works thats good enough for now
     let turr = entitiesSet.values().next().value;
     if (keys[39] && turr.rotation < 80) { // turn right with right arrow
@@ -358,15 +358,14 @@ function keyPress() {
     }
 
     if (keys[32] && bulletFlag) { // fire a bullet when space is pressed
-
         fireBullet();
     }
 
-    if (keys[82] && gameLoop == 0) {
+    if (keys[82] && gameLoop === 0) {
         highScore = document.getElementById('highscore');
 
         if (highScore.innerHTML < score) {
-            highScore.innerHTML = score
+            highScore.innerHTML = score;
         }
 
         startGame();
@@ -392,7 +391,7 @@ function fireBullet() {
     let b = new Bullet(x, y, xVec, yVec, turr.rotation);
     bulletsSet.add(b);
     entitiesSet.add(b);
-    if (score != 0) {
+    if (score !== 0) {
         updateScore(-1);
     }
     bulletFlag = false; // set d elay so that a stream of bullets isn't fired
@@ -402,25 +401,25 @@ function fireBullet() {
 }
 
 onkeydown = onkeyup = function (e) {
-    //run on every interaction of a key, sets the keys state to an array value
+    // run on every interaction of a key, sets the keys state to an array value
     keys[e.keyCode] = e.type === 'keydown';
 };
 
 // Credit: https://stackoverflow.com/a/11985464
 function drawImageRot(img, x, y, width, height, deg) {
-    //Convert degrees to radian 
+    // Convert degrees to radian
     var rad = deg * Math.PI / 180;
 
-    //Set the origin to the center of the image
+    // Set the origin to the center of the image
     ctx.translate(x + width / 2, y + height / 2);
 
-    //Rotate the canvas around the origin
+    // Rotate the canvas around the origin
     ctx.rotate(rad);
 
-    //draw the image    
+    // draw the image
     ctx.drawImage(img, width / 2 * (-1), height / 2 * (-1), width, height);
 
-    //reset the canvas  
+    // reset the canvas
     ctx.rotate(rad * (-1));
     ctx.translate((x + width / 2) * (-1), (y + height / 2) * (-1));
 }
