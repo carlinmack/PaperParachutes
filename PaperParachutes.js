@@ -4,6 +4,8 @@ let bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score, cance
 // html elements
 let currentScore;
 
+// you can now use log instead of console.log
+const log = console.log.bind(console);
 // parent class, every object must implement this to be drawn
 // class Canvas {
 //     constructor() {
@@ -59,34 +61,48 @@ class Helicopter extends Entity {
             this.direction = 'r';
         }
 
+        this.sprite = 0;
         this.alive = true;
     }
 
     hit() {
         if (this.alive) {
-            this.image.src = './resources/helicopter_red.png';
+            this.image.src = './resources/damagedHelicopter.png';
             this.alive = false;
+            let num = 5;
+            let changeSprite;
+            setTimeout(changeSprite = () => {
+                this.sprite = this.sprite + 1 % 6;
+                num--;
+                log(num);
+
+                if (num > 0) setTimeout(changeSprite, 150);
+            }, 0);
         }
     }
 
     display() {
-        if (this.direction === 'l') {
-            ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-        } else {
-            // save context
-            ctx.save();
+        // save context
+        ctx.save();
 
+        if (this.direction === 'r') {
             // flip - https://eloquentjavascript.net/17_canvas.html#p_9a1O8aEtUA
             ctx.translate(this.x, 0);
             ctx.scale(-1, 1);
             ctx.translate(-this.x, 0);
+        }
 
+        if (this.alive) {
             // draw
             ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-
-            // restore
-            ctx.restore();
+        } else {
+            ctx.drawImage(this.image,
+                this.sprite * 260, 0, 260, 260,
+                this.x, this.y, this.width, this.height);
         }
+        // restore
+        ctx.restore();
+
     }
 
     deleteSelf() {
