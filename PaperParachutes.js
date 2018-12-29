@@ -43,17 +43,17 @@ class Helicopter extends Entity {
         // changed it around so that helicoptors spawn themselves randomly
         if (Math.round(Math.random())) {
             if (Math.round(Math.random())) {
-                super('./resources/helicopter.png', 475, 30, 75, 70);
+                super('./resources/helicopter.png', 475, 30, 75, 35);
             } else {
-                super('./resources/helicopter.png', 475, -5, 75, 70);
+                super('./resources/helicopter.png', 475, 5, 75, 35);
             }
             this.xSpeed = -0.75;
             this.direction = 'l';
         } else {
             if (Math.round(Math.random())) {
-                super('./resources/helicopter.png', -75, 30, 75, 70);
+                super('./resources/helicopter.png', -75, 30, 75, 35);
             } else {
-                super('./resources/helicopter.png', -75, -5, 75, 70);
+                super('./resources/helicopter.png', -75, 5, 75, 35);
             }
             // this.xSpeed = -0.75; // maybe a bug IDK but the way I'm flipping
             // it means the speed is negative
@@ -67,7 +67,6 @@ class Helicopter extends Entity {
 
     hit() {
         if (this.alive) {
-            this.image.src = './resources/damagedHelicopter.png';
             this.alive = false;
             let num = 5;
             let changeSprite;
@@ -92,14 +91,10 @@ class Helicopter extends Entity {
             ctx.translate(-this.x, 0);
         }
 
-        if (this.alive) {
-            // draw
-            ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-        } else {
-            ctx.drawImage(this.image,
-                this.sprite * 202, 0, 200, 189,
-                this.x, this.y, this.width, this.height);
-        }
+        // draw
+        ctx.drawImage(this.image,
+            this.sprite * 208, 0, 208, 100,
+            this.x, this.y, this.width, this.height);
         // restore
         ctx.restore();
 
