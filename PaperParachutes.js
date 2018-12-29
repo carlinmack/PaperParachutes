@@ -207,7 +207,7 @@ function spawnHeli() {
         // can play around with time out values and use constiables to make them spawn 
         // faster as game progresses
         const time = Math.floor(1000 + (Math.random() * 8000)); // 1000 - 9000
-        setTimeout(spawn_heli, time);
+        setTimeout(spawnHeli, time);
         //issue here is we set multiple timeouts so hard to cancel them 
         //issue here is we set multiple timeouts so hard to cancel them 
         //issue here is we set multiple timeouts so hard to cancel them 
@@ -332,7 +332,7 @@ window.onload = startGame = function () {
     document.getElementById('restart').classList.add('hidden');
 
     countdown();
-    spawn_heli();
+    spawnHeli();
     spawn_troopers();
 };
 
