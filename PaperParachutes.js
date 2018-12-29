@@ -97,7 +97,7 @@ class Helicopter extends Entity {
             ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
         } else {
             ctx.drawImage(this.image,
-                this.sprite * 270, 0, 265, 247,
+                this.sprite * 202, 0, 200, 189,
                 this.x, this.y, this.width, this.height);
         }
         // restore
