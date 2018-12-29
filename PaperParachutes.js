@@ -240,7 +240,6 @@ function updateScore(x) {
     currentScore.innerHTML = score;
 }
 
-
 function countdown() {
     console.log("countdown");
     let num = 3;
@@ -269,39 +268,37 @@ function startLoops() {
 }
 
 function noscroll() {
-    if(mouseOverCanvas){ //only prevent scrolling if cursor over canvas
-        window.scrollTo( 0, 0 );
+    if (mouseOverCanvas) { //only prevent scrolling if cursor over canvas
+        window.scrollTo(0, 0);
     }
-    
-  }
-  
-function rotateTurret(e){
+}
+
+function rotateTurret(e) {
     let turr = entitiesSet.values().next().value;
-    if(e.deltaY>0 && turr.rotation < 80){
+
+    if (e.deltaY > 0 && turr.rotation < 80) {
         turr.rotate(3);
-    }else if(e.deltaY<0 && turr.rotation > -80){
+    } else if (e.deltaY < 0 && turr.rotation > -80) {
         turr.rotate(-3);
     }
-    
-
 }
 
 // initialise game
 window.onload = startGame = function () {
     canv = document.getElementById("gc");
-    canv.onclick = function(){//fire bullet on click of canvas
+    canv.onclick = function () { //fire bullet when canvas is clicked
         fireBullet();
     };
-    canv.addEventListener("wheel", rotateTurret); 
-    canv.addEventListener("mouseover",()=>{
-        mouseOverCanvas= true;
+    canv.addEventListener("wheel", rotateTurret);
+    canv.addEventListener("mouseover", () => {
+        mouseOverCanvas = true;
     });
-    canv.addEventListener("mouseleave",()=>{
-        mouseOverCanvas= false;
+    canv.addEventListener("mouseleave", () => {
+        mouseOverCanvas = false;
     });
-    
-    window.addEventListener('scroll', noscroll); //prevents window scrolling, think this is the only way cause it's buggy on canvas ;
-    
+
+    window.addEventListener('scroll', noscroll); //prevents window scrolling, think this is the only way cause it's buggy on canvas
+
     ctx = canv.getContext("2d");
     currentScore = document.getElementById('score');
     currentScore.innerHTML = 0;
@@ -361,7 +358,7 @@ function keyPress() {
     }
 
     if (keys[32] && bulletFlag) { // fire a bullet when space is pressed
-        
+
         fireBullet();
     }
 
@@ -376,7 +373,7 @@ function keyPress() {
     }
 }
 
-function fireBullet(){
+function fireBullet() {
     let turr = entitiesSet.values().next().value;
     // calculate radians as thats what the Math lib uses
     var rad = -turr.rotation * Math.PI / 180 + Math.PI / 2;
@@ -403,9 +400,6 @@ function fireBullet(){
         bulletFlag = true;
     }, 150);
 }
-
-
-
 
 onkeydown = onkeyup = function (e) {
     //run on every interaction of a key, sets the keys state to an array value
