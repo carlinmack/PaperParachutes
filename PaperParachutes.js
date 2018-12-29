@@ -40,9 +40,9 @@ class Helicopter extends Entity {
             this.direction = 'l';
         } else {
             if (Math.round(Math.random())) {
-                super('./resources/helicopter_r.png', -75, 30, 75, 70);
+                super('./resources/helicopter.png', -75, 30, 75, 70);
             } else {
-                super('./resources/helicopter_r.png', -75, -5, 75, 70);
+                super('./resources/helicopter.png', -75, -5, 75, 70);
             }
             // this.xSpeed = -0.75; // maybe a bug IDK but the way I'm flipping
             // it means the speed is negative
@@ -58,7 +58,7 @@ class Helicopter extends Entity {
             if (this.direction === 'l') {
                 this.image.src = './resources/helicopter_red.png';
             } else {
-                this.image.src = './resources/helicopter_red_r.png';
+                this.image.src = './resources/helicopter_red.png';
             }
             this.alive = false;
         }
@@ -68,9 +68,19 @@ class Helicopter extends Entity {
         if (this.direction === 'l') {
             ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
         } else {
-            // ctx.scale(-1, 1);
+            // save context
+            ctx.save();
+
+            // flip - https://eloquentjavascript.net/17_canvas.html#p_9a1O8aEtUA
+            ctx.translate(this.x, 0);
+            ctx.scale(-1, 1);
+            ctx.translate(-this.x, 0);
+
+            // draw
             ctx.drawImage(this.image, this.x, this.y, this.width, this.height);
-            // ctx.scale(-1, 1);
+
+            // restore
+            ctx.restore();
         }
     }
 
