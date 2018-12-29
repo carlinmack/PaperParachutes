@@ -1,5 +1,5 @@
 //classes and global functions and variables
-var bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score;
+var bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score, cancelSpawning;
 
 // html elements
 var currentScore;
@@ -200,6 +200,9 @@ function checkCollisions() {
 function spawn_heli() {
     // for reference helis take 6100ms to cross screen
     // they should spawn a max of two if they aren't hit at first
+    if(cancelSpawning){
+        return;
+    }
     let h = new Helicopter();
     helisSet.add(h);
     entitiesSet.add(h);
@@ -207,9 +210,14 @@ function spawn_heli() {
     // faster as game progresses
     var time = Math.floor(1000 + (Math.random() * 8000)); // 1000 - 9000
     setTimeout(spawn_heli, time);
+    //issue here is we set multiple timeouts so hard to cancel them 
+    // store timeouts in an array which is cleared?
 }
 
 function spawn_troopers() {
+    if(cancelSpawning){
+        return;
+    }
     for (let h of helisSet) {
         if (h.alive && h.x > 0 && h.x < (400 - h.width)) {
             let s = Math.floor(Math.random() * 10); // random between 0,9
@@ -236,7 +244,12 @@ function moveEntities() {
 
 function updateScore(x) {
     //when score =0 then it adds 2 to score upon collision :(
-    score += x;
+    if(score>0){
+        score += x;
+    }else{
+        score++;
+    }
+    
     currentScore.innerHTML = score;
 }
 
@@ -265,7 +278,6 @@ function countdown() {
 function startLoops() {
     gameLoop = setInterval(game, 1000 / 200); // I think this should be 60fps max
     // to save unecessary frame redraws but we'd need to change all the speeds and timeOuts
-    setInterval(keyPress, 1000 / 50);
 }
 
 // initialise game
@@ -285,22 +297,21 @@ window.onload = startGame = function () {
     helisSet.add(new Helicopter());
     score = 0;
     bulletFlag = true; // todo: find a place or way to set this privately
+    cancelSpawning = false;
 
     document.getElementById("restart").classList.add("hidden");
-
+    
+    countdown();
     spawn_heli();
     spawn_troopers();
-
-    console.log("go");
-
-    countdown();
-    console.log("done");
+    setInterval(keyPress, 1000 / 50);
 };
 
 // end game
 function endGame() {
     clearInterval(gameLoop);
     gameLoop = 0;
+    cancelSpawning =true;
     document.getElementById("restart").classList.remove("hidden");
 }
 
