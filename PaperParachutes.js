@@ -1,5 +1,6 @@
+
 // classes and global functions and variables
-var bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score, mouseOverCanvas;
+var bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score, mouseOverCanvas,cancelSpawning;;
 
 // html elements
 var currentScore;
@@ -197,19 +198,27 @@ function checkCollisions() {
     }
 }
 
-function spawnHeli() {
+function spawn_heli() {
     // for reference helis take 6100ms to cross screen
     // they should spawn a max of two if they aren't hit at first
+    if(cancelSpawning){
+        return;
+    }
     let h = new Helicopter();
     helisSet.add(h);
     entitiesSet.add(h);
     // can play around with time out values and use variables to make them spawn
     // faster as game progresses
     var time = Math.floor(1000 + (Math.random() * 8000)); // 1000 - 9000
-    setTimeout(spawnHeli, time);
+    setTimeout(spawn_heli, time);
+    //issue here is we set multiple timeouts so hard to cancel them 
+    // store timeouts in an array which is cleared?
 }
 
-function spawnTroopers() {
+function spawn_troopers() {
+    if(cancelSpawning){
+        return;
+    }
     for (let h of helisSet) {
         if (h.alive && h.x > 0 && h.x < (400 - h.width)) {
             let s = Math.floor(Math.random() * 10); // random between 0,9
@@ -219,7 +228,7 @@ function spawnTroopers() {
         }
     }
 
-    setTimeout(spawnTroopers, Math.floor(2000 + (Math.random() * 1000)));
+    setTimeout(spawn_troopers, Math.floor(2000 + (Math.random() * 1000)));
 }
 
 function drawGame() {
@@ -235,8 +244,13 @@ function moveEntities() {
 }
 
 function updateScore(x) {
-    // when score =0 then it adds 2 to score upon collision :(
-    score += x;
+
+    if(score>0){
+        score += x;
+    }else{
+        score++;
+    }
+    
     currentScore.innerHTML = score;
 }
 
@@ -264,7 +278,6 @@ function countdown() {
 function startLoops() {
     gameLoop = setInterval(game, 1000 / 200); // I think this should be 60fps max
     // to save unecessary frame redraws but we'd need to change all the speeds and timeOuts
-    setInterval(keyPress, 1000 / 50);
 }
 
 function noscroll() {
@@ -313,23 +326,22 @@ window.onload = startGame = function () {
     helisSet.add(new Helicopter());
     score = 0;
     bulletFlag = true; // todo: find a place or way to set this privately
+    cancelSpawning = false;
 
-    document.getElementById('restart').classList.add('hidden');
-
-    spawnHeli();
-    spawnTroopers();
-
-    console.log('go');
-
+    document.getElementById("restart").classList.add("hidden");
+    
     countdown();
-    console.log('done');
+    spawn_heli();
+    spawn_troopers();
+    setInterval(keyPress, 1000 / 50);
 };
 
 // end game
 function endGame() {
     clearInterval(gameLoop);
     gameLoop = 0;
-    document.getElementById('restart').classList.remove('hidden');
+    cancelSpawning =true;
+    document.getElementById("restart").classList.remove("hidden");
 }
 
 // game loop
