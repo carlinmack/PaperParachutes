@@ -5,6 +5,15 @@ let bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score, cance
 let currentScore;
 
 // parent class, every object must implement this to be drawn
+// class Canvas {
+//     constructor() {
+//         this.canvas = document.getElementById('gc');
+//         this.ctx = this.canvas.getContext('2d');
+//     }
+
+//     clear
+// }
+
 class Entity {
     constructor(src, x, y, w, h) {
         this.image = new Image();
@@ -55,11 +64,7 @@ class Helicopter extends Entity {
 
     hit() {
         if (this.alive) {
-            if (this.direction === 'l') {
-                this.image.src = './resources/helicopter_red.png';
-            } else {
-                this.image.src = './resources/helicopter_red.png';
-            }
+            this.image.src = './resources/helicopter_red.png';
             this.alive = false;
         }
     }
@@ -431,6 +436,8 @@ function drawImageRot(img, x, y, width, height, deg) {
     //Convert degrees to radian 
     const rad = deg * Math.PI / 180;
 
+    ctx.save();
+
     // Set the origin to the center of the image
     ctx.translate(x + width / 2, y + height / 2);
 
@@ -441,6 +448,5 @@ function drawImageRot(img, x, y, width, height, deg) {
     ctx.drawImage(img, width / 2 * (-1), height / 2 * (-1), width, height);
 
     // reset the canvas
-    ctx.rotate(rad * (-1));
-    ctx.translate((x + width / 2) * (-1), (y + height / 2) * (-1));
+    ctx.restore();
 }
