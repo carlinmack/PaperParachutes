@@ -1,8 +1,8 @@
 //classes and global functions and variables
-var bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score, cancelSpawning;
+let bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score, cancelSpawning;
 
 // html elements
-var currentScore;
+let currentScore;
 
 // parent class, every object must implement this to be drawn
 class Entity {
@@ -200,34 +200,34 @@ function checkCollisions() {
 function spawn_heli() {
     // for reference helis take 6100ms to cross screen
     // they should spawn a max of two if they aren't hit at first
-    if(cancelSpawning){
-        return;
+    if (gameLoop !== 0) {
+        let h = new Helicopter();
+        helisSet.add(h);
+        entitiesSet.add(h);
+        // can play around with time out values and use constiables to make them spawn 
+        // faster as game progresses
+        const time = Math.floor(1000 + (Math.random() * 8000)); // 1000 - 9000
+        setTimeout(spawn_heli, time);
+        //issue here is we set multiple timeouts so hard to cancel them 
+        //issue here is we set multiple timeouts so hard to cancel them 
+        //issue here is we set multiple timeouts so hard to cancel them 
+        // store timeouts in an array which is cleared?
     }
-    let h = new Helicopter();
-    helisSet.add(h);
-    entitiesSet.add(h);
-    // can play around with time out values and use variables to make them spawn 
-    // faster as game progresses
-    var time = Math.floor(1000 + (Math.random() * 8000)); // 1000 - 9000
-    setTimeout(spawn_heli, time);
-    //issue here is we set multiple timeouts so hard to cancel them 
-    // store timeouts in an array which is cleared?
 }
 
 function spawn_troopers() {
-    if(cancelSpawning){
-        return;
-    }
-    for (let h of helisSet) {
-        if (h.alive && h.x > 0 && h.x < (400 - h.width)) {
-            let s = Math.floor(Math.random() * 10); // random between 0,9
-            if (s > 2) { //70% chance a heli will spawn trooper
-                h.spawnTrooper();
+    if (gameLoop !== 0) {
+        for (let h of helisSet) {
+            if (h.alive && h.x > 0 && h.x < (400 - h.width)) {
+                let s = Math.floor(Math.random() * 10); // random between 0,9
+                if (s > 2) { //70% chance a heli will spawn trooper
+                    h.spawnTrooper();
+                }
             }
         }
-    }
 
-    setTimeout(spawn_troopers, Math.floor(2000 + (Math.random() * 1000)));
+        setTimeout(spawn_troopers, Math.floor(2000 + (Math.random() * 1000)));
+    }
 }
 
 function drawGame() {
@@ -244,18 +244,19 @@ function moveEntities() {
 
 function updateScore(x) {
     //when score =0 then it adds 2 to score upon collision :(
-    if(score>0){
+    if (score > 0) {
         score += x;
-    }else{
+    } else {
         score++;
     }
-    
+
     currentScore.innerHTML = score;
 }
 
-
 function countdown() {
-    console.log("countdown");
+    ctx.font = "3rem Arial";
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
     let num = 3;
     setTimeout(function running() {
         ctx.fillStyle = "LightGrey";
@@ -263,7 +264,7 @@ function countdown() {
 
         ctx.fillStyle = "Black";
         setTimeout(function () {
-            ctx.fillText(num, 50, 50);
+            ctx.fillText(num, canv.width / 2, canv.height / 2);
             num--;
         }, 200);
 
@@ -278,6 +279,7 @@ function countdown() {
 function startLoops() {
     gameLoop = setInterval(game, 1000 / 200); // I think this should be 60fps max
     // to save unecessary frame redraws but we'd need to change all the speeds and timeOuts
+    setInterval(keyPress, 1000 / 50);
 }
 
 // initialise game
@@ -297,21 +299,18 @@ window.onload = startGame = function () {
     helisSet.add(new Helicopter());
     score = 0;
     bulletFlag = true; // todo: find a place or way to set this privately
-    cancelSpawning = false;
 
     document.getElementById("restart").classList.add("hidden");
-    
+
     countdown();
     spawn_heli();
     spawn_troopers();
-    setInterval(keyPress, 1000 / 50);
 };
 
 // end game
 function endGame() {
     clearInterval(gameLoop);
     gameLoop = 0;
-    cancelSpawning =true;
     document.getElementById("restart").classList.remove("hidden");
 }
 
@@ -342,17 +341,17 @@ function keyPress() {
 
     if (keys[32] && bulletFlag) { // fire a bullet when space is pressed
         // calculate radians as thats what the Math lib uses
-        var rad = -turr.rotation * Math.PI / 180 + Math.PI / 2;
+        const rad = -turr.rotation * Math.PI / 180 + Math.PI / 2;
 
         // the vectors that the bullets will fire on
-        var xVec = Math.cos(rad);
-        var yVec = -Math.sin(rad);
+        const xVec = Math.cos(rad);
+        const yVec = -Math.sin(rad);
 
         // finding the point in the arc that the bullet will spawn
         // X:= originX + cos(angle) * radius;
         // Y:= originY + sin(angle) * radius;
-        var x = 186 + xVec * 44;
-        var y = 404 + yVec * 44;
+        const x = 186 + xVec * 44;
+        const y = 404 + yVec * 44;
 
         // create bullet
         let b = new Bullet(x, y, xVec, yVec, turr.rotation);
@@ -386,7 +385,7 @@ onkeydown = onkeyup = function (e) {
 // Credit: https://stackoverflow.com/a/11985464
 function drawImageRot(img, x, y, width, height, deg) {
     //Convert degrees to radian 
-    var rad = deg * Math.PI / 180;
+    const rad = deg * Math.PI / 180;
 
     //Set the origin to the center of the image
     ctx.translate(x + width / 2, y + height / 2);
