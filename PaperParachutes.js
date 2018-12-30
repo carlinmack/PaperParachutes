@@ -79,6 +79,7 @@ class Helicopter extends Entity {
             this.alive = false;
             let changeSprite;
             setTimeout(changeSprite = () => {
+                this.ySpeed += 0.02;
                 this.sprite = this.sprite + 1;
                 if (this.sprite > 6) this.sprite = 4;
 
