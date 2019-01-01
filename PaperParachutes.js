@@ -120,18 +120,32 @@ class Trooper extends Entity {
         this.opaque = true;
         this.alive = true;
         this.wounded = false;
-        this.sprite = 0;
+        this.landed = false;
+
+        this.sourceX = 0;
+        this.sourceY = 0;
+        this.sourceW = 160;
+        this.sourceH = 210;
     }
 
     move() {
         this.y += this.ySpeed;
-        if (this.y > 360 && this.ySpeed !== 0) {
+        if (!this.wounded && this.y > 360 && this.ySpeed !== 0) {
+            this.y = 380;
+            this.x += 10;
+            this.landed = true;
+            this.sourceY = 102;
+            this.sourceX = 320;
+            this.sourceH = 100;
+            this.sourceW = 40;
+            this.width = 10;
+            this.height = 22;
             this.ySpeed = 0;
             // if it lands unharmed, count how many others there are, if 5 end game
             if (this.wounded === false) {
                 let count = 0;
                 for (let t of troopersSet) {
-                    if (t.ySpeed === 0 && t.wounded === false) {
+                    if (t.landed && t.wounded === false) {
                         count++;
                     }
                 }
@@ -140,10 +154,21 @@ class Trooper extends Entity {
                 }
             }
         }
+        if (this.y > 380) {
+            this.ySpeed = 0;
+        }
     }
 
     hit() {
-        this.sprite += 1;
+        this.x += 10;
+        this.y += 20;
+        this.sourceY = 102;
+        this.sourceX = 364;
+        this.sourceH = 100;
+        this.sourceW = 40;
+        this.width = 10;
+        this.height = 22;
+
         this.alive = false;
         this.wounded = true;
     }
@@ -156,8 +181,9 @@ class Trooper extends Entity {
             this.deleteSelf();
         }
         ctx.globalAlpha = this.alpha;
+
         ctx.drawImage(this.image,
-            this.sprite * 160, 0, 160, 210,
+            this.sourceX, this.sourceY, this.sourceW, this.sourceH,
             this.x, this.y, this.width, this.height);
         ctx.globalAlpha = 1;
     }
@@ -188,7 +214,7 @@ class Bullet extends Entity {
 
 class Turret extends Entity {
     constructor(src, x, y, w, h) {
-        super('./resources/turret.png', 165, 350, 50, 120);
+        super('./resources/turret.png', 165, 315, 50, 120);
         this.rotation = 0;
     }
 
@@ -362,6 +388,9 @@ window.onload = startGame = function () {
     keys = [];
 
     entitiesSet.add(new Turret());
+    // turret base
+    entitiesSet.add(new Entity('./resources/base.png', 150, 375, 80, 25));
+
     helisSet.add(new Helicopter());
     score = 0;
     bulletFlag = true; // todo: find a place or way to set this privately
@@ -394,11 +423,11 @@ function keyPress() {
     // better way to access elements in set? Unsure how set indexing works,
     // if it works thats good enough for now
     let turr = entitiesSet.values().next().value;
-    if (keys[39] && turr.rotation < 80) { // turn right with right arrow
+    if (keys[39] && turr.rotation < 90) { // turn right with right arrow
         turr.rotate(3);
     }
 
-    if (keys[37] && turr.rotation > -80) { // turn left with left arrow
+    if (keys[37] && turr.rotation > -90) { // turn left with left arrow
         turr.rotate(-3);
     }
 
@@ -429,8 +458,8 @@ function fireBullet() {
     // finding the point in the arc that the bullet will spawn
     // X:= originX + cos(angle) * radius;
     // Y:= originY + sin(angle) * radius;
-    var x = 186 + xVec * 44;
-    var y = 404 + yVec * 44;
+    var x = 186 + xVec * 60;
+    var y = 370 + yVec * 60;
 
     // create bullet
     let b = new Bullet(x, y, xVec, yVec, turr.rotation);
