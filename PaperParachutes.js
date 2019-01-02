@@ -34,25 +34,18 @@ class Entity {
 
 class Helicopter extends Entity {
     constructor() {
+        super('./resources/helicopter.png', 0, 0, 75, 35)
         if (Math.round(Math.random())) {
-            if (Math.round(Math.random())) {
-                super('./resources/helicopter.png', 475, 50, 75, 35);
-            } else {
-                super('./resources/helicopter.png', 475, 5, 75, 35);
-            }
+            this.x = 475;
             this.xSpeed = -0.75;
             this.direction = 'l';
         } else {
-            if (Math.round(Math.random())) {
-                super('./resources/helicopter.png', -75, 50, 75, 35);
-            } else {
-                super('./resources/helicopter.png', -75, 5, 75, 35);
-            }
-            // this.xSpeed = -0.75; // maybe a bug IDK but the way I'm flipping
-            // it means the speed is negative
+            this.x = -75;
             this.xSpeed = 0.75;
             this.direction = 'r';
         }
+
+        Math.round(Math.random()) ? this.y = 50 : this.y = 5;
 
         this.sprite = 0;
         this.alive = true;
