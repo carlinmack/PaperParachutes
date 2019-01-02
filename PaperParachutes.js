@@ -1,5 +1,5 @@
 // classes and global functions and variables
-let bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score, mouseOverCanvas;
+let bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score, mouseOverCanvas, trooperSpawnProb;
 
 // flags
 let bulletFlag;
@@ -64,17 +64,21 @@ class Helicopter extends Entity {
             } else {
                 super('./resources/helicopter.png', -75, 5, 75, 35);
             }
-            // this.xSpeed = -0.75; // maybe a bug IDK but the way I'm flipping
-            // it means the speed is negative
             this.xSpeed = 0.75;
             this.direction = 'r';
         }
-
+        let t = 700+Math.floor(Math.random()*3000);
+        this.trooperSpawnTimer = setTimeout(()=>this.spawnTrooper(),t);
+        this.failedSpawnProb = Math.floor(Math.random()*10+1);
+        if(this.spawnProb>trooperSpawnProb){
+            clearTimeout(this.trooperSpawnTimer);
+        }
         this.sprite = 0;
         this.alive = true;
     }
 
     hit() {
+        clearTimeout(this.trooperSpawnTimer);
         if (this.alive) {
             this.alive = false;
             let changeSprite;
@@ -101,14 +105,20 @@ class Helicopter extends Entity {
     }
 
     deleteSelf() {
+        clearTimeout(this.trooperSpawnTimer);
         entitiesSet.delete(this);
         helisSet.delete(this);
     }
 
     spawnTrooper() {
+        if(this.x<0||this.x>370||this.failedSpawnProb>this.trooperSpawnProb){//stop trooper spawning on canvas edge
+            return;
+        }
         let t = new Trooper(this.x, this.y);
         troopersSet.add(t);
         entitiesSet.add(t);
+        
+        this.trooperSpawnTimer = setTimeout(()=>this.spawnTrooper(),Math.floor(Math.random()*1500+200)); //set next spawn timer
     }
 }
 
@@ -145,7 +155,7 @@ class Trooper extends Entity {
             if (this.wounded === false) {
                 let count = 0;
                 for (let t of troopersSet) {
-                    if (t.landed && t.wounded === false) {
+                    if (t.landed && t.wounded === false && t.x >0 && t.x < 400-t.width) {
                         count++;
                     }
                 }
@@ -269,6 +279,7 @@ function spawnHeli() {
 }
 
 function spawnTroopers() {
+    return;
     if (gameLoop !== 0) {
         for (let h of helisSet) {
             if (h.alive && h.x > 0 && h.x < (400 - h.width)) {
@@ -389,6 +400,7 @@ window.onload = startGame = function () {
     helisSet.add(new Helicopter());
     score = 0;
     bulletFlag = true; // todo: find a place or way to set this privately
+    trooperSpawnProb = 7; // 70% chance of spawning
 
     document.getElementById('restart').classList.add('hidden');
     countdown();
