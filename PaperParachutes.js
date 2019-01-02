@@ -45,6 +45,8 @@ class Entity {
         ctx.fillStyle = 'LightGrey';
         ctx.fillRect(this.x - 10, this.y - 10, this.width + 10, this.height + 10);
     }
+
+    deleteSelf(){}
 }
 
 class Helicopter extends Entity {
@@ -278,21 +280,6 @@ function spawnHeli() {
     }
 }
 
-function spawnTroopers() {
-    return;
-    if (gameLoop !== 0) {
-        for (let h of helisSet) {
-            if (h.alive && h.x > 0 && h.x < (400 - h.width)) {
-                let s = Math.floor(Math.random() * 10); // random between 0,9
-                if (s > 2) { // 70% chance a heli will spawn trooper
-                    h.spawnTrooper();
-                }
-            }
-        }
-
-        setTimeout(spawnTroopers, Math.floor(2000 + (Math.random() * 1000)));
-    }
-}
 
 function clearCanvas() {
     ctx.fillStyle = 'LightGrey';
@@ -348,7 +335,6 @@ function startLoops() {
     // to save unecessary frame redraws but we'd need to change all the speeds and timeOuts
     keyLoop = setInterval(keyPress, 1000 / 50);
     spawnHeli();
-    spawnTroopers();
 }
 
 function noscroll() {
@@ -409,6 +395,9 @@ window.onload = startGame = function () {
 // end game
 function endGame() {
     clearInterval(gameLoop);
+    for(let k of entitiesSet){
+        k.deleteSelf();
+    }
     gameLoop = 0;
     document.getElementById('restart').classList.remove('hidden');
 }
