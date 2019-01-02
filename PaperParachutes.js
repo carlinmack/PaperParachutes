@@ -10,16 +10,6 @@ let currentScore, highScore, canv, ctx;
 // you can now use log instead of console.log
 const log = console.log.bind(console);
 
-// parent class, every object must implement this to be drawn
-// class Canvas {
-//     constructor() {
-//         this.canvas = document.getElementById('gc');
-//         this.ctx = this.canvas.getContext('2d');
-//     }
-
-//     clear
-// }
-
 class Entity {
     constructor(src, x, y, w, h) {
         this.image = new Image();
@@ -39,11 +29,6 @@ class Entity {
     move() {
         this.x += this.xSpeed;
         this.y += this.ySpeed;
-    }
-
-    clear() {
-        ctx.fillStyle = 'LightGrey';
-        ctx.fillRect(this.x - 10, this.y - 10, this.width + 10, this.height + 10);
     }
 }
 
@@ -162,6 +147,7 @@ class Trooper extends Entity {
     hit() {
         this.x += 10;
         this.y += 20;
+        this.ySpeed += 1;
         this.sourceY = 102;
         this.sourceX = 364;
         this.sourceH = 100;
@@ -307,8 +293,8 @@ function updateScore(x) {
     // when score =0 then it adds 2 to score upon collision :(
     // if (score > 0) {
     score += x;
-    log('x ', x);
-    log('score ', x);
+    // log('x ', x);
+    // log('score ', x);
     // } else {
     //     score++;
     // }
@@ -322,11 +308,10 @@ function countdown() {
     ctx.textAlign = 'center';
     let num = 3;
     setTimeout(function running() {
-        ctx.fillStyle = 'LightGrey';
-        ctx.fillRect(0, 0, canv.width, canv.height);
+        clearCanvas();
 
         ctx.fillStyle = 'Black';
-        setTimeout(function () {
+        setTimeout(() => {
             ctx.fillText(num, canv.width / 2, canv.height / 2);
             num--;
         }, 200);
