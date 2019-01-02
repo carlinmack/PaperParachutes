@@ -304,15 +304,8 @@ function moveEntities() {
 }
 
 function updateScore(x) {
-    // when score =0 then it adds 2 to score upon collision :(
-    // if (score > 0) {
-    score += x;
-    log('x ', x);
-    log('score ', x);
-    // } else {
-    //     score++;
-    // }
 
+    score += x;
     currentScore.innerHTML = score;
 }
 
@@ -342,7 +335,9 @@ function countdown() {
 function startLoops() {
     gameLoop = setInterval(game, 1000 / 200); // I think this should be 60fps max
     // to save unecessary frame redraws but we'd need to change all the speeds and timeOuts
-    setInterval(keyPress, 1000 / 50);
+    keyLoop = setInterval(keyPress, 1000 / 50);
+    spawnHeli();
+    spawnTroopers();
 }
 
 function noscroll() {
@@ -396,10 +391,7 @@ window.onload = startGame = function () {
     bulletFlag = true; // todo: find a place or way to set this privately
 
     document.getElementById('restart').classList.add('hidden');
-
     countdown();
-    spawnHeli();
-    spawnTroopers();
 };
 
 // end game
@@ -447,6 +439,9 @@ function keyPress() {
 }
 
 function fireBullet() {
+    if(gameLoop===0){
+        return;
+    }
     let turr = entitiesSet.values().next().value;
     // calculate radians as thats what the Math lib uses
     var rad = -turr.rotation * Math.PI / 180 + Math.PI / 2;
