@@ -116,7 +116,7 @@ class Helicopter extends Entity {
 class Trooper extends Entity {
     constructor(x, y) {
         super('./resources/para.png', x, y, 30, 40);
-        this.ySpeed = 1.5;
+        this.ySpeed = 1.25;
         this.alpha = 1;
         this.opaque = true;
         this.alive = true;
@@ -184,7 +184,7 @@ class Trooper extends Entity {
     hit() {
         this.x += 10;
         this.y += 20;
-        this.ySpeed += 1;
+        this.ySpeed += 0.5;
         this.sourceY = 102;
         this.sourceX = 364;
         this.sourceH = 100;
@@ -197,17 +197,18 @@ class Trooper extends Entity {
     }
 
     display() {
-        if (this.wounded && this.y > 360 && this.alpha > 0) {
-            this.alpha -= 0.01;
+        if (this.wounded && this.y > 380 && this.alpha > 0.005) {
+            this.alpha -= 0.005;
         }
-        if (this.alpha <= 0) {
-            this.deleteSelf();
-        }
+
+        if (this.alpha <= 0.01) this.deleteSelf();
+
         ctx.globalAlpha = this.alpha;
 
         ctx.drawImage(this.image,
             this.sourceX, this.sourceY, this.sourceW, this.sourceH,
             this.x, this.y, this.width, this.height);
+
         ctx.globalAlpha = 1;
     }
 
