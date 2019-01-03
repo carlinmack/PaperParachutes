@@ -41,7 +41,7 @@ class Entity {
 
 class Helicopter extends Entity {
     constructor() {
-        super('./resources/helicopter.png', 0, 0, 75, 35)
+        super('./resources/helicopter.png', 0, 0, 75, 35);
         if (Math.round(Math.random())) {
             this.x = 475;
             this.xSpeed = -0.75;
@@ -106,13 +106,13 @@ class Helicopter extends Entity {
         let t = new Trooper(this.x, this.y);
         troopersSet.add(t);
         entitiesSet.add(t);
-        
+
         // set next spawn timer
         let time = 450 + Math.floor(Math.random() * 1500);
         this.trooperSpawnTimer = setTimeout(() => this.spawnTrooper(), time);
 
-        this.failedSpawnProb++; //increase chance of failed spawn 
-                                //(this means is less likely for heli to spawn 2 troopers)
+        this.failedSpawnProb++; // increase chance of failed spawn
+        // (this means is less likely for heli to spawn 2 troopers)
     }
 }
 
@@ -152,7 +152,6 @@ class Trooper extends Entity {
         if (!this.wounded &&
             this.y > 360 &&
             this.ySpeed !== 0) {
-
             this.land();
             // if it lands unharmed, count how many others there are, if 5 end game
             if (this.wounded === false) {
@@ -380,7 +379,7 @@ window.onload = startGame = function () {
     highScore = document.getElementById('highscore');
     currentScore = document.getElementById('score');
     currentScore.innerHTML = 0;
-    highScore.innerHTML = localStorage.getItem("highscore");
+    highScore.innerHTML = localStorage.getItem('highscore') || 0;
 
     entitiesSet = new Set();
     bulletsSet = new Set();
@@ -404,9 +403,9 @@ function endGame() {
     gameLoop = 0;
     document.getElementById('restart').classList.remove('hidden');
 
-    //set highscore
-    if (localStorage.getItem("highscore") < score) {
-        localStorage.setItem("highscore",score);
+    // set highscore
+    if (localStorage.getItem('highscore') < score) {
+        localStorage.setItem('highscore', score);
     }
 }
 
@@ -437,7 +436,6 @@ function keyPress() {
     }
 
     if (keys[82] && gameLoop === 0) {
-
         for (let k of entitiesSet) {
             k.deleteSelf();
         }
@@ -445,9 +443,9 @@ function keyPress() {
         startGame();
     }
 
-    if(keys[90]){
-        localStorage.setItem("highscore",0);
-        highScore.innerHTML = localStorage.getItem("highscore");
+    if (keys[90]) {
+        localStorage.setItem('highscore', 0);
+        highScore.innerHTML = localStorage.getItem('highscore');
     }
 }
 
