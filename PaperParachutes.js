@@ -123,7 +123,6 @@ class Trooper extends Entity {
         this.alpha = 1;
         this.opaque = true;
         this.alive = true;
-        this.wounded = false;
         this.landed = false;
 
         this.sourceX = 0;
@@ -149,15 +148,15 @@ class Trooper extends Entity {
         }
 
         // Landing
-        if (!this.wounded &&
+        if (this.alive &&
             this.y > 360 &&
             this.ySpeed !== 0) {
             this.land();
             // if it lands unharmed, count how many others there are, if 5 end game
-            if (this.wounded === false) {
+            if (this.alive) {
                 let count = 0;
                 for (let t of troopersSet) {
-                    if (t.landed && t.wounded === false) {
+                    if (t.landed && t.alive) {
                         count++;
                     }
                 }
@@ -172,13 +171,13 @@ class Trooper extends Entity {
     land() {
         this.x += 10;
         this.y += 20;
-        this.sourceY = 102;
+        this.ySpeed = 0;
         this.sourceX = 320;
-        this.sourceH = 100;
+        this.sourceY = 102;
         this.sourceW = 40;
+        this.sourceH = 100;
         this.width = 10;
         this.height = 22;
-        this.ySpeed = 0;
 
         this.landed = true;
     }
@@ -187,19 +186,18 @@ class Trooper extends Entity {
         this.x += 10;
         this.y += 20;
         this.ySpeed += 0.5;
-        this.sourceY = 102;
         this.sourceX = 364;
-        this.sourceH = 100;
+        this.sourceY = 102;
         this.sourceW = 40;
+        this.sourceH = 100;
         this.width = 10;
         this.height = 22;
 
         this.alive = false;
-        this.wounded = true;
     }
 
     display() {
-        if (this.wounded && this.y > 380 && this.alpha > 0.005) {
+        if (!this.alive && this.y > 380 && this.alpha > 0.005) {
             this.alpha -= 0.005;
         }
 
@@ -239,7 +237,7 @@ class Bullet extends Entity {
 }
 
 class Turret extends Entity {
-    constructor(src, x, y, w, h) {
+    constructor() {
         super('./resources/turret.png', 165, 315, 50, 120);
         this.rotation = 0;
     }
