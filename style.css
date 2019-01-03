@@ -3,7 +3,7 @@ body {
     min-width: 440px;
     font-size: 200%;
     font-weight: bold;
-    font-family: sans-serif;
+    font-family: 'Iosevka', sans-serif;
     display: grid;
     grid-template-rows: 1fr 80px;
     height: 98vh;
@@ -27,13 +27,21 @@ table {
     width: 400px;
     margin: 2%;
     font-size: 1.5rem;
-    font-variant: small-caps;
+    text-transform: uppercase;
 }
 
 #score,
 #highscore,
 p {
-    display: inline;
+    display: inline-block;
+}
+
+#scoreCell {
+    text-align: right;
+}
+
+#highscoreCell {
+    text-align: left;
 }
 
 .hidden {
@@ -43,6 +51,7 @@ p {
 #restart {
     text-align: center;
     font-variant: small-caps;
+    line-height: 20px;
 }
 
 footer {
@@ -54,4 +63,12 @@ footer {
     line-height: 1.2rem;
     font-size: 0.8rem;
     font-weight: normal;
+}
+
+@font-face {
+    font-family: 'Iosevka';
+    src: url('resources/fonts/iosevka-ss11-regular-webfont.woff2') format('woff2'),
+        url('resources/fonts/iosevka-ss11-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
 }
