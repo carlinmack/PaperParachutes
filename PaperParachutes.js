@@ -251,11 +251,14 @@ class Turret extends Entity {
     }
 }
 
-function deleteEntities() {
+function clearCanvas() {
+    ctx.fillStyle = 'LightGrey';
+    ctx.fillRect(0, 0, canv.width, canv.height);
+}
+
+function moveEntities() {
     for (let e of entitiesSet) {
-        if (e.y < (0 - e.height) || e.x < (0 - e.width) || e.x > (400 + e.width)) {
-            e.deleteSelf(this);
-        }
+        e.move();
     }
 }
 
@@ -276,6 +279,20 @@ function checkCollisions() {
     }
 }
 
+function drawGame() {
+    for (let e of entitiesSet) {
+        e.display();
+    }
+}
+
+function deleteEntities() {
+    for (let e of entitiesSet) {
+        if (e.y < (0 - e.height) || e.x < (0 - e.width) || e.x > (400 + e.width)) {
+            e.deleteSelf(this);
+        }
+    }
+}
+
 function spawnHeli() {
     // for reference helis take 6100ms to cross screen
     // they should spawn a max of two if they aren't hit at first
@@ -287,23 +304,6 @@ function spawnHeli() {
         // faster as game progresses
         const time = Math.floor(1000 + (Math.random() * 8000)); // 1000 - 9000
         setTimeout(spawnHeli, time);
-    }
-}
-
-function clearCanvas() {
-    ctx.fillStyle = 'LightGrey';
-    ctx.fillRect(0, 0, canv.width, canv.height);
-}
-
-function drawGame() {
-    for (let e of entitiesSet) {
-        e.display();
-    }
-}
-
-function moveEntities() {
-    for (let e of entitiesSet) {
-        e.move();
     }
 }
 
