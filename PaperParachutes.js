@@ -1,6 +1,6 @@
 // classes and global functions and variables
 let bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score, mouseOverCanvas, trooperSpawnProb;
-
+trooperSpawnProb = 7; // 70% chance of spawning
 // flags
 let bulletFlag;
 
@@ -58,11 +58,6 @@ class Helicopter extends Entity {
         this.trooperSpawnTimer = setTimeout(() => this.spawnTrooper(), time);
         this.failedSpawnProb = Math.floor(Math.random() * 10 + 1);
 
-        // what is this.spawnProb ?
-        // if (this.spawnProb > trooperSpawnProb) {
-        //     clearTimeout(this.trooperSpawnTimer);
-        // }
-
         this.sprite = 0;
         this.alive = true;
     }
@@ -104,16 +99,20 @@ class Helicopter extends Entity {
         // stop trooper spawning on canvas edge
         if (this.x < 0 ||
             this.x > 370 ||
-            this.failedSpawnProb > this.trooperSpawnProb) {
+            this.failedSpawnProb > trooperSpawnProb) {
             return;
         }
 
         let t = new Trooper(this.x, this.y);
         troopersSet.add(t);
         entitiesSet.add(t);
+        
         // set next spawn timer
         let time = 450 + Math.floor(Math.random() * 1500);
         this.trooperSpawnTimer = setTimeout(() => this.spawnTrooper(), time);
+
+        this.failedSpawnProb++; //increase chance of failed spawn 
+                                //(this means is less likely for heli to spawn 2 troopers)
     }
 }
 
@@ -159,7 +158,7 @@ class Trooper extends Entity {
             if (this.wounded === false) {
                 let count = 0;
                 for (let t of troopersSet) {
-                    if (t.landed && t.wounded === false && t.x > 0 && t.x < 400 - t.width) {
+                    if (t.landed && t.wounded === false) {
                         count++;
                     }
                 }
@@ -291,17 +290,12 @@ function spawnHeli() {
         // faster as game progresses
         const time = Math.floor(1000 + (Math.random() * 8000)); // 1000 - 9000
         setTimeout(spawnHeli, time);
-        // issue here is we set multiple timeouts so hard to cancel them
-        // store timeouts in an array which is cleared?
     }
 }
 
 function clearCanvas() {
     ctx.fillStyle = 'LightGrey';
     ctx.fillRect(0, 0, canv.width, canv.height);
-    // for (let e of entitiesSet) {
-    //     e.clear();
-    // }
 }
 
 function drawGame() {
@@ -383,8 +377,10 @@ window.onload = startGame = function () {
     window.addEventListener('scroll', noScroll); // prevents window scrolling, think this is the only way cause it's buggy on canvas
 
     ctx = canv.getContext('2d');
+    highScore = document.getElementById('highscore');
     currentScore = document.getElementById('score');
     currentScore.innerHTML = 0;
+    highScore.innerHTML = localStorage.getItem("highscore");
 
     entitiesSet = new Set();
     bulletsSet = new Set();
@@ -395,11 +391,8 @@ window.onload = startGame = function () {
     entitiesSet.add(new Turret());
     // turret base
     entitiesSet.add(new Entity('./resources/base.png', 150, 375, 80, 25));
-
-    helisSet.add(new Helicopter());
-    score = 0;
     bulletFlag = true; // todo: find a place or way to set this privately
-    trooperSpawnProb = 7; // 70% chance of spawning
+    score = 0;
 
     document.getElementById('restart').classList.add('hidden');
     countdown();
@@ -410,6 +403,11 @@ function endGame() {
     clearInterval(gameLoop);
     gameLoop = 0;
     document.getElementById('restart').classList.remove('hidden');
+
+    //set highscore
+    if (localStorage.getItem("highscore") < score) {
+        localStorage.setItem("highscore",score);
+    }
 }
 
 // game loop
@@ -439,17 +437,17 @@ function keyPress() {
     }
 
     if (keys[82] && gameLoop === 0) {
-        highScore = document.getElementById('highscore');
-
-        if (highScore.innerHTML < score) {
-            highScore.innerHTML = score;
-        }
 
         for (let k of entitiesSet) {
             k.deleteSelf();
         }
 
         startGame();
+    }
+
+    if(keys[90]){
+        localStorage.setItem("highscore",0);
+        highScore.innerHTML = localStorage.getItem("highscore");
     }
 }
 
