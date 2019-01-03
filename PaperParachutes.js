@@ -51,14 +51,17 @@ class Helicopter extends Entity {
             this.xSpeed = 0.75;
             this.direction = 'r';
         }
+
         Math.round(Math.random()) ? this.y = 50 : this.y = 5;
 
-        let t = 700 + Math.floor(Math.random() * 3000);
-        this.trooperSpawnTimer = setTimeout(() => this.spawnTrooper(), t);
+        let time = 700 + Math.floor(Math.random() * 2500);
+        this.trooperSpawnTimer = setTimeout(() => this.spawnTrooper(), time);
         this.failedSpawnProb = Math.floor(Math.random() * 10 + 1);
-        if (this.spawnProb > trooperSpawnProb) {
-            clearTimeout(this.trooperSpawnTimer);
-        }
+
+        // what is this.spawnProb ?
+        // if (this.spawnProb > trooperSpawnProb) {
+        //     clearTimeout(this.trooperSpawnTimer);
+        // }
 
         this.sprite = 0;
         this.alive = true;
@@ -109,7 +112,8 @@ class Helicopter extends Entity {
         troopersSet.add(t);
         entitiesSet.add(t);
         // set next spawn timer
-        this.trooperSpawnTimer = setTimeout(() => this.spawnTrooper(), Math.floor(Math.random() * 1500 + 200));
+        let time = 450 + Math.floor(Math.random() * 1500);
+        this.trooperSpawnTimer = setTimeout(() => this.spawnTrooper(), time);
     }
 }
 
