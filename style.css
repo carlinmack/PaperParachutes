@@ -23,25 +23,26 @@ canvas {
     background-color: lightgray;
 }
 
-#score {
-    margin: 2% 10%;
-    text-align: right;
-    display: inline;
+table {
+    width: 400px;
+    margin: 2%;
+    font-size: 1.5rem;
+    font-variant: small-caps;
 }
 
-#highscore {
-    margin: 2% 10%;
-    text-align: left;
+#score,
+#highscore,
+p {
     display: inline;
-
 }
 
 .hidden {
     display: none;
 }
 
-p {
+#restart {
     text-align: center;
+    font-variant: small-caps;
 }
 
 footer {

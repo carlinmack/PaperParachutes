@@ -10,16 +10,6 @@ let currentScore, highScore, canv, ctx;
 // you can now use log instead of console.log
 const log = console.log.bind(console);
 
-// parent class, every object must implement this to be drawn
-// class Canvas {
-//     constructor() {
-//         this.canvas = document.getElementById('gc');
-//         this.ctx = this.canvas.getContext('2d');
-//     }
-
-//     clear
-// }
-
 class Entity {
     constructor(src, x, y, w, h) {
         this.image = new Image();
@@ -51,24 +41,17 @@ class Entity {
 
 class Helicopter extends Entity {
     constructor() {
-        // changed it around so that helicoptors spawn themselves randomly
+        super('./resources/helicopter.png', 0, 0, 75, 35)
         if (Math.round(Math.random())) {
-            if (Math.round(Math.random())) {
-                super('./resources/helicopter.png', 475, 30, 75, 35);
-            } else {
-                super('./resources/helicopter.png', 475, 5, 75, 35);
-            }
+            this.x = 475;
             this.xSpeed = -0.75;
             this.direction = 'l';
         } else {
-            if (Math.round(Math.random())) {
-                super('./resources/helicopter.png', -75, 30, 75, 35);
-            } else {
-                super('./resources/helicopter.png', -75, 5, 75, 35);
-            }
+            this.x = -75;
             this.xSpeed = 0.75;
             this.direction = 'r';
         }
+        Math.round(Math.random()) ? this.y = 50 : this.y = 5;
 
         let t = 700 + Math.floor(Math.random() * 3000);
         this.trooperSpawnTimer = setTimeout(() => this.spawnTrooper(), t);
@@ -148,17 +131,26 @@ class Trooper extends Entity {
 
     move() {
         this.y += this.ySpeed;
-        if (!this.wounded && this.y > 360 && this.ySpeed !== 0) {
-            this.y = 380;
-            this.x += 10;
-            this.landed = true;
-            this.sourceY = 102;
-            this.sourceX = 320;
-            this.sourceH = 100;
-            this.sourceW = 40;
-            this.width = 10;
-            this.height = 22;
-            this.ySpeed = 0;
+
+        // Stacking
+        if (this.y > 250 &&
+            !this.landed &&
+            troopersSet.size > 1) {
+            for (let trooper of troopersSet) {
+                if (trooper.landed &&
+                    Math.abs(this.x - trooper.x) < 10 &&
+                    Math.abs(this.y - trooper.y) < 40) {
+                    this.land();
+                }
+            }
+        }
+
+        // Landing
+        if (!this.wounded &&
+            this.y > 360 &&
+            this.ySpeed !== 0) {
+
+            this.land();
             // if it lands unharmed, count how many others there are, if 5 end game
             if (this.wounded === false) {
                 let count = 0;
@@ -167,19 +159,32 @@ class Trooper extends Entity {
                         count++;
                     }
                 }
-                if (count >= 5) {
-                    endGame();
-                }
+                if (count >= 5) endGame();
             }
         }
-        if (this.y > 380) {
-            this.ySpeed = 0;
-        }
+
+        // Landing wounded
+        if (this.y > 380) this.ySpeed = 0;
+    }
+
+    land() {
+        this.x += 10;
+        this.y += 20;
+        this.sourceY = 102;
+        this.sourceX = 320;
+        this.sourceH = 100;
+        this.sourceW = 40;
+        this.width = 10;
+        this.height = 22;
+        this.ySpeed = 0;
+
+        this.landed = true;
     }
 
     hit() {
         this.x += 10;
         this.y += 20;
+        this.ySpeed += 1;
         this.sourceY = 102;
         this.sourceX = 364;
         this.sourceH = 100;
@@ -317,11 +322,10 @@ function countdown() {
     ctx.textAlign = 'center';
     let num = 3;
     setTimeout(function running() {
-        ctx.fillStyle = 'LightGrey';
-        ctx.fillRect(0, 0, canv.width, canv.height);
+        clearCanvas();
 
         ctx.fillStyle = 'Black';
-        setTimeout(function () {
+        setTimeout(() => {
             ctx.fillText(num, canv.width / 2, canv.height / 2);
             num--;
         }, 200);
@@ -341,7 +345,7 @@ function startLoops() {
     spawnHeli();
 }
 
-function noscroll() {
+function noScroll() {
     if (mouseOverCanvas) { // only prevent scrolling if cursor over canvas
         window.scrollTo(0, 0);
     }
@@ -371,7 +375,7 @@ window.onload = startGame = function () {
         mouseOverCanvas = false;
     });
 
-    window.addEventListener('scroll', noscroll); // prevents window scrolling, think this is the only way cause it's buggy on canvas
+    window.addEventListener('scroll', noScroll); // prevents window scrolling, think this is the only way cause it's buggy on canvas
 
     ctx = canv.getContext('2d');
     currentScore = document.getElementById('score');
@@ -399,9 +403,6 @@ window.onload = startGame = function () {
 // end game
 function endGame() {
     clearInterval(gameLoop);
-    for (let k of entitiesSet) {
-        k.deleteSelf();
-    }
     gameLoop = 0;
     document.getElementById('restart').classList.remove('hidden');
 }
@@ -437,6 +438,10 @@ function keyPress() {
 
         if (highScore.innerHTML < score) {
             highScore.innerHTML = score;
+        }
+
+        for (let k of entitiesSet) {
+            k.deleteSelf();
         }
 
         startGame();
