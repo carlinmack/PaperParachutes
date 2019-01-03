@@ -1,5 +1,5 @@
 // classes and global functions and variables
-let bulletsSet, helisSet, troopersSet, keys, entitiesSet, gameLoop, score, mouseOverCanvas, trooperSpawnProb;
+let   entitiesSet, bulletsSet, helisSet, troopersSet, debrisSet, keys,gameLoop, score, mouseOverCanvas, trooperSpawnProb;
 trooperSpawnProb = 7; // 70% chance of spawning
 // flags
 let bulletFlag;
@@ -42,6 +42,8 @@ class Entity {
 class Helicopter extends Entity {
     constructor() {
         super('./resources/helicopter.png', 0, 0, 75, 35);
+        helisSet.add(this);
+        entitiesSet.add(this);
         if (Math.round(Math.random())) {
             this.x = 475;
             this.xSpeed = -0.75;
@@ -64,6 +66,8 @@ class Helicopter extends Entity {
 
     hit() {
         clearTimeout(this.trooperSpawnTimer);
+        spawnDebris(this.x,this.y);       
+        
         if (this.alive) {
             this.alive = false;
             let changeSprite;
@@ -103,9 +107,7 @@ class Helicopter extends Entity {
             return;
         }
 
-        let t = new Trooper(this.x, this.y);
-        troopersSet.add(t);
-        entitiesSet.add(t);
+        new Trooper(this.x, this.y);
 
         // set next spawn timer
         let time = 450 + Math.floor(Math.random() * 1500);
@@ -119,6 +121,8 @@ class Helicopter extends Entity {
 class Trooper extends Entity {
     constructor(x, y) {
         super('./resources/para.png', x, y, 30, 40);
+        troopersSet.add(this);
+        entitiesSet.add(this);
         this.ySpeed = 1.25;
         this.alpha = 1;
         this.opaque = true;
@@ -221,6 +225,8 @@ class Trooper extends Entity {
 class Bullet extends Entity {
     constructor(x, y, xVec, yVec, rotation) {
         super('./resources/bullet.png', x, y, 10, 10);
+        bulletsSet.add(this);
+        entitiesSet.add(this);
         this.xSpeed = xVec * 4.5;
         this.ySpeed = yVec * 4.5;
         this.rotation = rotation;
@@ -239,6 +245,7 @@ class Bullet extends Entity {
 class Turret extends Entity {
     constructor() {
         super('./resources/turret.png', 165, 315, 50, 120);
+        entitiesSet.add(this);
         this.rotation = 0;
     }
 
@@ -248,6 +255,22 @@ class Turret extends Entity {
 
     rotate(x) {
         this.rotation += x;
+    }
+}
+
+class Debris extends Entity {
+    constructor(s,x,y) {
+        super(s, x, y, 45, 20);
+        entitiesSet.add(this);
+        debrisSet.add(this);
+        this.xSpeed = Math.random();//play around with these values
+        this.ySpeed = Math.random();
+        setTimeout(()=>this.deleteSelf(),1000);
+    }
+
+    deleteSelf(){
+        entitiesSet.delete(this);
+        debrisSet.delete(this);
     }
 }
 
@@ -263,7 +286,7 @@ function moveEntities() {
 }
 
 function checkCollisions() {
-    for (let b of bulletsSet) {
+    for (let b of new Set([...bulletsSet, ...debrisSet])) {
         for (let t of new Set([...troopersSet, ...helisSet])) {
             if (t.alive &&
                 b.x > 0 && b.x < 400 &&
@@ -277,6 +300,8 @@ function checkCollisions() {
             }
         }
     }
+
+
 }
 
 function drawGame() {
@@ -297,12 +322,10 @@ function spawnHeli() {
     // for reference helis take 6100ms to cross screen
     // they should spawn a max of two if they aren't hit at first
     if (gameLoop !== 0) {
-        let h = new Helicopter();
-        helisSet.add(h);
-        entitiesSet.add(h);
+        new Helicopter();
         // can play around with time out values and use constiables to make them spawn
         // faster as game progresses
-        const time = Math.floor(1000 + (Math.random() * 8000)); // 1000 - 9000
+        const time = Math.floor(1000 + (Math.random() * 6000)); // range is 1000 - 7000
         setTimeout(spawnHeli, time);
     }
 }
@@ -357,6 +380,22 @@ function rotateTurret(e) {
     }
 }
 
+function spawnDebris(x,y){
+    let n = Math.floor(Math.random()*3)+1;
+    switch(n) { //some bug where 5 pieces of debris spawn
+        case 1:
+            new Debris('./resources/debris1.png',x,y);
+            break;
+        case 2:
+            new Debris('./resources/debris1.png',x,y);
+            new Debris('./resources/debris2.png',x,y);
+        case 3:
+            new Debris('./resources/debris1.png',x,y);
+            new Debris('./resources/debris2.png',x,y);
+            new Debris('./resources/debris3.png',x,y);
+      }
+}
+
 // initialise game
 window.onload = startGame = function () {
     canv = document.getElementById('gc');
@@ -383,9 +422,10 @@ window.onload = startGame = function () {
     bulletsSet = new Set();
     helisSet = new Set();
     troopersSet = new Set();
+    debrisSet = new Set();
     keys = [];
 
-    entitiesSet.add(new Turret());
+    new Turret();
     // turret base
     entitiesSet.add(new Entity('./resources/base.png', 150, 375, 80, 25));
     bulletFlag = true; // todo: find a place or way to set this privately
@@ -465,9 +505,7 @@ function fireBullet() {
     var y = 370 + yVec * 60;
 
     // create bullet
-    let b = new Bullet(x, y, xVec, yVec, turr.rotation);
-    bulletsSet.add(b);
-    entitiesSet.add(b);
+    new Bullet(x, y, xVec, yVec, turr.rotation);
     if (score !== 0) {
         updateScore(-1);
     }
