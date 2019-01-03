@@ -46,7 +46,7 @@ class Entity {
         ctx.fillRect(this.x - 10, this.y - 10, this.width + 10, this.height + 10);
     }
 
-    deleteSelf(){}
+    deleteSelf() {}
 }
 
 class Helicopter extends Entity {
@@ -69,12 +69,14 @@ class Helicopter extends Entity {
             this.xSpeed = 0.75;
             this.direction = 'r';
         }
-        let t = 700+Math.floor(Math.random()*3000);
-        this.trooperSpawnTimer = setTimeout(()=>this.spawnTrooper(),t);
-        this.failedSpawnProb = Math.floor(Math.random()*10+1);
-        if(this.spawnProb>trooperSpawnProb){
+
+        let t = 700 + Math.floor(Math.random() * 3000);
+        this.trooperSpawnTimer = setTimeout(() => this.spawnTrooper(), t);
+        this.failedSpawnProb = Math.floor(Math.random() * 10 + 1);
+        if (this.spawnProb > trooperSpawnProb) {
             clearTimeout(this.trooperSpawnTimer);
         }
+
         this.sprite = 0;
         this.alive = true;
     }
@@ -113,14 +115,18 @@ class Helicopter extends Entity {
     }
 
     spawnTrooper() {
-        if(this.x<0||this.x>370||this.failedSpawnProb>this.trooperSpawnProb){//stop trooper spawning on canvas edge
+        // stop trooper spawning on canvas edge
+        if (this.x < 0 ||
+            this.x > 370 ||
+            this.failedSpawnProb > this.trooperSpawnProb) {
             return;
         }
+
         let t = new Trooper(this.x, this.y);
         troopersSet.add(t);
         entitiesSet.add(t);
-        
-        this.trooperSpawnTimer = setTimeout(()=>this.spawnTrooper(),Math.floor(Math.random()*1500+200)); //set next spawn timer
+        // set next spawn timer
+        this.trooperSpawnTimer = setTimeout(() => this.spawnTrooper(), Math.floor(Math.random() * 1500 + 200));
     }
 }
 
@@ -157,7 +163,7 @@ class Trooper extends Entity {
             if (this.wounded === false) {
                 let count = 0;
                 for (let t of troopersSet) {
-                    if (t.landed && t.wounded === false && t.x >0 && t.x < 400-t.width) {
+                    if (t.landed && t.wounded === false && t.x > 0 && t.x < 400 - t.width) {
                         count++;
                     }
                 }
@@ -280,7 +286,6 @@ function spawnHeli() {
     }
 }
 
-
 function clearCanvas() {
     ctx.fillStyle = 'LightGrey';
     ctx.fillRect(0, 0, canv.width, canv.height);
@@ -302,7 +307,6 @@ function moveEntities() {
 }
 
 function updateScore(x) {
-
     score += x;
     currentScore.innerHTML = score;
 }
@@ -333,7 +337,7 @@ function countdown() {
 function startLoops() {
     gameLoop = setInterval(game, 1000 / 200); // I think this should be 60fps max
     // to save unecessary frame redraws but we'd need to change all the speeds and timeOuts
-    keyLoop = setInterval(keyPress, 1000 / 50);
+    setInterval(keyPress, 1000 / 50);
     spawnHeli();
 }
 
@@ -395,7 +399,7 @@ window.onload = startGame = function () {
 // end game
 function endGame() {
     clearInterval(gameLoop);
-    for(let k of entitiesSet){
+    for (let k of entitiesSet) {
         k.deleteSelf();
     }
     gameLoop = 0;
@@ -440,9 +444,8 @@ function keyPress() {
 }
 
 function fireBullet() {
-    if(gameLoop===0){
-        return;
-    }
+    if (gameLoop === 0) return;
+
     let turr = entitiesSet.values().next().value;
     // calculate radians as thats what the Math lib uses
     var rad = -turr.rotation * Math.PI / 180 + Math.PI / 2;
