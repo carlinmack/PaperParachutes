@@ -322,7 +322,7 @@ function updateScore(x) {
 }
 
 function countdown() {
-    ctx.font = '3rem Arial';
+    ctx.font = '3rem Iosevka';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
     let num = 3;
