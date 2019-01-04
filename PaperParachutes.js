@@ -53,9 +53,9 @@ class Helicopter extends Entity {
 
         Math.round(Math.random()) ? this.y = 50 : this.y = 5;
 
-        let time = 700 + Math.floor(Math.random() * 2500);
+        let time = randomInt(450, 3200);
         this.trooperSpawnTimer = setTimeout(() => this.spawnTrooper(), time);
-        this.failedSpawnProb = Math.floor(Math.random() * 10 + 1);
+        this.failedSpawnProb = randomInt(1, 10);
 
         this.sprite = 0;
         this.alive = true;
@@ -107,7 +107,7 @@ class Helicopter extends Entity {
         new Trooper(this.x, this.y);
 
         // set next spawn timer
-        let time = 450 + Math.floor(Math.random() * 1500);
+        let time = randomInt(450, 1950);
         this.trooperSpawnTimer = setTimeout(() => this.spawnTrooper(), time);
 
         this.failedSpawnProb++; // increase chance of failed spawn
@@ -341,7 +341,7 @@ function spawnHeli() {
         new Helicopter();
         // can play around with time out values and use constiables to make them spawn
         // faster as game progresses
-        const time = Math.floor(1000 + (Math.random() * 6000)); // range is 1000 - 7000
+        const time = randomInt(1000, 7000);
         setTimeout(spawnHeli, time);
     }
 }
@@ -397,7 +397,7 @@ function rotateTurret(e) {
 }
 
 function spawnDebris(x, y) {
-    let n = Math.floor(Math.random() * 3) + 1;
+    let n = randomInt(1, 3);
 
     for (let i = 0; i < n; i++) {
         new Debris(x, y);
