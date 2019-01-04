@@ -375,6 +375,7 @@ function countdown() {
 
 function startLoops() {
     startAnimating(60);
+    gameLoop = 1;
     setInterval(keyPress, 1000 / 50);
     spawnHeli();
 }
@@ -447,7 +448,6 @@ window.onload = startGame = function () {
 
 // end game
 function endGame() {
-    clearInterval(gameLoop);
     stop = true;
     gameLoop = 0;
     document.getElementById('restart').classList.remove('hidden');
