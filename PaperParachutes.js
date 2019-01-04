@@ -1,14 +1,11 @@
 // classes and global functions and variables
-let   entitiesSet, bulletsSet, helisSet, troopersSet, debrisSet, keys,gameLoop, score, mouseOverCanvas, trooperSpawnProb;
+let entitiesSet, bulletsSet, helisSet, troopersSet, debrisSet, keys, gameLoop, score, mouseOverCanvas, trooperSpawnProb;
 trooperSpawnProb = 7; // 70% chance of spawning
 // flags
 let bulletFlag;
 
 // html elements
 let currentScore, highScore, canv, ctx;
-
-// you can now use log instead of console.log
-const log = console.log.bind(console);
 
 class Entity {
     constructor(src, x, y, w, h) {
@@ -66,8 +63,8 @@ class Helicopter extends Entity {
 
     hit() {
         clearTimeout(this.trooperSpawnTimer);
-        spawnDebris(this.x,this.y);       
-        
+        spawnDebris(this.x, this.y);
+
         if (this.alive) {
             this.alive = false;
             let changeSprite;
@@ -259,18 +256,39 @@ class Turret extends Entity {
 }
 
 class Debris extends Entity {
-    constructor(s,x,y) {
-        super(s, x, y, 45, 20);
+    constructor(x, y) {
+        super('./resources/helicopterSource.png', x, y, 0, 0);
         entitiesSet.add(this);
         debrisSet.add(this);
-        this.xSpeed = Math.random();//play around with these values
-        this.ySpeed = Math.random();
-        setTimeout(()=>this.deleteSelf(),1000);
+        this.xSpeed = randomReal(-1, 1);
+        this.ySpeed = randomReal(-0.5, 1);
+
+        this.sourceX = randomInt(10, 95);
+        this.sourceY = randomInt(0, 42);
+        this.sourceW = randomInt(21, 42);
+        this.sourceH = randomInt(45, 95);
+
+        this.width = this.sourceW / 2;
+        this.height = this.sourceH / 2;
+
+        setTimeout(() => this.deleteSelf(), 1000);
+
+        let gravity;
+        setTimeout(gravity = () => {
+            this.ySpeed += 0.02;
+            setTimeout(gravity, 100);
+        }, 0);
     }
 
-    deleteSelf(){
+    deleteSelf() {
         entitiesSet.delete(this);
         debrisSet.delete(this);
+    }
+
+    display() {
+        ctx.drawImage(this.image,
+            this.sourceX, this.sourceY, this.sourceW, this.sourceH,
+            this.x, this.y, this.width, this.height);
     }
 }
 
@@ -300,8 +318,6 @@ function checkCollisions() {
             }
         }
     }
-
-
 }
 
 function drawGame() {
@@ -380,20 +396,12 @@ function rotateTurret(e) {
     }
 }
 
-function spawnDebris(x,y){
-    let n = Math.floor(Math.random()*3)+1;
-    switch(n) { //some bug where 5 pieces of debris spawn
-        case 1:
-            new Debris('./resources/debris1.png',x,y);
-            break;
-        case 2:
-            new Debris('./resources/debris1.png',x,y);
-            new Debris('./resources/debris2.png',x,y);
-        case 3:
-            new Debris('./resources/debris1.png',x,y);
-            new Debris('./resources/debris2.png',x,y);
-            new Debris('./resources/debris3.png',x,y);
-      }
+function spawnDebris(x, y) {
+    let n = Math.floor(Math.random() * 3) + 1;
+
+    for (let i = 0; i < n; i++) {
+        new Debris(x, y);
+    }
 }
 
 // initialise game
@@ -519,6 +527,20 @@ onkeydown = onkeyup = function (e) {
     // run on every interaction of a key, sets the keys state to an array value
     keys[e.keyCode] = e.type === 'keydown';
 };
+
+// you can now use log instead of console.log
+const log = console.log.bind(console);
+
+function randomInt(min, max) {
+    // https://stackoverflow.com/a/1527820
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function randomReal(min, max) {
+    return Math.random() * (max - min) + min;
+}
 
 // Credit: https://stackoverflow.com/a/11985464
 function drawImageRot(img, x, y, width, height, deg) {
