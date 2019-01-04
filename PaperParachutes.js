@@ -263,10 +263,10 @@ class Debris extends Entity {
         this.xSpeed = randomReal(-1, 1);
         this.ySpeed = randomReal(-0.5, 1);
 
-        this.sourceX = randomInt(0, 95);
+        this.sourceX = randomInt(10, 95);
         this.sourceY = randomInt(0, 42);
-        this.sourceW = randomInt(15, 42);
-        this.sourceH = randomInt(35, 95);
+        this.sourceW = randomInt(21, 42);
+        this.sourceH = randomInt(45, 95);
 
         this.width = this.sourceW / 2;
         this.height = this.sourceH / 2;
