@@ -43,11 +43,11 @@ class Helicopter extends Entity {
         entitiesSet.add(this);
         if (Math.round(Math.random())) {
             this.x = 475;
-            this.xSpeed = -0.75;
+            this.xSpeed = -2;
             this.direction = 'l';
         } else {
             this.x = -75;
-            this.xSpeed = 0.75;
+            this.xSpeed = 2;
             this.direction = 'r';
         }
 
@@ -69,7 +69,7 @@ class Helicopter extends Entity {
             this.alive = false;
             let changeSprite;
             setTimeout(changeSprite = () => {
-                this.ySpeed += 0.02;
+                this.ySpeed += 0.04;
                 this.sprite = this.sprite + 1;
                 if (this.sprite > 6) this.sprite = 4;
 
@@ -120,7 +120,7 @@ class Trooper extends Entity {
         super('./resources/para.png', x, y, 30, 40);
         troopersSet.add(this);
         entitiesSet.add(this);
-        this.ySpeed = 1.25;
+        this.ySpeed = 3;
         this.alpha = 1;
         this.opaque = true;
         this.alive = true;
@@ -186,7 +186,7 @@ class Trooper extends Entity {
     hit() {
         this.x += 10;
         this.y += 20;
-        this.ySpeed += 0.5;
+        this.ySpeed += 1;
         this.sourceX = 364;
         this.sourceY = 102;
         this.sourceW = 40;
@@ -224,8 +224,8 @@ class Bullet extends Entity {
         super('./resources/bullet.png', x, y, 10, 10);
         bulletsSet.add(this);
         entitiesSet.add(this);
-        this.xSpeed = xVec * 4.5;
-        this.ySpeed = yVec * 4.5;
+        this.xSpeed = xVec * 12;
+        this.ySpeed = yVec * 12;
         this.rotation = rotation;
     }
 
@@ -260,8 +260,8 @@ class Debris extends Entity {
         super('./resources/debris.png', x, y, 0, 0);
         entitiesSet.add(this);
         debrisSet.add(this);
-        this.xSpeed = randomReal(-1, 1);
-        this.ySpeed = randomReal(-0.5, 1);
+        this.xSpeed = randomReal(-2, 2);
+        this.ySpeed = randomReal(-1, 2);
 
         this.sourceX = randomInt(10, 95);
         this.sourceY = randomInt(0, 42);
@@ -275,7 +275,7 @@ class Debris extends Entity {
 
         let gravity;
         setTimeout(gravity = () => {
-            this.ySpeed += 0.02;
+            this.ySpeed += 0.04;
             setTimeout(gravity, 100);
         }, 0);
     }
@@ -374,7 +374,8 @@ function countdown() {
 }
 
 function startLoops() {
-    gameLoop = setInterval(game, 1000 / 200); // I think this should be 60fps max
+    // gameLoop = setInterval(game, 1000 / 200); // I think this should be 60fps max
+    startAnimating(60);
     // to save unecessary frame redraws but we'd need to change all the speeds and timeOuts
     setInterval(keyPress, 1000 / 50);
     spawnHeli();
@@ -438,6 +439,7 @@ window.onload = startGame = function () {
     entitiesSet.add(new Entity('./resources/base.png', 150, 375, 80, 25));
     bulletFlag = true; // todo: find a place or way to set this privately
     score = 0;
+    stop = false;
 
     document.getElementById('restart').classList.add('hidden');
     countdown();
@@ -446,6 +448,7 @@ window.onload = startGame = function () {
 // end game
 function endGame() {
     clearInterval(gameLoop);
+    stop = true;
     gameLoop = 0;
     document.getElementById('restart').classList.remove('hidden');
 
@@ -462,6 +465,40 @@ function game() {
     checkCollisions();
     drawGame();
     deleteEntities(); // maybe put this in keyPress as it doesn't need to run 200 times a second
+}
+
+var stop = false;
+var fpsInterval, startTime, now, then, elapsed;
+
+function startAnimating(fps) {
+    fpsInterval = 1000 / fps;
+    then = window.performance.now();
+    startTime = then;
+    animate();
+}
+
+function animate(newtime) {
+    // stop
+    if (stop) {
+        return;
+    }
+
+    // request another frame
+    requestAnimationFrame(animate);
+
+    // calc elapsed time since last loop
+    now = newtime;
+    elapsed = now - then;
+
+    // if enough time has elapsed, draw the next frame
+    if (elapsed > fpsInterval) {
+        // Get ready for next frame by setting then=now, but...
+        // Also, adjust for fpsInterval not being multiple of 16.67
+        then = now - (elapsed % fpsInterval);
+
+        // draw stuff here
+        game();
+    }
 }
 
 // keypress loop
