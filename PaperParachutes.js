@@ -261,7 +261,7 @@ class Debris extends Entity {
         entitiesSet.add(this);
         debrisSet.add(this);
         this.xSpeed = randomReal(-1, 1);
-        this.ySpeed = randomReal(-1, 1) + 0.5;
+        this.ySpeed = randomReal(-0.5, 1);
 
         this.sourceX = randomInt(0, 95);
         this.sourceY = randomInt(0, 42);
@@ -272,6 +272,12 @@ class Debris extends Entity {
         this.height = this.sourceH / 2;
 
         setTimeout(() => this.deleteSelf(), 1000);
+
+        let gravity;
+        setTimeout(gravity = () => {
+            this.ySpeed += 0.02;
+            setTimeout(gravity, 100);
+        }, 0);
     }
 
     deleteSelf() {
@@ -392,20 +398,9 @@ function rotateTurret(e) {
 
 function spawnDebris(x, y) {
     let n = Math.floor(Math.random() * 3) + 1;
-    switch (n) {
-        case 1:
-            new Debris(x, y);
-            break;
-        case 2:
-            new Debris(x, y);
-            new Debris(x, y);
-            break;
-        case 3:
-            new Debris(x, y);
-            new Debris(x, y);
-            new Debris(x, y);
-            break;
-        default:
+
+    for (let i = 0; i < n; i++) {
+        new Debris(x, y);
     }
 }
 
