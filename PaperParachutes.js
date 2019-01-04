@@ -257,7 +257,7 @@ class Turret extends Entity {
 
 class Debris extends Entity {
     constructor(x, y) {
-        super('./resources/helicopterSource.png', x, y, 0, 0);
+        super('./resources/debris.png', x, y, 0, 0);
         entitiesSet.add(this);
         debrisSet.add(this);
         this.xSpeed = randomReal(-1, 1);
