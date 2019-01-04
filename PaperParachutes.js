@@ -53,7 +53,7 @@ class Helicopter extends Entity {
 
         Math.round(Math.random()) ? this.y = 50 : this.y = 5;
 
-        let time = randomInt(450, 3200);
+        let time = randomInt(450, 3000);
         this.trooperSpawnTimer = setTimeout(() => this.spawnTrooper(), time);
         this.failedSpawnProb = randomInt(1, 10);
 
@@ -335,13 +335,13 @@ function deleteEntities() {
 }
 
 function spawnHeli() {
-    // for reference helis take 6100ms to cross screen
+    // for reference helis take 4600ms to cross screen
     // they should spawn a max of two if they aren't hit at first
     if (gameLoop !== 0) {
         new Helicopter();
         // can play around with time out values and use constiables to make them spawn
         // faster as game progresses
-        const time = randomInt(1000, 7000);
+        const time = randomInt(1000, 5500);
         setTimeout(spawnHeli, time);
     }
 }
@@ -374,9 +374,7 @@ function countdown() {
 }
 
 function startLoops() {
-    // gameLoop = setInterval(game, 1000 / 200); // I think this should be 60fps max
     startAnimating(60);
-    // to save unecessary frame redraws but we'd need to change all the speeds and timeOuts
     setInterval(keyPress, 1000 / 50);
     spawnHeli();
 }
@@ -442,6 +440,8 @@ window.onload = startGame = function () {
     stop = false;
 
     document.getElementById('restart').classList.add('hidden');
+    document.getElementById('restart').addEventListener('click', () => keys[82] = true);
+
     countdown();
 };
 
@@ -467,13 +467,14 @@ function game() {
     deleteEntities(); // maybe put this in keyPress as it doesn't need to run 200 times a second
 }
 
-var stop = false;
-var fpsInterval, startTime, now, then, elapsed;
+// https://stackoverflow.com/questions/19764018/controlling-fps-with-requestanimationframe#comment38674664_19772220
+// http://jsfiddle.net/chicagogrooves/nRpVD/2/
+let stop = false;
+let fpsInterval, now, then, elapsed;
 
 function startAnimating(fps) {
     fpsInterval = 1000 / fps;
     then = window.performance.now();
-    startTime = then;
     animate();
 }
 
