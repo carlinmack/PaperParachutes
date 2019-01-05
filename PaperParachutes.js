@@ -251,7 +251,13 @@ class Turret extends Entity {
     }
 
     rotate(x) {
-        this.rotation += x;
+        if (((this.rotation + x) ** 2) <= 90 ** 2) {
+            this.rotation += x;
+        } else if (this.rotation > 0) {
+            this.rotation = 90;
+        } else {
+            this.rotation = -90;
+        }
     }
 }
 
@@ -385,12 +391,12 @@ function noScroll() {
     }
 }
 
-function rotateTurret(e) {
+function rotateTurret(event) {
     let turr = entitiesSet.values().next().value;
 
-    if (e.deltaY > 0 && turr.rotation < 80) {
+    if (event.deltaY > 0) {
         turr.rotate(3);
-    } else if (e.deltaY < 0 && turr.rotation > -80) {
+    } else if (event.deltaY < 0) {
         turr.rotate(-3);
     }
 }
@@ -437,7 +443,6 @@ window.onload = startGame = function () {
     entitiesSet.add(new Entity('./resources/base.png', 150, 375, 80, 25));
     bulletFlag = true; // todo: find a place or way to set this privately
     score = 0;
-    stop = false;
 
     document.getElementById('restart').classList.add('hidden');
     document.getElementById('restart').addEventListener('click', () => keys[82] = true);
@@ -472,11 +477,11 @@ function keyPress() {
     // better way to access elements in set? Unsure how set indexing works,
     // if it works thats good enough for now
     let turr = entitiesSet.values().next().value;
-    if (keys[39] && turr.rotation < 90) { // turn right with right arrow
+    if (keys[39]) { // turn right with right arrow
         turr.rotate(4);
     }
 
-    if (keys[37] && turr.rotation > -90) { // turn left with left arrow
+    if (keys[37]) { // turn left with left arrow
         turr.rotate(-4);
     }
 
@@ -531,10 +536,10 @@ onkeydown = onkeyup = function (e) {
     keys[e.keyCode] = e.type === 'keydown';
 };
 
-
 /* ------- HELPER FUNCTIONS ------- */
 // you can now use log instead of console.log
 const log = console.log.bind(console);
+const localStorage = window.localStorage;
 
 function randomInt(min, max) {
     // https://stackoverflow.com/a/1527820
