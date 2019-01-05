@@ -1,5 +1,5 @@
 // classes and global functions and variables
-let entitiesSet, bulletsSet, helisSet, troopersSet, debrisSet, keys, gameLoop, score, mouseOverCanvas, trooperSpawnProb;
+let entitiesSet, bulletsSet, helisSet, troopersSet, debrisSet, keys, keyLoop, gameLoop, score, mouseOverCanvas, trooperSpawnProb;
 trooperSpawnProb = 7; // 70% chance of spawning
 // flags
 let bulletFlag;
@@ -43,11 +43,11 @@ class Helicopter extends Entity {
         entitiesSet.add(this);
         if (Math.round(Math.random())) {
             this.x = 475;
-            this.xSpeed = -2;
+            this.xSpeed = -2.5;
             this.direction = 'l';
         } else {
             this.x = -75;
-            this.xSpeed = 2;
+            this.xSpeed = 2.5;
             this.direction = 'r';
         }
 
@@ -374,9 +374,8 @@ function countdown() {
 }
 
 function startLoops() {
-    startAnimating(60);
-    gameLoop = 1;
-    setInterval(keyPress, 1000 / 50);
+    gameLoop = window.requestAnimationFrame(game);
+    keyLoop = setInterval(keyPress, 1000 / 50);
     spawnHeli();
 }
 
@@ -448,7 +447,7 @@ window.onload = startGame = function () {
 
 // end game
 function endGame() {
-    stop = true;
+    window.cancelAnimationFrame(gameLoop);
     gameLoop = 0;
     document.getElementById('restart').classList.remove('hidden');
 
@@ -460,46 +459,12 @@ function endGame() {
 
 // game loop
 function game() {
+    gameLoop = window.requestAnimationFrame(game);
     clearCanvas();
     moveEntities();
     checkCollisions();
     drawGame();
     deleteEntities(); // maybe put this in keyPress as it doesn't need to run 200 times a second
-}
-
-// https://stackoverflow.com/questions/19764018/controlling-fps-with-requestanimationframe#comment38674664_19772220
-// http://jsfiddle.net/chicagogrooves/nRpVD/2/
-let stop = false;
-let fpsInterval, now, then, elapsed;
-
-function startAnimating(fps) {
-    fpsInterval = 1000 / fps;
-    then = window.performance.now();
-    animate();
-}
-
-function animate(newtime) {
-    // stop
-    if (stop) {
-        return;
-    }
-
-    // request another frame
-    requestAnimationFrame(animate);
-
-    // calc elapsed time since last loop
-    now = newtime;
-    elapsed = now - then;
-
-    // if enough time has elapsed, draw the next frame
-    if (elapsed > fpsInterval) {
-        // Get ready for next frame by setting then=now, but...
-        // Also, adjust for fpsInterval not being multiple of 16.67
-        then = now - (elapsed % fpsInterval);
-
-        // draw stuff here
-        game();
-    }
 }
 
 // keypress loop
@@ -508,11 +473,11 @@ function keyPress() {
     // if it works thats good enough for now
     let turr = entitiesSet.values().next().value;
     if (keys[39] && turr.rotation < 90) { // turn right with right arrow
-        turr.rotate(3);
+        turr.rotate(4);
     }
 
     if (keys[37] && turr.rotation > -90) { // turn left with left arrow
-        turr.rotate(-3);
+        turr.rotate(-4);
     }
 
     if (keys[32] && bulletFlag) { // fire a bullet when space is pressed
@@ -523,7 +488,7 @@ function keyPress() {
         for (let k of entitiesSet) {
             k.deleteSelf();
         }
-
+        clearInterval(keyLoop);
         startGame();
     }
 
@@ -566,6 +531,8 @@ onkeydown = onkeyup = function (e) {
     keys[e.keyCode] = e.type === 'keydown';
 };
 
+
+/* ------- HELPER FUNCTIONS ------- */
 // you can now use log instead of console.log
 const log = console.log.bind(console);
 
