@@ -1,5 +1,6 @@
+/* eslint-disable space-before-function-paren */
 // classes and global functions and variables
-let entitiesSet, bulletsSet, helisSet, troopersSet, debrisSet, keys, keyLoop, gameLoop, score, mouseOverCanvas, trooperSpawnProb;
+let entitiesSet, bulletsSet, helisSet, troopersSet, debrisSet, buttons, keys, keyLoop, gameLoop, score, mouseOverCanvas, trooperSpawnProb;
 trooperSpawnProb = 7; // 70% chance of spawning
 // flags
 let bulletFlag;
@@ -298,6 +299,43 @@ class Debris extends Entity {
     }
 }
 
+class Button {
+    constructor(text, x, y) {
+        this.minX = x - 50;
+        this.maxX = x + 50;
+        this.x = x;
+        this.y = y;
+        this.minY = y - 10;
+        this.maxY = y + 10;
+        this.text = text;
+        log(this);
+    }
+
+    isPressed(X, Y) {
+        if (X >= this.minX && X <= this.maxX &&
+            Y >= this.minY && Y <= this.maxY) {
+            this.action();
+        }
+    };
+
+    display() {
+        ctx.font = '2.5rem Iosevka';
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = 'Black';
+        ctx.fillText(this.text, this.x, this.y);
+
+        // const path = new Path2D();
+        // path.rect(this.minX, this.minY, this.maxX, this.maxY);
+        // path.closePath();
+        // ctx.lineWidth = 2;
+        // ctx.strokeStyle = "#000000";
+        // ctx.stroke(path);
+    };
+
+    action() {}
+}
+
 function clearCanvas() {
     ctx.fillStyle = 'LightGrey';
     ctx.fillRect(0, 0, canv.width, canv.height);
@@ -379,6 +417,28 @@ function countdown() {
     }, 100);
 }
 
+function displayMenu() {
+    ctx.font = '2.5rem Iosevka';
+    ctx.textBaseline = 'middle';
+    ctx.textAlign = 'center';
+    ctx.fillStyle = 'Black';
+    ctx.fillText('Paper Parachutes', canv.width / 2, canv.height / 4);
+
+    const play = new Button('Play', canv.width / 2, canv.height / 2);
+    play.action = () => {
+        log('play Game');
+        countdown();
+    }
+
+    const instructions = new Button('Instructions', canv.width / 2, 3 * canv.height / 4);
+    instructions.action = () => log('instructions');
+
+    buttons = [play, instructions];
+
+    play.display();
+    instructions.display();
+}
+
 function startLoops() {
     gameLoop = window.requestAnimationFrame(game);
     keyLoop = setInterval(keyPress, 1000 / 50);
@@ -412,9 +472,20 @@ function spawnDebris(x, y) {
 // initialise game
 window.onload = startGame = function () {
     canv = document.getElementById('gc');
-    canv.onclick = function () { // fire bullet when canvas is clicked
-        fireBullet();
-    };
+
+    canv.addEventListener('click', function (event) { // fire bullet when canvas is clicked
+        if (gameLoop) {
+            fireBullet();
+        } else {
+            let rect = canv.getBoundingClientRect();
+            let clickX = event.clientX - rect.left;
+            let clickY = event.clientY - rect.top;
+
+            for (const but of buttons) {
+                but.isPressed(clickX, clickY);
+            }
+        }
+    });
     canv.addEventListener('wheel', rotateTurret);
     canv.addEventListener('mouseover', () => {
         mouseOverCanvas = true;
@@ -447,7 +518,8 @@ window.onload = startGame = function () {
     document.getElementById('restart').classList.add('hidden');
     document.getElementById('restart').addEventListener('click', () => keys[82] = true);
 
-    countdown();
+    displayMenu();
+    // countdown();
 };
 
 // end game
