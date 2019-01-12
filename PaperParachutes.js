@@ -301,32 +301,39 @@ class Debris extends Entity {
 
 class Button {
     constructor(text, x, y) {
-        this.minX = x - 50;
-        this.maxX = x + 50;
+        this.width = 300;
+        this.height = 60;
+
         this.x = x;
+        this.minX = x - this.width / 2;
+        this.maxX = this.minX + this.width;
+
         this.y = y;
-        this.minY = y - 10;
-        this.maxY = y + 10;
+        this.minY = y - this.height / 2;
+        this.maxY = this.minY + this.height;
+
         this.text = text;
         log(this);
     }
 
     isPressed(X, Y) {
+        log(X, Y);
+
         if (X >= this.minX && X <= this.maxX &&
             Y >= this.minY && Y <= this.maxY) {
+            log(this)
             this.action();
         }
     };
 
     display() {
-        ctx.font = '2.5rem Iosevka';
-        ctx.textBaseline = 'middle';
-        ctx.textAlign = 'center';
+        ctx.font = '2.25rem Iosevka';
         ctx.fillStyle = 'Black';
         ctx.fillText(this.text, this.x, this.y);
 
+        // Draw Border
         // const path = new Path2D();
-        // path.rect(this.minX, this.minY, this.maxX, this.maxY);
+        // path.rect(this.minX, this.minY, this.width, this.height);
         // path.closePath();
         // ctx.lineWidth = 2;
         // ctx.strokeStyle = "#000000";
@@ -421,14 +428,11 @@ function displayMenu() {
     ctx.font = '2.5rem Iosevka';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
-    ctx.fillStyle = 'Black';
+    ctx.fillStyle = 'White';
     ctx.fillText('Paper Parachutes', canv.width / 2, canv.height / 4);
 
     const play = new Button('Play', canv.width / 2, canv.height / 2);
-    play.action = () => {
-        log('play Game');
-        countdown();
-    }
+    play.action = countdown;
 
     const instructions = new Button('Instructions', canv.width / 2, 3 * canv.height / 4);
     instructions.action = () => log('instructions');
@@ -478,8 +482,8 @@ window.onload = startGame = function () {
             fireBullet();
         } else {
             let rect = canv.getBoundingClientRect();
-            let clickX = event.clientX - rect.left;
-            let clickY = event.clientY - rect.top;
+            let clickX = event.clientX - rect.left - 10;
+            let clickY = event.clientY - rect.top - 10;
 
             for (const but of buttons) {
                 but.isPressed(clickX, clickY);
