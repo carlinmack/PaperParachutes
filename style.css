@@ -21,6 +21,8 @@ canvas {
     border-style: outset;
     border-radius: 1%;
     background-color: lightgray;
+    width: 400px;
+    height: 400px;
 }
 
 table {

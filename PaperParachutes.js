@@ -1,7 +1,9 @@
 /* eslint-disable space-before-function-paren */
 // classes and global functions and variables
-let entitiesSet, bulletsSet, helisSet, troopersSet, debrisSet, buttons, keys, keyLoop, gameLoop, score, mouseOverCanvas, trooperSpawnProb;
+let entitiesSet, bulletsSet, helisSet, troopersSet, debrisSet, buttons, keyLoop, gameLoop, score, mouseOverCanvas, trooperSpawnProb;
 trooperSpawnProb = 7; // 70% chance of spawning
+const keys = []
+const scale = 2;
 // flags
 let bulletFlag;
 
@@ -12,12 +14,12 @@ class Entity {
     constructor(src, x, y, w, h) {
         this.image = new Image();
         this.image.src = src;
-        this.x = x;
-        this.y = y;
+        this.x = x * scale;
+        this.y = y * scale;
         this.xSpeed = 0;
         this.ySpeed = 0;
-        this.width = w;
-        this.height = h;
+        this.width = w * scale;
+        this.height = h * scale;
     }
 
     display() {
@@ -43,16 +45,16 @@ class Helicopter extends Entity {
         helisSet.add(this);
         entitiesSet.add(this);
         if (Math.round(Math.random())) {
-            this.x = 475;
-            this.xSpeed = -2.5;
+            this.x = 475 * scale;
+            this.xSpeed = -2.5 * scale;
             this.direction = 'l';
         } else {
-            this.x = -75;
-            this.xSpeed = 2.5;
+            this.x = -75 * scale;
+            this.xSpeed = 2.5 * scale;
             this.direction = 'r';
         }
 
-        Math.round(Math.random()) ? this.y = 50 : this.y = 5;
+        Math.round(Math.random()) ? this.y = 50 * scale : this.y = 5 * scale;
 
         let time = randomInt(450, 3000);
         this.trooperSpawnTimer = setTimeout(() => this.spawnTrooper(), time);
@@ -64,13 +66,13 @@ class Helicopter extends Entity {
 
     hit() {
         clearTimeout(this.trooperSpawnTimer);
-        spawnDebris(this.x, this.y);
+        spawnDebris(this.x / scale, this.y / scale);
 
         if (this.alive) {
             this.alive = false;
             let changeSprite;
             setTimeout(changeSprite = () => {
-                this.ySpeed += 0.04;
+                this.ySpeed += 0.04 * scale;
                 this.sprite = this.sprite + 1;
                 if (this.sprite > 6) this.sprite = 4;
 
@@ -100,12 +102,12 @@ class Helicopter extends Entity {
     spawnTrooper() {
         // stop trooper spawning on canvas edge
         if (this.x < 0 ||
-            this.x > 370 ||
+            this.x > 370 * scale ||
             this.failedSpawnProb > trooperSpawnProb) {
             return;
         }
 
-        new Trooper(this.x, this.y);
+        new Trooper(this.x / scale, this.y / scale);
 
         // set next spawn timer
         let time = randomInt(450, 1950);
@@ -121,7 +123,7 @@ class Trooper extends Entity {
         super('./resources/para.png', x, y, 30, 40);
         troopersSet.add(this);
         entitiesSet.add(this);
-        this.ySpeed = 3;
+        this.ySpeed = 3 * scale;
         this.alpha = 1;
         this.opaque = true;
         this.alive = true;
@@ -137,21 +139,21 @@ class Trooper extends Entity {
         this.y += this.ySpeed;
 
         // Stacking
-        if (this.y > 250 &&
-            !this.landed &&
-            troopersSet.size > 1) {
-            for (let trooper of troopersSet) {
-                if (trooper.landed &&
-                    Math.abs(this.x - trooper.x) < 10 &&
-                    Math.abs(this.y - trooper.y) < 40) {
-                    this.land();
-                }
-            }
-        }
+        // if (this.y > 250 * scale &&
+        //     !this.landed &&
+        //     troopersSet.size > 1) {
+        //     for (let trooper of troopersSet) {
+        //         if (trooper.landed &&
+        //             Math.abs(this.x - trooper.x) < 10 &&
+        //             Math.abs(this.y - trooper.y) < 40) {
+        //             this.land();
+        //         }
+        //     }
+        // }
 
         // Landing
         if (this.alive &&
-            this.y > 360 &&
+            this.y > 360 * scale &&
             this.ySpeed !== 0) {
             this.land();
             // if it lands unharmed, count how many others there are, if 5 end game
@@ -167,33 +169,33 @@ class Trooper extends Entity {
         }
 
         // Landing wounded
-        if (this.y > 380) this.ySpeed = 0;
+        if (this.y > 380 * scale) this.ySpeed = 0;
     }
 
     land() {
-        this.x += 10;
-        this.y += 20;
+        this.x += 10 * scale;
+        this.y += 20 * scale;
         this.ySpeed = 0;
         this.sourceX = 320;
         this.sourceY = 102;
         this.sourceW = 40;
         this.sourceH = 100;
-        this.width = 10;
-        this.height = 22;
+        this.width = 10 * scale;
+        this.height = 22 * scale;
 
         this.landed = true;
     }
 
     hit() {
-        this.x += 10;
-        this.y += 20;
-        this.ySpeed += 1;
+        this.x += 10 * scale;
+        this.y += 20 * scale;
+        this.ySpeed += 1 * scale;
         this.sourceX = 364;
         this.sourceY = 102;
         this.sourceW = 40;
         this.sourceH = 100;
-        this.width = 10;
-        this.height = 22;
+        this.width = 10 * scale;
+        this.height = 22 * scale;
 
         this.alive = false;
     }
@@ -225,8 +227,8 @@ class Bullet extends Entity {
         super('./resources/bullet.png', x, y, 10, 10);
         bulletsSet.add(this);
         entitiesSet.add(this);
-        this.xSpeed = xVec * 12;
-        this.ySpeed = yVec * 12;
+        this.xSpeed = xVec * 12 * scale;
+        this.ySpeed = yVec * 12 * scale;
         this.rotation = rotation;
     }
 
@@ -267,22 +269,22 @@ class Debris extends Entity {
         super('./resources/debris.png', x, y, 0, 0);
         entitiesSet.add(this);
         debrisSet.add(this);
-        this.xSpeed = randomReal(-2, 2);
-        this.ySpeed = randomReal(-1, 2);
+        this.xSpeed = randomReal(-2, 2) * scale;
+        this.ySpeed = randomReal(-1, 2) * scale;
 
         this.sourceX = randomInt(10, 95);
         this.sourceY = randomInt(0, 42);
         this.sourceW = randomInt(21, 42);
         this.sourceH = randomInt(45, 95);
 
-        this.width = this.sourceW / 2;
-        this.height = this.sourceH / 2;
+        this.width = this.sourceW / 2 * scale;
+        this.height = this.sourceH / 2 * scale;
 
         setTimeout(() => this.deleteSelf(), 1000);
 
         let gravity;
         setTimeout(gravity = () => {
-            this.ySpeed += 0.04;
+            this.ySpeed += 0.04 * scale;
             setTimeout(gravity, 100);
         }, 0);
     }
@@ -301,8 +303,8 @@ class Debris extends Entity {
 
 class Button {
     constructor(text, x, y) {
-        this.width = 300;
-        this.height = 60;
+        this.width = 300 * scale;
+        this.height = 60 * scale;
 
         this.x = x;
         this.minX = x - this.width / 2;
@@ -323,7 +325,7 @@ class Button {
     };
 
     display() {
-        ctx.font = '2.25rem Iosevka';
+        ctx.font = 2.25 * scale + 'rem Iosevka ';
         ctx.fillStyle = 'Black';
         ctx.textAlign = 'center';
         ctx.fillText(this.text, this.x, this.y);
@@ -332,7 +334,7 @@ class Button {
         // const path = new Path2D();
         // path.rect(this.minX, this.minY, this.width, this.height);
         // path.closePath();
-        // ctx.lineWidth = 2;
+        // ctx.lineWidth = 2 * scale;
         // ctx.strokeStyle = "#000000";
         // ctx.stroke(path);
     };
@@ -355,7 +357,7 @@ function checkCollisions() {
     for (let b of new Set([...bulletsSet, ...debrisSet])) {
         for (let t of new Set([...troopersSet, ...helisSet])) {
             if (t.alive &&
-                b.x > 0 && b.x < 400 &&
+                b.x > 0 && b.x < 400 * scale &&
                 b.x < t.x + t.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
                 b.x + b.width > t.x &&
                 b.y < t.y + t.height &&
@@ -376,7 +378,7 @@ function drawGame() {
 
 function deleteEntities() {
     for (let e of entitiesSet) {
-        if (e.y < (0 - e.height) || e.x < (0 - e.width) || e.x > (400 + e.width)) {
+        if (e.y < (0 - e.height) || e.x < (0 - e.width) || e.x > (400 * scale + e.width)) {
             e.deleteSelf(this);
         }
     }
@@ -400,7 +402,8 @@ function updateScore(x) {
 }
 
 function countdown() {
-    ctx.font = '3rem Iosevka';
+    gameLoop = 1; // stopping menu buttons from being pressed
+    ctx.font = 3 * scale + 'rem Iosevka';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
     let num = 3;
@@ -424,7 +427,7 @@ function countdown() {
 function displayMenu() {
     clearCanvas();
 
-    ctx.font = '2.5rem Iosevka';
+    ctx.font = 2.5 * scale + 'rem Iosevka ';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
     ctx.fillStyle = 'White';
@@ -449,9 +452,9 @@ Every bullet you fire takes one point away
 Falling parachuters can hit other parachutes
 The game ends when either your turret is hit by a parachuter or 5 land on the ground unharmed`
 
-    let formattedInstructions = getLinesForParagraphs(ctx, instructions, 700);
+    let formattedInstructions = getLinesForParagraphs(ctx, instructions, 700 * scale);
 
-    ctx.font = '1rem Iosevka';
+    ctx.font = 1 * scale + 'rem Iosevka ';
     ctx.textAlign = 'left';
     ctx.fillStyle = 'Black';
 
@@ -459,7 +462,7 @@ The game ends when either your turret is hit by a parachuter or 5 land on the gr
     formattedInstructions.forEach(instruction => {
         instruction.forEach(line => {
             ctx.fillText(line, canv.width / 8, y);
-            y += 25;
+            y += 25 * scale;
         })
         y += canv.height / 20;
     })
@@ -508,7 +511,7 @@ function startGame() {
     helisSet = new Set();
     troopersSet = new Set();
     debrisSet = new Set();
-    keys = [];
+    keys.length = 0;
 
     new Turret();
     // turret base
@@ -533,8 +536,8 @@ window.onload = function () {
             fireBullet();
         } else {
             let rect = canv.getBoundingClientRect();
-            let clickX = event.clientX - rect.left - 10;
-            let clickY = event.clientY - rect.top - 10;
+            let clickX = (event.clientX - rect.left - 10) * scale;
+            let clickY = (event.clientY - rect.top - 10) * scale;
 
             for (const but of buttons) {
                 but.isPressed(clickX, clickY);
@@ -548,6 +551,9 @@ window.onload = function () {
     canv.addEventListener('mouseleave', () => {
         mouseOverCanvas = false;
     });
+
+    canv.width = 400 * scale;
+    canv.height = 400 * scale;
 
     window.addEventListener('scroll', noScroll); // prevents window scrolling, think this is the only way cause it's buggy on canvas
     ctx = canv.getContext('2d');
