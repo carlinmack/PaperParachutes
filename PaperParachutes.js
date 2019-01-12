@@ -313,7 +313,6 @@ class Button {
         this.maxY = this.minY + this.height;
 
         this.text = text;
-        log(this);
     }
 
     isPressed(X, Y) {
@@ -326,6 +325,7 @@ class Button {
     display() {
         ctx.font = '2.25rem Iosevka';
         ctx.fillStyle = 'Black';
+        ctx.textAlign = 'center';
         ctx.fillText(this.text, this.x, this.y);
 
         // Draw Border
@@ -422,6 +422,8 @@ function countdown() {
 }
 
 function displayMenu() {
+    clearCanvas();
+
     ctx.font = '2.5rem Iosevka';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
@@ -432,12 +434,42 @@ function displayMenu() {
     play.action = startGame;
 
     const instructions = new Button('Instructions', canv.width / 2, 3 * canv.height / 4);
-    instructions.action = () => log('instructions');
+    instructions.action = displayInstructions;
 
     buttons = [play, instructions];
 
     play.display();
     instructions.display();
+}
+
+function displayInstructions() {
+    clearCanvas();
+    let instructions = `Everything you hit awards you two points
+Every bullet you fire takes one point away
+Falling parachuters can hit other parachutes
+The game ends when either your turret is hit by a parachuter or 5 land on the ground unharmed`
+
+    let formattedInstructions = getLinesForParagraphs(ctx, instructions, 700);
+
+    ctx.font = '1rem Iosevka';
+    ctx.textAlign = 'left';
+    ctx.fillStyle = 'Black';
+
+    let y = canv.height / 8;
+    formattedInstructions.forEach(instruction => {
+        instruction.forEach(line => {
+            ctx.fillText(line, canv.width / 8, y);
+            y += 25;
+        })
+        y += canv.height / 20;
+    })
+
+    const back = new Button('Back', canv.width / 2, 9 * canv.height / 10);
+    back.action = displayMenu;
+
+    buttons = [back];
+
+    back.display();
 }
 
 function startLoops() {
@@ -630,6 +662,31 @@ function randomInt(min, max) {
 
 function randomReal(min, max) {
     return Math.random() * (max - min) + min;
+}
+
+// https://stackoverflow.com/questions/2936112/text-wrap-in-a-canvas-element#comment79378090_16599668
+function getLinesForParagraphs(ctx, text, maxWidth) {
+    return text.split("\n").map(para => getLines(ctx, para, maxWidth));
+}
+
+// https://stackoverflow.com/a/16599668
+function getLines(ctx, text, maxWidth) {
+    var words = text.split(" ");
+    var lines = [];
+    var currentLine = words[0];
+
+    for (var i = 1; i < words.length; i++) {
+        var word = words[i];
+        var width = ctx.measureText(currentLine + " " + word).width;
+        if (width < maxWidth) {
+            currentLine += " " + word;
+        } else {
+            lines.push(currentLine);
+            currentLine = word;
+        }
+    }
+    lines.push(currentLine);
+    return lines;
 }
 
 // Credit: https://stackoverflow.com/a/11985464
