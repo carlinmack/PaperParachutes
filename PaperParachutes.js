@@ -317,11 +317,8 @@ class Button {
     }
 
     isPressed(X, Y) {
-        log(X, Y);
-
         if (X >= this.minX && X <= this.maxX &&
             Y >= this.minY && Y <= this.maxY) {
-            log(this)
             this.action();
         }
     };
@@ -432,7 +429,7 @@ function displayMenu() {
     ctx.fillText('Paper Parachutes', canv.width / 2, canv.height / 4);
 
     const play = new Button('Play', canv.width / 2, canv.height / 2);
-    play.action = countdown;
+    play.action = startGame;
 
     const instructions = new Button('Instructions', canv.width / 2, 3 * canv.height / 4);
     instructions.action = () => log('instructions');
@@ -473,8 +470,30 @@ function spawnDebris(x, y) {
     }
 }
 
+function startGame() {
+    entitiesSet = new Set();
+    bulletsSet = new Set();
+    helisSet = new Set();
+    troopersSet = new Set();
+    debrisSet = new Set();
+    keys = [];
+
+    new Turret();
+    // turret base
+    entitiesSet.add(new Entity('./resources/base.png', 150, 375, 80, 25));
+    bulletFlag = true; // todo: find a place or way to set this privately
+    score = 0;
+
+    currentScore.innerHTML = 0;
+    highScore.innerHTML = localStorage.getItem('highscore') || 0;
+
+    document.getElementById('restart').classList.add('hidden');
+
+    countdown();
+}
+
 // initialise game
-window.onload = startGame = function () {
+window.onload = function () {
     canv = document.getElementById('gc');
 
     canv.addEventListener('click', function (event) { // fire bullet when canvas is clicked
@@ -499,31 +518,16 @@ window.onload = startGame = function () {
     });
 
     window.addEventListener('scroll', noScroll); // prevents window scrolling, think this is the only way cause it's buggy on canvas
-
     ctx = canv.getContext('2d');
+
     highScore = document.getElementById('highscore');
     currentScore = document.getElementById('score');
     currentScore.innerHTML = 0;
     highScore.innerHTML = localStorage.getItem('highscore') || 0;
 
-    entitiesSet = new Set();
-    bulletsSet = new Set();
-    helisSet = new Set();
-    troopersSet = new Set();
-    debrisSet = new Set();
-    keys = [];
-
-    new Turret();
-    // turret base
-    entitiesSet.add(new Entity('./resources/base.png', 150, 375, 80, 25));
-    bulletFlag = true; // todo: find a place or way to set this privately
-    score = 0;
-
-    document.getElementById('restart').classList.add('hidden');
     document.getElementById('restart').addEventListener('click', () => keys[82] = true);
 
     displayMenu();
-    // countdown();
 };
 
 // end game
