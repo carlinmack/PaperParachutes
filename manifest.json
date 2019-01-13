@@ -2,10 +2,16 @@
     "short_name": "Parachutes",
     "name": "Parachutes",
     "icons": [{
-        "src": "/resources/icons/android-chrome-144x144.png",
-        "sizes": "144x144",
-        "type": "image/png"
-    }],
+            "src": "./resources/icons/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "./resources/icons/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
     "background_color": "#d6dbeb",
     "theme_color": "#d3d3d3",
     "display": "standalone"

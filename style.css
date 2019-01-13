@@ -69,6 +69,7 @@ footer {
 
 @font-face {
     font-family: 'Iosevka';
+    font-display: swap;
     src: url('resources/fonts/iosevka-ss11-regular-webfont.woff2') format('woff2'),
         url('resources/fonts/iosevka-ss11-regular-webfont.woff') format('woff');
     font-weight: normal;
