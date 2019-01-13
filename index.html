@@ -3,6 +3,7 @@
 
 <head>
     <link rel='stylesheet' type='text/css' href='style.css'>
+    <link rel="manifest" href="manifest.json">
     <meta charset='utf-8' />
 </head>
 
@@ -25,6 +26,15 @@
         MacKenzie & Michael Rimmer 2018 </footer>
 
     <script type='text/javascript' src='PaperParachutes.js'></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker
+                .register('/service-worker.js')
+                .then(function () {
+                    console.log("Service Worker Registered");
+                });
+        }
+    </script>
 </body>
 
 </html>
