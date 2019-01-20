@@ -562,6 +562,12 @@ window.onload = function () {
             }
         }
     });
+    canv.addEventListener('touchstart', function (event) { // fire bullet when canvas is clicked
+        if (gameLoop) keys[32] = true;
+    });
+    canv.addEventListener('touchend', function (event) { // fire bullet when canvas is clicked
+        if (gameLoop) keys[32] = false;
+    });
     canv.addEventListener('wheel', rotateTurret);
     canv.addEventListener('mouseover', () => {
         mouseOverCanvas = true;
@@ -569,10 +575,6 @@ window.onload = function () {
     canv.addEventListener('mouseleave', () => {
         mouseOverCanvas = false;
     });
-
-    // if (window.innerWidth < 600) {
-    //     scale = 3 / 4;
-    // }
 
     canv.width = 400 * scale;
     canv.height = 400 * scale;
