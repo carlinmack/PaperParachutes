@@ -1,6 +1,6 @@
 body {
     background-color: #d6dbeb;
-    min-width: 440px;
+    min-width: 300px;
     font-size: 200%;
     font-weight: bold;
     font-family: 'Iosevka', sans-serif;
@@ -13,7 +13,6 @@ main {
     margin: 5% auto;
     grid-row: 1;
     text-align: center;
-    width: 410px;
 }
 
 canvas {
@@ -68,25 +67,42 @@ footer {
 }
 
 button {
-    grid-column: 2;
-    grid-row: 1;
-    font-size: 2em;
-    display: inline-block;
-    border: none;
-    border-radius: 15px;
-    padding: 0.8rem 2rem;
-    margin: 7px 0;
-    text-decoration: none;
-    background: #c2d0ff;
-    color: #ffffff;
-    cursor: pointer;
-    text-align: center;
-    -webkit-appearance: none;
-    -moz-appearance: none;
+    display: none;
 }
 
-button:hover {
-    background: #8fa9ff;
+@media only screen and (max-width: 600px) {
+    button {
+        grid-column: 2;
+        grid-row: 1;
+        font-size: 2em;
+        display: inline-block;
+        border: none;
+        border-radius: 15px;
+        padding: 0.8rem 2rem;
+        margin: 7px 0;
+        text-decoration: none;
+        background: #c2d0ff;
+        color: #ffffff;
+        cursor: pointer;
+        text-align: center;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+    button:hover {
+        background: #8fa9ff;
+    }
+
+    canvas {
+        width: 300px;
+        height: 300px;
+    }
+
+    table {
+        width: 90vw;
+        max-width: 300px;
+        margin: auto;
+    }
 }
 
 

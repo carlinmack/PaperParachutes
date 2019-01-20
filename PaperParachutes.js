@@ -3,7 +3,7 @@
 let entitiesSet, bulletsSet, helisSet, troopersSet, debrisSet, buttons, keyLoop, gameLoop, score, mouseOverCanvas, trooperSpawnProb;
 trooperSpawnProb = 7; // 70% chance of spawning
 const keys = [];
-const scale = 2;
+let scale = 2;
 // flags
 let bulletFlag;
 
@@ -188,7 +188,7 @@ class Trooper extends Entity {
 
     hit(bulletY) {
         if (bulletY < this.y + 17) {
-            log('parachute hit');
+            // log('parachute hit');
             this.x += 10 * scale;
             this.y += 20 * scale;
             this.ySpeed += 1 * scale;
@@ -517,6 +517,7 @@ function startGame() {
     helisSet = new Set();
     troopersSet = new Set();
     debrisSet = new Set();
+    buttons.length = 0;
     keys.length = 0;
 
     new Turret();
@@ -541,10 +542,21 @@ window.onload = function () {
         if (gameLoop) {
             fireBullet();
         } else {
+            let clickX;
+            let clickY;
             let rect = canv.getBoundingClientRect();
-            let clickX = (event.clientX - rect.left - 10) * scale;
-            let clickY = (event.clientY - rect.top - 10) * scale;
 
+            if (window.innerWidth > 600) {
+                clickX = (event.clientX - rect.left - 10) * scale;
+                clickY = (event.clientY - rect.top - 10) * scale;
+            } else {
+                clickX = (event.clientX - rect.left - 10) * 4 / 3 * scale;
+                clickY = (event.clientY - rect.top - 10) * 4 / 3 * scale;
+            }
+            // ctx.fillStyle = 'black';
+            // ctx.beginPath();
+            // ctx.arc(clickX, clickY, 5, 0, 2 * Math.PI);
+            // ctx.fill();
             for (const but of buttons) {
                 but.isPressed(clickX, clickY);
             }
@@ -557,6 +569,10 @@ window.onload = function () {
     canv.addEventListener('mouseleave', () => {
         mouseOverCanvas = false;
     });
+
+    // if (window.innerWidth < 600) {
+    //     scale = 3 / 4;
+    // }
 
     canv.width = 400 * scale;
     canv.height = 400 * scale;
@@ -572,16 +588,16 @@ window.onload = function () {
     document.getElementById('restart').addEventListener('click', () => {
         keys[82] = true;
     });
-    document.getElementById('right').addEventListener('mousedown', () => {
+    document.getElementById('right').addEventListener('touchstart', () => {
         if (gameLoop) keys[39] = true;
     });
-    document.getElementById('right').addEventListener('mouseup', () => {
+    document.getElementById('right').addEventListener('touchend', () => {
         if (gameLoop) keys[39] = false;
     });
-    document.getElementById('left').addEventListener('mousedown', () => {
+    document.getElementById('left').addEventListener('touchstart', () => {
         if (gameLoop) keys[37] = true;
     });
-    document.getElementById('left').addEventListener('mouseup', () => {
+    document.getElementById('left').addEventListener('touchend', () => {
         if (gameLoop) keys[37] = false;
     });
 
