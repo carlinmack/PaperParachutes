@@ -186,9 +186,9 @@ class Trooper extends Entity {
         this.landed = true;
     }
 
-    hit(bulletY) {
-        if (bulletY < this.y + 17) {
-            // log('parachute hit');
+    hit(para) {
+        if (para) {
+            log('parachute hit');
             this.x += 10 * scale;
             this.y += 20 * scale;
             this.ySpeed += 1 * scale;
@@ -357,19 +357,42 @@ function moveEntities() {
     }
 }
 
+function trooperCollision(b, t) {
+
+    if (t.alive && b.x > 0 && b.x < 400 * scale &&
+        b.x + b.width > t.x + 2 && b.x < t.x + 27 && b.y < t.y + 19 && b.y > t.y + 2) {
+        t.hit(true);
+        b.deleteSelf();
+        updateScore(2);
+    } else {
+        if (t.alive &&
+            b.x > 0 && b.x < 400 * scale &&
+            b.x + b.width > t.x + 11 && b.x < t.x + 18 && b.y < t.y + 25 && b.y > t.y + 18) {
+            t.hit(false);
+            b.deleteSelf();
+            updateScore(2);
+        }
+    }
+}
+
 function checkCollisions() {
     for (let b of new Set([...bulletsSet, ...debrisSet])) {
         for (let t of new Set([...troopersSet, ...helisSet])) {
-            if (t.alive &&
-                b.x > 0 && b.x < 400 * scale &&
-                b.x < t.x + t.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
-                b.x + b.width > t.x &&
-                b.y < t.y + t.height &&
-                b.height + b.y > t.y) {
-                t.hit(b.y);
-                b.deleteSelf();
-                updateScore(2);
+            if (t instanceof Trooper) {
+                trooperCollision(b, t);
+            } else { //heli collision detection
+                if (t.alive &&
+                    b.x > 0 && b.x < 400 * scale &&
+                    b.x < t.x + t.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
+                    b.x + b.width > t.x &&
+                    b.y < t.y + t.height &&
+                    b.height + b.y > t.y) {
+                    t.hit();
+                    b.deleteSelf();
+                    updateScore(2);
+                }
             }
+
         }
     }
 }
