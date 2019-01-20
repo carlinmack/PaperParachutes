@@ -358,16 +358,17 @@ function moveEntities() {
 }
 
 function trooperCollision(b, t) {
+    log("trooper");
 
     if (t.alive && b.x > 0 && b.x < 400 * scale &&
-        b.x + b.width > t.x + 2 && b.x < t.x + 27 && b.y < t.y + 19 && b.y > t.y + 2) {
+        b.x + b.width * scale > t.x + 2 * scale && b.x < t.x + 27 * scale && b.y < t.y + 19 * scale && b.y > t.y + 2 * scale) {
         t.hit(true);
         b.deleteSelf();
         updateScore(2);
     } else {
         if (t.alive &&
             b.x > 0 && b.x < 400 * scale &&
-            b.x + b.width > t.x + 11 && b.x < t.x + 18 && b.y < t.y + 25 && b.y > t.y + 18) {
+            b.x + b.width * scale > t.x + 11 * scale && b.x < t.x + 18 * scale && b.y < t.y + 25 * scale && b.y > t.y + 18 * scale) {
             t.hit(false);
             b.deleteSelf();
             updateScore(2);
@@ -535,12 +536,13 @@ function spawnDebris(x, y) {
 }
 
 function startGame() {
+    document.getElementById('menu').classList.add('hidden');
+    document.getElementById('gc').classList.remove('hidden');
     entitiesSet = new Set();
     bulletsSet = new Set();
     helisSet = new Set();
     troopersSet = new Set();
     debrisSet = new Set();
-    buttons.length = 0;
     keys.length = 0;
 
     new Turret();
@@ -626,7 +628,9 @@ window.onload = function () {
         if (gameLoop) keys[37] = false;
     });
 
-    displayMenu();
+
+
+    // displayMenu();
 };
 
 // end game
@@ -774,4 +778,14 @@ function drawImageRot(img, x, y, width, height, deg) {
 
     // reset the canvas
     ctx.restore();
+}
+
+function clicked(Button) {
+    let x = document.querySelectorAll('.screen');
+    // hides them
+    for (let i = 0; i < x.length; i++) {
+        x[i].classList.add('hidden');
+    }
+    // except the chosen screen
+    document.getElementById(Button).classList.remove('hidden');
 }

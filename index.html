@@ -34,7 +34,20 @@
                 </td>
             </tr>
         </table>
-        <canvas id='gc'></canvas>
+        <div id="menu" class="screen">
+            <h1>Paper Parachutes</h1>
+            <button id="play" onclick="startGame()">Play!</button>
+            <button id="instructions" onclick="clicked('instructionsScreen')">Instructions</button>
+        </div>
+        <div id="instructionsScreen" class="hidden screen">
+            <p>Everything you hit awards you two points</p>
+            <p>Every bullet you fire takes one point away</p>
+            <p>Falling debris can hit other parachutes</p>
+            <p>The game ends when either your turret is hit by a parachuter or 5 land on the ground unharmed</p>
+            <button id="back" onclick="clicked('menu')">Back</button>
+        </div>
+
+        <canvas class="screen hidden" id='gc'></canvas>
         <br>
         <button id='left'><svg width='51' height='64' viewBox='0 0 13 13' class='arrow'>
                 <title>Arrow Left</title>
