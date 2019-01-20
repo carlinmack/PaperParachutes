@@ -67,6 +67,29 @@ footer {
     font-weight: normal;
 }
 
+button {
+    grid-column: 2;
+    grid-row: 1;
+    font-size: 2em;
+    display: inline-block;
+    border: none;
+    border-radius: 15px;
+    padding: 0.8rem 2rem;
+    margin: 7px 0;
+    text-decoration: none;
+    background: #c2d0ff;
+    color: #ffffff;
+    cursor: pointer;
+    text-align: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+button:hover {
+    background: #8fa9ff;
+}
+
+
 @font-face {
     font-family: 'Iosevka';
     font-display: swap;
