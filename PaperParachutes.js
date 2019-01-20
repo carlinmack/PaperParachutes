@@ -3,7 +3,7 @@
 let entitiesSet, bulletsSet, helisSet, troopersSet, debrisSet, buttons, keyLoop, gameLoop, score, mouseOverCanvas, trooperSpawnProb;
 trooperSpawnProb = 7; // 70% chance of spawning
 const keys = []
-const scale = 2;
+const scale = 1;
 // flags
 let bulletFlag;
 
@@ -186,18 +186,22 @@ class Trooper extends Entity {
         this.landed = true;
     }
 
-    hit() {
-        this.x += 10 * scale;
-        this.y += 20 * scale;
-        this.ySpeed += 1 * scale;
-        this.sourceX = 364;
-        this.sourceY = 102;
-        this.sourceW = 40;
-        this.sourceH = 100;
-        this.width = 10 * scale;
-        this.height = 22 * scale;
-
-        this.alive = false;
+    hit(bulletY) {
+        if (bulletY < this.y + 17) {
+            log('parachute hit');
+            this.x += 10 * scale;
+            this.y += 20 * scale;
+            this.ySpeed += 1 * scale;
+            this.sourceX = 364;
+            this.sourceY = 102;
+            this.sourceW = 40;
+            this.sourceH = 100;
+            this.width = 10 * scale;
+            this.height = 22 * scale;
+            this.alive = false;
+        } else {
+            this.deleteSelf();
+        }
     }
 
     display() {
@@ -362,7 +366,7 @@ function checkCollisions() {
                 b.x + b.width > t.x &&
                 b.y < t.y + t.height &&
                 b.height + b.y > t.y) {
-                t.hit();
+                t.hit(b.y);
                 b.deleteSelf();
                 updateScore(2);
             }
