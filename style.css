@@ -109,8 +109,6 @@ button:focus {
 
 #left,
 #right {
-    grid-column: 2;
-    grid-row: 1;
     font-size: 2em;
     display: none;
     border: none;
@@ -119,11 +117,10 @@ button:focus {
     margin: 7px 0;
     text-decoration: none;
     background: #c2d0ff;
-    color: #ffffff;
     cursor: pointer;
-    text-align: center;
     -webkit-appearance: none;
     -moz-appearance: none;
+    width: 48%;
 }
 
 #left:hover,
@@ -153,6 +150,11 @@ button:focus {
         max-width: 300px;
         margin: auto;
     }
+    
+
+h1 {
+	margin: 8% 0 2% 0;
+}
 }
 
 
