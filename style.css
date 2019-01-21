@@ -43,10 +43,15 @@ p {
     margin: 6% auto auto auto;
 }
 
+#instructionsScreen p:first-child {
+    margin-top: 2em;
+}
+
 #instructionsScreen>p {
     font-family: 'Iosevka', sans-serif;
-    font-size: 0.65em;
-    margin: 1em auto 0em auto;
+    font-size: 0.6em;
+    font-weight: 400;
+    margin: 0.7em auto;
     text-align: left;
     width: 80%;
 }

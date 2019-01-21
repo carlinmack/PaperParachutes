@@ -57,7 +57,7 @@ class Helicopter extends Entity {
         Math.round(Math.random()) ? this.y = 50 * scale : this.y = 5 * scale;
 
         let time = randomInt(450, 3000);
-        this.trooperSpawnTimer = setTimeout(() => this.spawnTrooper(), time);
+        this.trooperSpawnTimer = new Timer(() => this.spawnTrooper(), time);
         this.failedSpawnProb = randomInt(1, 10);
 
         this.sprite = 0;
@@ -71,12 +71,12 @@ class Helicopter extends Entity {
         if (this.alive) {
             this.alive = false;
             let changeSprite;
-            setTimeout(changeSprite = () => {
+            new Timer(changeSprite = () => {
                 this.ySpeed += 0.04 * scale;
                 this.sprite = this.sprite + 1;
                 if (this.sprite > 6) this.sprite = 4;
 
-                setTimeout(changeSprite, 150);
+                new Timer(changeSprite, 150);
             }, 0);
         }
     }
@@ -111,7 +111,7 @@ class Helicopter extends Entity {
 
         // set next spawn timer
         let time = randomInt(450, 1950);
-        this.trooperSpawnTimer = setTimeout(() => this.spawnTrooper(), time);
+        this.trooperSpawnTimer = new Timer(() => this.spawnTrooper(), time);
 
         this.failedSpawnProb++; // increase chance of failed spawn
         // (this means is less likely for heli to spawn 2 troopers)
@@ -188,7 +188,7 @@ class Trooper extends Entity {
 
     hit(para) {
         if (para) {
-            log('parachute hit');
+            // log('parachute hit');
             this.x += 10 * scale;
             this.y += 20 * scale;
             this.ySpeed += 1 * scale;
@@ -284,12 +284,12 @@ class Debris extends Entity {
         this.width = this.sourceW / 2 * scale;
         this.height = this.sourceH / 2 * scale;
 
-        setTimeout(() => this.deleteSelf(), 1000);
+        new Timer(() => this.deleteSelf(), 1000);
 
         let gravity;
-        setTimeout(gravity = () => {
+        new Timer(gravity = () => {
             this.ySpeed += 0.04 * scale;
-            setTimeout(gravity, 100);
+            new Timer(gravity, 100);
         }, 0);
     }
 
@@ -335,15 +335,32 @@ class Button {
         ctx.fillText(this.text, this.x, this.y);
 
         // Draw Border
-        // const path = new Path2D();
-        // path.rect(this.minX, this.minY, this.width, this.height);
-        // path.closePath();
-        // ctx.lineWidth = 2 * scale;
-        // ctx.strokeStyle = '#000000';
-        // ctx.stroke(path);
+        const path = new Path2D();
+        path.rect(this.minX, this.minY, this.width, this.height);
+        path.closePath();
+        ctx.lineWidth = 2 * scale;
+        ctx.strokeStyle = '#000000';
+        ctx.stroke(path);
     };
 
     action() {}
+}
+
+function Timer(callback, delay) {
+    var timerId, start, remaining = delay;
+
+    this.pause = function () {
+        window.clearTimeout(timerId);
+        remaining -= new Date() - start;
+    };
+
+    this.resume = function () {
+        start = new Date();
+        window.clearTimeout(timerId);
+        timerId = window.setTimeout(callback, remaining);
+    };
+
+    this.resume();
 }
 
 function clearCanvas() {
@@ -358,7 +375,7 @@ function moveEntities() {
 }
 
 function trooperCollision(b, t) {
-    log("trooper");
+    // log("trooper");
 
     if (t.alive && b.x > 0 && b.x < 400 * scale &&
         b.x + b.width * scale > t.x + 2 * scale && b.x < t.x + 27 * scale && b.y < t.y + 19 * scale && b.y > t.y + 2 * scale) {
@@ -420,7 +437,7 @@ function spawnHeli() {
         // can play around with time out values and use constiables to make them spawn
         // faster as game progresses
         const time = randomInt(1000, 5500);
-        setTimeout(spawnHeli, time);
+        new Timer(spawnHeli, time);
     }
 }
 
@@ -435,17 +452,17 @@ function countdown() {
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
     let num = 3;
-    setTimeout(function running() {
+    new Timer(function running() {
         clearCanvas();
 
         ctx.fillStyle = 'Black';
-        setTimeout(() => {
+        new Timer(() => {
             ctx.fillText(num, canv.width / 2, canv.height / 2);
             num--;
         }, 200);
 
         if (num > 0) {
-            setTimeout(running, 1000);
+            new Timer(running, 1000);
         } else {
             startLoops();
         }
@@ -709,7 +726,7 @@ function fireBullet() {
         updateScore(-1);
     }
     bulletFlag = false; // set delay so that a stream of bullets isn't fired
-    setTimeout(function () {
+    new Timer(function () {
         bulletFlag = true;
     }, 150);
 }
