@@ -555,6 +555,10 @@ function spawnDebris(x, y) {
 function startGame() {
     document.getElementById('menu').classList.add('hidden');
     document.getElementById('gc').classList.remove('hidden');
+    if (window.innerWidth < 600) {
+        document.getElementById('left').classList.remove('hidden');
+        document.getElementById('right').classList.remove('hidden');
+    }
     entitiesSet = new Set();
     bulletsSet = new Set();
     helisSet = new Set();

@@ -40,7 +40,7 @@ p {
 
 #back {
     padding: 0;
-    margin: 6% auto auto auto;
+    margin: 6% auto;
 }
 
 #instructionsScreen p:first-child {
@@ -65,13 +65,14 @@ p {
 }
 
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 #restart {
     text-align: center;
     font-variant: small-caps;
     line-height: 20px;
+    display: block;
 }
 
 footer {
@@ -110,7 +111,6 @@ button:focus {
 #left,
 #right {
     font-size: 2em;
-    display: none;
     border: none;
     border-radius: 15px;
     padding: 0.8rem 2rem;
@@ -139,6 +139,7 @@ button:focus {
     .screen {
         width: 300px;
         height: 300px;
+        overflow: hidden;
     }
 
     main {
@@ -150,11 +151,11 @@ button:focus {
         max-width: 300px;
         margin: auto;
     }
-    
 
-h1 {
-	margin: 8% 0 2% 0;
-}
+
+    h1 {
+        margin: 8% 0 2% 0;
+    }
 }
 
 
