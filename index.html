@@ -19,7 +19,7 @@
     <meta name='msapplication-TileColor' content='#d3d3d3'>
     <meta name='msapplication-config' content='./resources/icons/browserconfig.xml'>
     <meta name='theme-color' content='#d3d3d3'>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <meta name='viewport' content='width=device-width, initial-scale=1, user-scalable=no'>
 </head>
 
 <body>
@@ -62,8 +62,8 @@
     <footer>This game was written in pure Javascript<br>© Carlin
         MacKenzie & Michael Rimmer 2018 </footer>
 
-    <script type='text/javascript' src='PaperParachutes.js'></script>
-    <!-- <script>
+    <script src='PaperParachutes.js'></script>
+    <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker
                 .register('./service-worker.js')
@@ -71,7 +71,7 @@
                     console.log('Service Worker Registered');
                 });
         }
-    </script> -->
+    </script>
 </body>
 
 </html>

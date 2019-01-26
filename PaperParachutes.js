@@ -636,20 +636,23 @@ window.onload = function () {
     document.getElementById('restart').addEventListener('click', () => {
         keys[82] = true;
     });
+
     document.getElementById('right').addEventListener('touchstart', () => {
+        document.getElementById('right').style.background = '#8fa9ff';
         if (gameLoop) keys[39] = true;
     });
     document.getElementById('right').addEventListener('touchend', () => {
+        document.getElementById('right').style.background = '#c2d0ff';
         if (gameLoop) keys[39] = false;
     });
     document.getElementById('left').addEventListener('touchstart', () => {
+        document.getElementById('left').style.background = '#8fa9ff';
         if (gameLoop) keys[37] = true;
     });
     document.getElementById('left').addEventListener('touchend', () => {
+        document.getElementById('left').style.background = '#c2d0ff';
         if (gameLoop) keys[37] = false;
     });
-
-
 
     // displayMenu();
 };

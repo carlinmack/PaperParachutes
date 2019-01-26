@@ -107,7 +107,6 @@ button:focus {
     color: white;
 }
 
-
 #left,
 #right {
     font-size: 2em;
@@ -151,7 +150,6 @@ button:focus {
         max-width: 300px;
         margin: auto;
     }
-
 
     h1 {
         margin: 8% 0 2% 0;
