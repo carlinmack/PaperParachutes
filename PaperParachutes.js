@@ -310,47 +310,6 @@ class Debris extends Entity {
     }
 }
 
-/* class Button {
-    constructor(text, x, y) {
-        this.width = 300 * scale;
-        this.height = 60 * scale;
-
-        this.x = x;
-        this.minX = x - this.width / 2;
-        this.maxX = this.minX + this.width;
-
-        this.y = y;
-        this.minY = y - this.height / 2;
-        this.maxY = this.minY + this.height;
-
-        this.text = text;
-    }
-
-    isPressed(X, Y) {
-        if (X >= this.minX && X <= this.maxX &&
-            Y >= this.minY && Y <= this.maxY) {
-            this.action();
-        }
-    };
-
-    display() {
-        ctx.font = 2.25 * scale + 'rem Iosevka ';
-        ctx.fillStyle = 'Black';
-        ctx.textAlign = 'center';
-        ctx.fillText(this.text, this.x, this.y);
-
-        // Draw Border
-        const path = new Path2D();
-        path.rect(this.minX, this.minY, this.width, this.height);
-        path.closePath();
-        ctx.lineWidth = 2 * scale;
-        ctx.strokeStyle = '#000000';
-        ctx.stroke(path);
-    };
-
-    action() {}
-} */
-
 function Timer(callback, delay) {
     var timerId, start, remaining = delay;
 
@@ -507,57 +466,6 @@ function countdown() {
         }
     }, 100);
 }
-
-/* function displayMenu() {
-    clearCanvas();
-
-    ctx.font = 2.5 * scale + 'rem Iosevka ';
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = 'center';
-    ctx.fillStyle = 'White';
-    ctx.fillText('Paper Parachutes', canv.width / 2, canv.height / 4);
-
-    const play = new Button('Play', canv.width / 2, canv.height / 2);
-    play.action = startGame;
-
-    const instructions = new Button('Instructions', canv.width / 2, 3 * canv.height / 4);
-    instructions.action = displayInstructions;
-
-    buttons = [play, instructions];
-
-    play.display();
-    instructions.display();
-}
-
-function displayInstructions() {
-    clearCanvas();
-    let instructions = `Everything you hit awards you two points
-Every bullet you fire takes one point away
-Falling parachuters can hit other parachutes
-The game ends when either your turret is hit by a parachuter or 5 land on the ground unharmed`;
-
-    let formattedInstructions = getLinesForParagraphs(ctx, instructions, 700 * scale);
-
-    ctx.font = 1 * scale + 'rem Iosevka ';
-    ctx.textAlign = 'left';
-    ctx.fillStyle = 'Black';
-
-    let y = canv.height / 8;
-    formattedInstructions.forEach(instruction => {
-        instruction.forEach(line => {
-            ctx.fillText(line, canv.width / 8, y);
-            y += 25 * scale;
-        });
-        y += canv.height / 20;
-    });
-
-    const back = new Button('Back', canv.width / 2, 9 * canv.height / 10);
-    back.action = displayMenu;
-
-    buttons = [back];
-
-    back.display();
-} */
 
 function startLoops() {
     gameLoop = window.requestAnimationFrame(game);
@@ -808,31 +716,6 @@ function randomInt(min, max) {
 function randomReal(min, max) {
     return Math.random() * (max - min) + min;
 }
-
-/* https://stackoverflow.com/questions/2936112/text-wrap-in-a-canvas-element#comment79378090_16599668
-function getLinesForParagraphs(ctx, text, maxWidth) {
-    return text.split('\n').map(para => getLines(ctx, para, maxWidth));
-}
-
-// https://stackoverflow.com/a/16599668
-function getLines(ctx, text, maxWidth) {
-    var words = text.split(' ');
-    var lines = [];
-    var currentLine = words[0];
-
-    for (var i = 1; i < words.length; i++) {
-        var word = words[i];
-        var width = ctx.measureText(currentLine + ' ' + word).width;
-        if (width < maxWidth) {
-            currentLine += ' ' + word;
-        } else {
-            lines.push(currentLine);
-            currentLine = word;
-        }
-    }
-    lines.push(currentLine);
-    return lines;
-} */
 
 // Credit: https://stackoverflow.com/a/11985464
 function drawImageRot(img, x, y, width, height, deg) {
