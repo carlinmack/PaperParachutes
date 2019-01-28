@@ -1,6 +1,7 @@
 /* eslint-disable space-before-function-paren */
 // classes and global functions and variables
-let entitiesSet, bulletsSet, helisSet, troopersSet, debrisSet, buttons, keyLoop, gameLoop, score, mouseOverCanvas, trooperSpawnProb;
+let entitiesSet, bulletsSet, helisSet, troopersSet, debrisSet, buttons, timerSet;
+let keyLoop, gameLoop, score, mouseOverCanvas, trooperSpawnProb;
 trooperSpawnProb = 7; // 70% chance of spawning
 const keys = [];
 let scale = 2;
@@ -67,6 +68,10 @@ class Helicopter extends Entity {
     hit() {
         clearTimeout(this.trooperSpawnTimer);
         spawnDebris(this.x / scale, this.y / scale);
+        // TODO pass xspeed and yspeed so that display of debris could also 
+        // display the cover block
+
+        // TODO work out when the game should pause, maybe have a shoot to reenter?
 
         if (this.alive) {
             this.alive = false;
@@ -349,16 +354,27 @@ class Button {
 function Timer(callback, delay) {
     var timerId, start, remaining = delay;
 
+    this.paused = false;
+
     this.pause = function () {
+        this.paused = true;
+
         window.clearTimeout(timerId);
-        remaining -= new Date() - start;
+        remaining -= performance.now() - start;
     };
 
     this.resume = function () {
-        start = new Date();
+        this.paused = false;
+
+        start = performance.now();
         window.clearTimeout(timerId);
-        timerId = window.setTimeout(callback, remaining);
+        timerId = window.setTimeout(() => {
+            callback();
+            timerSet.delete(this);
+        }, remaining);
     };
+
+    timerSet.add(this);
 
     this.resume();
 }
@@ -421,6 +437,30 @@ function drawGame() {
     }
 }
 
+const checkFocus = (function () {
+    let hasFocus = document.hasFocus();
+    let hidden = document.hidden;
+    return function () {
+        let hasFocusNow = document.hasFocus();
+        let hiddenNow = document.hidden;
+
+        if (document.hidden || !document.hasFocus()) {
+            // lost focus
+            for (const timer of timerSet) {
+                timer.pause();
+            }
+        } else if (hasFocus !== hasFocusNow || hidden !== hiddenNow) {
+            // if statement checks if the state has changed since last check
+            // gained focus
+            for (const timer of timerSet) {
+                if (timer.paused) timer.resume();
+            }
+        }
+        hasFocus = hasFocusNow;
+        hidden = hiddenNow;
+    }
+})();
+
 function deleteEntities() {
     for (let e of entitiesSet) {
         if (e.y < (0 - e.height) || e.x < (0 - e.width) || e.x > (400 * scale + e.width)) {
@@ -469,7 +509,7 @@ function countdown() {
     }, 100);
 }
 
-function displayMenu() {
+/*function displayMenu() {
     clearCanvas();
 
     ctx.font = 2.5 * scale + 'rem Iosevka ';
@@ -518,11 +558,12 @@ The game ends when either your turret is hit by a parachuter or 5 land on the gr
     buttons = [back];
 
     back.display();
-}
+}*/
 
 function startLoops() {
     gameLoop = window.requestAnimationFrame(game);
     keyLoop = setInterval(keyPress, 1000 / 50);
+    statusLoop = setInterval(status, 1000 / 2);
     spawnHeli();
 }
 
@@ -564,6 +605,8 @@ function startGame() {
     helisSet = new Set();
     troopersSet = new Set();
     debrisSet = new Set();
+    timerSet = new Set();
+    log(timerSet)
     keys.length = 0;
 
     new Turret();
@@ -676,7 +719,6 @@ function game() {
     moveEntities();
     checkCollisions();
     drawGame();
-    deleteEntities(); // maybe put this in keyPress as it doesn't need to run 200 times a second
 }
 
 // keypress loop
@@ -708,6 +750,13 @@ function keyPress() {
         localStorage.setItem('highscore', 0);
         highScore.innerHTML = localStorage.getItem('highscore');
     }
+}
+
+// status loop
+function status() {
+    deleteEntities();
+    checkFocus();
+    log(timerSet);
 }
 
 function fireBullet() {
