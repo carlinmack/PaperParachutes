@@ -1,7 +1,7 @@
 /* eslint-disable space-before-function-paren */
 // classes and global functions and variables
 let entitiesSet, bulletsSet, helisSet, troopersSet, debrisSet, buttons, timerSet;
-let keyLoop, gameLoop, score, mouseOverCanvas, trooperSpawnProb;
+let keyLoop, gameLoop, statusLoop, score, mouseOverCanvas, trooperSpawnProb;
 trooperSpawnProb = 7; // 70% chance of spawning
 const keys = [];
 let scale = 2;
@@ -68,7 +68,7 @@ class Helicopter extends Entity {
     hit() {
         clearTimeout(this.trooperSpawnTimer);
         spawnDebris(this.x / scale, this.y / scale);
-        // TODO pass xspeed and yspeed so that display of debris could also 
+        // TODO pass xspeed and yspeed so that display of debris could also
         // display the cover block
 
         // TODO work out when the game should pause, maybe have a shoot to reenter?
@@ -310,7 +310,7 @@ class Debris extends Entity {
     }
 }
 
-class Button {
+/* class Button {
     constructor(text, x, y) {
         this.width = 300 * scale;
         this.height = 60 * scale;
@@ -349,7 +349,7 @@ class Button {
     };
 
     action() {}
-}
+} */
 
 function Timer(callback, delay) {
     var timerId, start, remaining = delay;
@@ -414,7 +414,7 @@ function checkCollisions() {
         for (let t of new Set([...troopersSet, ...helisSet])) {
             if (t instanceof Trooper) {
                 trooperCollision(b, t);
-            } else { //heli collision detection
+            } else { // heli collision detection
                 if (t.alive &&
                     b.x > 0 && b.x < 400 * scale &&
                     b.x < t.x + t.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
@@ -426,7 +426,6 @@ function checkCollisions() {
                     updateScore(2);
                 }
             }
-
         }
     }
 }
@@ -458,7 +457,7 @@ const checkFocus = (function () {
         }
         hasFocus = hasFocusNow;
         hidden = hiddenNow;
-    }
+    };
 })();
 
 function deleteEntities() {
@@ -509,7 +508,7 @@ function countdown() {
     }, 100);
 }
 
-/*function displayMenu() {
+/* function displayMenu() {
     clearCanvas();
 
     ctx.font = 2.5 * scale + 'rem Iosevka ';
@@ -558,7 +557,7 @@ The game ends when either your turret is hit by a parachuter or 5 land on the gr
     buttons = [back];
 
     back.display();
-}*/
+} */
 
 function startLoops() {
     gameLoop = window.requestAnimationFrame(game);
@@ -606,7 +605,7 @@ function startGame() {
     troopersSet = new Set();
     debrisSet = new Set();
     timerSet = new Set();
-    log(timerSet)
+    log(timerSet);
     keys.length = 0;
 
     new Turret();
@@ -743,6 +742,7 @@ function keyPress() {
             k.deleteSelf();
         }
         clearInterval(keyLoop);
+        clearInterval(statusLoop);
         startGame();
     }
 
@@ -787,7 +787,7 @@ function fireBullet() {
     }, 150);
 }
 
-onkeydown = onkeyup = function (e) {
+window.onkeydown = window.onkeyup = function (e) {
     // run on every interaction of a key, sets the keys state to an array value
     keys[e.keyCode] = e.type === 'keydown';
 };
@@ -796,6 +796,7 @@ onkeydown = onkeyup = function (e) {
 // you can now use log instead of console.log
 const log = console.log.bind(console);
 const localStorage = window.localStorage;
+const performance = window.performance;
 
 function randomInt(min, max) {
     // https://stackoverflow.com/a/1527820
@@ -808,7 +809,7 @@ function randomReal(min, max) {
     return Math.random() * (max - min) + min;
 }
 
-// https://stackoverflow.com/questions/2936112/text-wrap-in-a-canvas-element#comment79378090_16599668
+/* https://stackoverflow.com/questions/2936112/text-wrap-in-a-canvas-element#comment79378090_16599668
 function getLinesForParagraphs(ctx, text, maxWidth) {
     return text.split('\n').map(para => getLines(ctx, para, maxWidth));
 }
@@ -831,7 +832,7 @@ function getLines(ctx, text, maxWidth) {
     }
     lines.push(currentLine);
     return lines;
-}
+} */
 
 // Credit: https://stackoverflow.com/a/11985464
 function drawImageRot(img, x, y, width, height, deg) {
