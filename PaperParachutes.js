@@ -2,6 +2,7 @@
 // classes and global functions and variables
 let entitiesSet, bulletsSet, helisSet, troopersSet, debrisSet, buttons, timerSet;
 let keyLoop, gameLoop, statusLoop, score, mouseOverCanvas, trooperSpawnProb;
+let focus = true;
 trooperSpawnProb = 7; // 70% chance of spawning
 const keys = [];
 let scale = 2;
@@ -333,8 +334,12 @@ function Timer(callback, delay) {
         }, remaining);
     };
 
-    timerSet.add(this);
+    this.clear = function () {
+        window.clearTimeout(timerId);
+        timerSet.delete(this);
+    }
 
+    timerSet.add(this);
     this.resume();
 }
 
@@ -395,29 +400,18 @@ function drawGame() {
     }
 }
 
-const checkFocus = (function () {
-    let hasFocus = document.hasFocus();
-    let hidden = document.hidden;
-    return function () {
-        let hasFocusNow = document.hasFocus();
-        let hiddenNow = document.hidden;
-
-        if (document.hidden || !document.hasFocus()) {
-            // lost focus
-            for (const timer of timerSet) {
-                timer.pause();
-            }
-        } else if (hasFocus !== hasFocusNow || hidden !== hiddenNow) {
-            // if statement checks if the state has changed since last check
-            // gained focus
-            for (const timer of timerSet) {
-                if (timer.paused) timer.resume();
-            }
+function checkFocus() {
+    if (document.hidden || !document.hasFocus()) {
+        // lost focus
+        focus = false;
+        for (const timer of timerSet) {
+            timer.pause();
         }
-        hasFocus = hasFocusNow;
-        hidden = hiddenNow;
-    };
-})();
+        document.getElementById('gc').style.opacity = 0.2;
+        document.getElementById('pauseScreen').classList.remove('hidden');
+        window.cancelAnimationFrame(gameLoop);
+    }
+}
 
 function deleteEntities() {
     for (let e of entitiesSet) {
@@ -603,8 +597,6 @@ window.onload = function () {
         document.getElementById('left').style.background = '#c2d0ff';
         if (gameLoop) keys[37] = false;
     });
-
-    // displayMenu();
 };
 
 // end game
@@ -612,6 +604,12 @@ function endGame() {
     window.cancelAnimationFrame(gameLoop);
     gameLoop = 0;
     document.getElementById('restart').classList.remove('hidden');
+
+    for (const timer of timerSet) {
+        timer.clear();
+    }
+
+    clearInterval(statusLoop);
 
     // set highscore
     if (localStorage.getItem('highscore') < score) {
@@ -642,7 +640,17 @@ function keyPress() {
     }
 
     if (keys[32] && bulletFlag) { // fire a bullet when space is pressed
-        fireBullet();
+        if (focus) {
+            fireBullet();
+        } else {
+            for (const timer of timerSet) {
+                if (timer.paused) timer.resume();
+            }
+            document.getElementById('gc').style.opacity = 1;
+            document.getElementById('pauseScreen').classList.add('hidden');
+            gameLoop = window.requestAnimationFrame(game);
+            focus = true;
+        }
     }
 
     if (keys[82] && gameLoop === 0) {
