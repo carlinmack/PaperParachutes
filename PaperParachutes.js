@@ -498,8 +498,7 @@ function startGame() {
     document.getElementById('menu').classList.add('hidden');
     document.getElementById('gc').classList.remove('hidden');
     if (window.innerWidth < 600) {
-        document.getElementById('left').classList.remove('hidden');
-        document.getElementById('right').classList.remove('hidden');
+        document.getElementById('controls').classList.remove('hidden');
     }
     entitiesSet = new Set();
     bulletsSet = new Set();
@@ -596,6 +595,14 @@ window.onload = function () {
     document.getElementById('left').addEventListener('touchend', () => {
         document.getElementById('left').style.background = '#c2d0ff';
         if (gameLoop) keys[37] = false;
+    });
+    document.getElementById('fire').addEventListener('touchstart', () => {
+        document.getElementById('fire').style.background = '#8fa9ff';
+        if (gameLoop) keys[32] = true;
+    });
+    document.getElementById('fire').addEventListener('touchend', () => {
+        document.getElementById('fire').style.background = '#c2d0ff';
+        if (gameLoop) keys[32] = false;
     });
 };
 

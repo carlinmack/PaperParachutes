@@ -52,7 +52,7 @@ p {
     position: absolute;
     top: 50px;
     background-color: transparent;
-    display: flex;
+    display: grid;
 }
 
 #instructionsScreen p:first-child {
@@ -87,6 +87,10 @@ p {
     display: block;
 }
 
+#fire {
+    width: 100% !important;
+}
+
 footer {
     grid-row: 2;
     font-family: monospace;
@@ -119,8 +123,7 @@ button:focus {
     color: white;
 }
 
-#left,
-#right {
+#controls button {
     font-size: 2em;
     border: none;
     border-radius: 15px;
@@ -134,15 +137,12 @@ button:focus {
     width: 48%;
 }
 
-#left:hover,
-#right:hover {
+#controls button:hover {
     background: #8fa9ff;
 }
 
 @media only screen and (max-width: 600px) {
-
-    #left,
-    #right {
+    #controls button {
         display: inline-block;
     }
 

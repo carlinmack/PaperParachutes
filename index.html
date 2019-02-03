@@ -49,17 +49,19 @@
         <canvas class='screen hidden' id='gc'></canvas>
         <div id='pauseScreen' class='screen hidden'>
             <h2>Fire to Restart</h2>
+        </div><br>
+        <div id='controls' class='hidden'>
+            <button id='fire'>FIRE</button><br>
+            <button id='left'><svg width='51' height='64' viewBox='0 0 13 13' class='arrow'>
+                    <title>Arrow Left</title>
+                    <path id='arrowL' fill='#818181' d='M0 8l12 7V2L6 5z' />
+                </svg></button>
+            <button id='right'><svg width='51' height='64' viewBox='0 0 13 13' class='arrow'>
+                    <title>Arrow Right</title>
+                    <path id='arrowR' fill='#818181' d='M13 8L2 15V2z' />
+                </svg></button>
         </div>
-        <br>
-        <button id='left' class='hidden'><svg width='51' height='64' viewBox='0 0 13 13' class='arrow'>
-                <title>Arrow Left</title>
-                <path id='arrowL' fill='#818181' d='M0 8l12 7V2L6 5z' />
-            </svg></button>
-        <button id='right' class='hidden'><svg width='51' height='64' viewBox='0 0 13 13' class='arrow'>
-                <title>Arrow Right</title>
-                <path id='arrowR' fill='#818181' d='M13 8L2 15V2z' />
-            </svg></button>
-        <p id='restart' class='hidden'>press R to restart</p>
+        <h2 id='restart' class='hidden'>press R to restart</h2>
     </main>
     <footer>This game was written in pure Javascript<br>© Carlin
         MacKenzie & Michael Rimmer 2018 </footer>
