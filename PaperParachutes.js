@@ -5,7 +5,7 @@ let keyLoop, gameLoop, statusLoop, score, mouseOverCanvas, trooperSpawnProb;
 let focus = true;
 trooperSpawnProb = 7; // 70% chance of spawning
 const keys = [];
-let scale = 2;
+let scale = 1;
 // flags
 let bulletFlag;
 
@@ -58,10 +58,10 @@ class Helicopter extends Entity {
 
         Math.round(Math.random()) ? this.y = 50 * scale : this.y = 5 * scale;
 
-        //change
-        // let time = randomInt(450, 3000);
-        // this.trooperSpawnTimer = new Timer(() => this.spawnTrooper(), time);
-        // this.failedSpawnProb = randomInt(1, 10);
+        // change
+        let time = randomInt(450, 3000);
+        this.trooperSpawnTimer = new Timer(() => this.spawnTrooper(), time);
+        this.failedSpawnProb = randomInt(1, 10);
 
         this.sprite = 0;
         this.alive = true;
@@ -107,21 +107,22 @@ class Helicopter extends Entity {
     }
 
     spawnTrooper() {
+        //change
         // stop trooper spawning on canvas edge
-        // if (this.x < 0 ||
-        //     this.x > 370 * scale ||
-        //     this.failedSpawnProb > trooperSpawnProb) {
-        //     return;
-        // }
-        log("spawning trooper");
+        if (this.x < 0 ||
+            this.x > 370 * scale ||
+            this.failedSpawnProb > trooperSpawnProb) {
+            return;
+        }
+
         new Trooper(this.x / scale, this.y / scale);
 
-        // // set next spawn timer
-        // let time = randomInt(450, 1950);
-        // this.trooperSpawnTimer = new Timer(() => this.spawnTrooper(), time);
+        // set next spawn timer
+        let time = randomInt(450, 1950);
+        this.trooperSpawnTimer = new Timer(() => this.spawnTrooper(), time);
 
-        // this.failedSpawnProb++; // increase chance of failed spawn
-        // // (this means is less likely for heli to spawn 2 troopers)
+        this.failedSpawnProb++; // increase chance of failed spawn
+        // (this means is less likely for heli to spawn 2 troopers)
     }
 }
 
@@ -135,7 +136,7 @@ class Trooper extends Entity {
         this.opaque = true;
         this.alive = true;
         this.landed = false;
-
+        this.naked = false;
         this.sourceX = 0;
         this.sourceY = 0;
         this.sourceW = 160;
@@ -150,7 +151,7 @@ class Trooper extends Entity {
             !this.landed &&
             troopersSet.size > 1) {
             for (let trooper of troopersSet) {
-                log(this.x, trooper.x + 10)
+                // log(this.x, trooper.x + 10)
                 if (trooper.landed &&
                     Math.abs(this.x - trooper.x + 10 * scale) < 10 * scale &&
                     Math.abs(this.y - trooper.y) < 40 * scale) {
@@ -167,10 +168,15 @@ class Trooper extends Entity {
         }
 
         // Landing wounded
-        if (this.y > 380 * scale) this.ySpeed = 0;
+        if (this.y > 380 * scale && !this.alive) {
+            this.ySpeed = 0;
+            troopersSet.delete(this);
+        }
     }
 
     land() {
+
+        this.naked = true;
         this.x += 10 * scale;
         this.y += 20 * scale;
         this.ySpeed = 0;
@@ -204,6 +210,7 @@ class Trooper extends Entity {
     hit(para) {
         if (para) {
             // log('parachute hit');
+            this.naked = true;
             this.x += 10 * scale;
             this.y += 20 * scale;
             this.ySpeed += 1 * scale;
@@ -366,23 +373,27 @@ function moveEntities() {
 function trooperCollision(b, t) {
     // log("trooper");
 
-    //hit trooper
+    //hit parachute
     if (t.alive && b.x > 0 && b.x < 400 * scale &&
         b.x + b.width * scale > t.x + 2 * scale && b.x < t.x + 27 * scale && b.y < t.y + 19 * scale && b.y > t.y + 2 * scale) {
-        t.hit(true);
+        if (!t.naked) {
+            t.hit(true);
+        } else {
+            t.hit(false);
+        }
         b.deleteSelf();
         updateScore(2);
-    } else {
-        //hit parachute
-        if (t.alive &&
-            b.x > 0 && b.x < 400 * scale &&
-            b.x + b.width * scale > t.x + 11 * scale && b.x < t.x + 18 * scale && b.y < t.y + 25 * scale && b.y > t.y + 18 * scale) {
-            t.hit(false);
-            b.deleteSelf();
-            updateScore(2);
-        }
+        //hit trooper
+    } else if (t.alive &&
+        b.x > 0 && b.x < 400 * scale &&
+        b.x + b.width * scale > t.x + 11 * scale && b.x < t.x + 18 * scale && b.y < t.y + 25 * scale && b.y > t.y + 18 * scale) {
+        t.hit(false);
+        b.deleteSelf();
+        updateScore(2);
     }
 }
+
+
 
 function checkCollisions() {
     for (let b of new Set([...bulletsSet, ...debrisSet])) {
@@ -398,6 +409,22 @@ function checkCollisions() {
                 t.hit();
                 b.deleteSelf();
                 updateScore(2);
+            }
+        }
+    }
+
+    for (let t1 of troopersSet) {
+        if (!t1.alive) {
+            for (let t2 of troopersSet) {
+                if (t2.alive &&
+                    t1.x > 0 && t1.x < 400 * scale &&
+                    t1.x < t2.x + t2.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
+                    t1.x + t1.width > t2.x &&
+                    t1.y < t2.y + t2.height &&
+                    t1.height + t1.y > t2.y) {
+                    t2.hit();
+                    updateScore(2);
+                }
             }
         }
     }
@@ -475,16 +502,16 @@ function startLoops() {
     keyLoop = setInterval(keyPress, 1000 / 50);
     statusLoop = setInterval(status, 1000 / 2);
 
-    t1 = new Helicopter();
-    t1.x = 100;
-    t1.y = 100;
-    t1.xSpeed = 0;
-    t1.ySpeed = 0;
-    log("before spawn trooper");
-    setInterval(() => {
-        t1.spawnTrooper()
-    }, 2000);
-    //spawnHeli();
+    //have 1 heli spawn in same location and auto spawn troopers (for testing) (remember to edit trooper spawn)
+    // t1 = new Helicopter();
+    // t1.x = 100;
+    // t1.y = 100;
+    // t1.xSpeed = 0;
+    // t1.ySpeed = 0;
+    // setInterval(() => {
+    //     t1.spawnTrooper()
+    // }, 2000);
+    spawnHeli();
 }
 
 function noScroll() {
