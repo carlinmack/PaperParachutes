@@ -58,9 +58,10 @@ class Helicopter extends Entity {
 
         Math.round(Math.random()) ? this.y = 50 * scale : this.y = 5 * scale;
 
-        let time = randomInt(450, 3000);
-        this.trooperSpawnTimer = new Timer(() => this.spawnTrooper(), time);
-        this.failedSpawnProb = randomInt(1, 10);
+        //change
+        // let time = randomInt(450, 3000);
+        // this.trooperSpawnTimer = new Timer(() => this.spawnTrooper(), time);
+        // this.failedSpawnProb = randomInt(1, 10);
 
         this.sprite = 0;
         this.alive = true;
@@ -107,20 +108,20 @@ class Helicopter extends Entity {
 
     spawnTrooper() {
         // stop trooper spawning on canvas edge
-        if (this.x < 0 ||
-            this.x > 370 * scale ||
-            this.failedSpawnProb > trooperSpawnProb) {
-            return;
-        }
-
+        // if (this.x < 0 ||
+        //     this.x > 370 * scale ||
+        //     this.failedSpawnProb > trooperSpawnProb) {
+        //     return;
+        // }
+        log("spawning trooper");
         new Trooper(this.x / scale, this.y / scale);
 
-        // set next spawn timer
-        let time = randomInt(450, 1950);
-        this.trooperSpawnTimer = new Timer(() => this.spawnTrooper(), time);
+        // // set next spawn timer
+        // let time = randomInt(450, 1950);
+        // this.trooperSpawnTimer = new Timer(() => this.spawnTrooper(), time);
 
-        this.failedSpawnProb++; // increase chance of failed spawn
-        // (this means is less likely for heli to spawn 2 troopers)
+        // this.failedSpawnProb++; // increase chance of failed spawn
+        // // (this means is less likely for heli to spawn 2 troopers)
     }
 }
 
@@ -145,33 +146,24 @@ class Trooper extends Entity {
         this.y += this.ySpeed;
 
         // Stacking
-        // if (this.y > 250 * scale &&
-        //     !this.landed &&
-        //     troopersSet.size > 1) {
-        //     for (let trooper of troopersSet) {
-        //         if (trooper.landed &&
-        //             Math.abs(this.x - trooper.x) < 10 &&
-        //             Math.abs(this.y - trooper.y) < 40) {
-        //             this.land();
-        //         }
-        //     }
-        // }
+        if (this.y > 250 * scale &&
+            !this.landed &&
+            troopersSet.size > 1) {
+            for (let trooper of troopersSet) {
+                log(this.x, trooper.x + 10)
+                if (trooper.landed &&
+                    Math.abs(this.x - trooper.x + 10 * scale) < 10 * scale &&
+                    Math.abs(this.y - trooper.y) < 40 * scale) {
+                    this.land();
+                }
+            }
+        }
 
         // Landing
         if (this.alive &&
             this.y > 360 * scale &&
             this.ySpeed !== 0) {
             this.land();
-            // if it lands unharmed, count how many others there are, if 5 end game
-            if (this.alive) {
-                let count = 0;
-                for (let t of troopersSet) {
-                    if (t.landed && t.alive) {
-                        count++;
-                    }
-                }
-                if (count >= 5) endGame();
-            }
         }
 
         // Landing wounded
@@ -190,6 +182,23 @@ class Trooper extends Entity {
         this.height = 22 * scale;
 
         this.landed = true;
+
+        // if it lands unharmed, count how many others there are, if 5 end game
+        this.checkNumLanded();
+    }
+
+    checkNumLanded() {
+        if (this.alive) {
+            let count = 0;
+            for (let t of troopersSet) {
+                if (t.landed && t.alive) {
+                    count++;
+                }
+            }
+            //change
+            if (count >= 5)
+                endGame();
+        }
     }
 
     hit(para) {
@@ -357,12 +366,14 @@ function moveEntities() {
 function trooperCollision(b, t) {
     // log("trooper");
 
+    //hit trooper
     if (t.alive && b.x > 0 && b.x < 400 * scale &&
         b.x + b.width * scale > t.x + 2 * scale && b.x < t.x + 27 * scale && b.y < t.y + 19 * scale && b.y > t.y + 2 * scale) {
         t.hit(true);
         b.deleteSelf();
         updateScore(2);
     } else {
+        //hit parachute
         if (t.alive &&
             b.x > 0 && b.x < 400 * scale &&
             b.x + b.width * scale > t.x + 11 * scale && b.x < t.x + 18 * scale && b.y < t.y + 25 * scale && b.y > t.y + 18 * scale) {
@@ -378,17 +389,15 @@ function checkCollisions() {
         for (let t of new Set([...troopersSet, ...helisSet])) {
             if (t instanceof Trooper) {
                 trooperCollision(b, t);
-            } else { // heli collision detection
-                if (t.alive &&
-                    b.x > 0 && b.x < 400 * scale &&
-                    b.x < t.x + t.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
-                    b.x + b.width > t.x &&
-                    b.y < t.y + t.height &&
-                    b.height + b.y > t.y) {
-                    t.hit();
-                    b.deleteSelf();
-                    updateScore(2);
-                }
+            } else if (t.alive &&
+                b.x > 0 && b.x < 400 * scale &&
+                b.x < t.x + t.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
+                b.x + b.width > t.x &&
+                b.y < t.y + t.height &&
+                b.height + b.y > t.y) {
+                t.hit();
+                b.deleteSelf();
+                updateScore(2);
             }
         }
     }
@@ -465,7 +474,17 @@ function startLoops() {
     gameLoop = window.requestAnimationFrame(game);
     keyLoop = setInterval(keyPress, 1000 / 50);
     statusLoop = setInterval(status, 1000 / 2);
-    spawnHeli();
+
+    t1 = new Helicopter();
+    t1.x = 100;
+    t1.y = 100;
+    t1.xSpeed = 0;
+    t1.ySpeed = 0;
+    log("before spawn trooper");
+    setInterval(() => {
+        t1.spawnTrooper()
+    }, 2000);
+    //spawnHeli();
 }
 
 function noScroll() {
@@ -506,7 +525,7 @@ function startGame() {
     troopersSet = new Set();
     debrisSet = new Set();
     timerSet = new Set();
-    log(timerSet);
+    // log(timerSet);
     keys.length = 0;
 
     new Turret();
@@ -679,7 +698,7 @@ function keyPress() {
 function status() {
     deleteEntities();
     checkFocus();
-    log(timerSet);
+    //log(timerSet);
 }
 
 function fireBullet() {
