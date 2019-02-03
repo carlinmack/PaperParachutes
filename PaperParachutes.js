@@ -107,7 +107,7 @@ class Helicopter extends Entity {
     }
 
     spawnTrooper() {
-        //change
+        // change
         // stop trooper spawning on canvas edge
         if (this.x < 0 ||
             this.x > 370 * scale ||
@@ -175,7 +175,6 @@ class Trooper extends Entity {
     }
 
     land() {
-
         this.naked = true;
         this.x += 10 * scale;
         this.y += 20 * scale;
@@ -201,9 +200,8 @@ class Trooper extends Entity {
                     count++;
                 }
             }
-            //change
-            if (count >= 5)
-                endGame();
+            // change
+            if (count >= 5) endGame();
         }
     }
 
@@ -328,7 +326,7 @@ class Debris extends Entity {
 }
 
 function Timer(callback, delay) {
-    var timerId, start, remaining = delay;
+    let timerId, start, remaining = delay;
 
     this.paused = false;
 
@@ -353,7 +351,7 @@ function Timer(callback, delay) {
     this.clear = function () {
         window.clearTimeout(timerId);
         timerSet.delete(this);
-    }
+    };
 
     timerSet.add(this);
     this.resume();
@@ -373,7 +371,7 @@ function moveEntities() {
 function trooperCollision(b, t) {
     // log("trooper");
 
-    //hit parachute
+    // hit parachute
     if (t.alive && b.x > 0 && b.x < 400 * scale &&
         b.x + b.width * scale > t.x + 2 * scale && b.x < t.x + 27 * scale && b.y < t.y + 19 * scale && b.y > t.y + 2 * scale) {
         if (!t.naked) {
@@ -383,7 +381,7 @@ function trooperCollision(b, t) {
         }
         b.deleteSelf();
         updateScore(2);
-        //hit trooper
+        // hit trooper
     } else if (t.alive &&
         b.x > 0 && b.x < 400 * scale &&
         b.x + b.width * scale > t.x + 11 * scale && b.x < t.x + 18 * scale && b.y < t.y + 25 * scale && b.y > t.y + 18 * scale) {
@@ -392,8 +390,6 @@ function trooperCollision(b, t) {
         updateScore(2);
     }
 }
-
-
 
 function checkCollisions() {
     for (let b of new Set([...bulletsSet, ...debrisSet])) {
@@ -502,7 +498,7 @@ function startLoops() {
     keyLoop = setInterval(keyPress, 1000 / 50);
     statusLoop = setInterval(status, 1000 / 2);
 
-    //have 1 heli spawn in same location and auto spawn troopers (for testing) (remember to edit trooper spawn)
+    // have 1 heli spawn in same location and auto spawn troopers (for testing) (remember to edit trooper spawn)
     // t1 = new Helicopter();
     // t1.x = 100;
     // t1.y = 100;
@@ -725,7 +721,7 @@ function keyPress() {
 function status() {
     deleteEntities();
     checkFocus();
-    //log(timerSet);
+    // log(timerSet);
 }
 
 function fireBullet() {
