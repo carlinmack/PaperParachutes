@@ -1,17 +1,34 @@
-/* eslint-disable space-before-function-paren */
-// classes and global functions and variables
+/**
+ *  The entry point to the code is startGame() which is called from an event
+ *  listener assigned on window.onload. The game loops are initialised
+ *  in startLoops.
+ *
+ * @file    Entire codebase used to run the Paper Parachutes game, including
+ *          classes and engine
+ * @author  Carlin Mackenzie
+ * @author  Michael Rimmer
+ *
+ * @todo    Encapsulate a lot of the behaviour like clearing canvas, moving
+ *          objects etc into a canvas class so that we can stop exposing all the
+ *          global variables.
+ */
+
+// global variables
 let entitiesSet, bulletsSet, helisSet, troopersSet, debrisSet, buttons, timerSet;
-let keyLoop, gameLoop, statusLoop, score, mouseOverCanvas, trooperSpawnProb;
+let keyLoop, gameLoop, statusLoop, score, mouseOverCanvas;
+
 let focus = true;
-trooperSpawnProb = 7; // 70% chance of spawning
+let trooperSpawnProb = 7; // 70% chance of spawning
 const keys = [];
-let scale = 1;
+let scale = 2;
+
 // flags
 let bulletFlag;
 
 // html elements
 let currentScore, highScore, canv, ctx;
 
+/* ------- CLASSES  ------- */
 class Entity {
     constructor(src, x, y, w, h) {
         this.image = new Image();
@@ -72,8 +89,6 @@ class Helicopter extends Entity {
         spawnDebris(this.x / scale, this.y / scale);
         // TODO pass xspeed and yspeed so that display of debris could also
         // display the cover block
-
-        // TODO work out when the game should pause, maybe have a shoot to reenter?
 
         if (this.alive) {
             this.alive = false;
@@ -278,7 +293,8 @@ class Turret extends Entity {
     }
 
     rotate(x) {
-        if (((this.rotation + x) ** 2) <= 90 ** 2) {
+        // 1800 = 90^2, if the absolute value of the new rotation is less than 90
+        if (((this.rotation + x) ** 2) <= 1800) {
             this.rotation += x;
         } else if (this.rotation > 0) {
             this.rotation = 90;
@@ -326,6 +342,8 @@ class Debris extends Entity {
 }
 
 function Timer(callback, delay) {
+    // this is a wrapper for window.setTimeout so that the game can be paused
+    // when the window loses focus
     let timerId, start, remaining = delay;
 
     this.paused = false;
@@ -357,6 +375,7 @@ function Timer(callback, delay) {
     this.resume();
 }
 
+/* ------- GLOBAL FUNCTIONS  ------- */
 function clearCanvas() {
     ctx.fillStyle = 'LightGrey';
     ctx.fillRect(0, 0, canv.width, canv.height);
@@ -471,7 +490,6 @@ function updateScore(x) {
 }
 
 function countdown() {
-    gameLoop = 1; // stopping menu buttons from being pressed
     ctx.font = 3 * scale + 'rem Iosevka';
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
@@ -498,15 +516,15 @@ function startLoops() {
     keyLoop = setInterval(keyPress, 1000 / 50);
     statusLoop = setInterval(status, 1000 / 2);
 
-    // have 1 heli spawn in same location and auto spawn troopers (for testing) (remember to edit trooper spawn)
-    // t1 = new Helicopter();
-    // t1.x = 100;
-    // t1.y = 100;
-    // t1.xSpeed = 0;
-    // t1.ySpeed = 0;
-    // setInterval(() => {
-    //     t1.spawnTrooper()
-    // }, 2000);
+    /* have 1 heli spawn in same location and auto spawn troopers (for testing) (remember to edit trooper spawn)
+     t1 = new Helicopter();
+     t1.x = 100;
+     t1.y = 100;
+     t1.xSpeed = 0;
+     t1.ySpeed = 0;
+     setInterval(() => {
+         t1.spawnTrooper()
+     }, 2000); */
     spawnHeli();
 }
 
@@ -536,6 +554,7 @@ function spawnDebris(x, y) {
     }
 }
 
+/* ------- ENTRY TO GAME  ------- */
 function startGame() {
     document.getElementById('menu').classList.add('hidden');
     document.getElementById('gc').classList.remove('hidden');
@@ -565,7 +584,7 @@ function startGame() {
     countdown();
 }
 
-// initialise game
+/* ------- INITIALISE GAME ------- */
 window.onload = function () {
     canv = document.getElementById('gc');
 
@@ -666,7 +685,7 @@ function endGame() {
     }
 }
 
-// game loop
+/* ------- GAME LOOP ------- */
 function game() {
     gameLoop = window.requestAnimationFrame(game);
     clearCanvas();
@@ -675,7 +694,7 @@ function game() {
     drawGame();
 }
 
-// keypress loop
+/* ------- KEY LOOP ------- */
 function keyPress() {
     // better way to access elements in set? Unsure how set indexing works,
     // if it works thats good enough for now
@@ -717,7 +736,7 @@ function keyPress() {
     }
 }
 
-// status loop
+/* ------- STATUS LOOP ------- */
 function status() {
     deleteEntities();
     checkFocus();
@@ -758,7 +777,6 @@ window.onkeydown = window.onkeyup = function (e) {
 };
 
 /* ------- HELPER FUNCTIONS ------- */
-// you can now use log instead of console.log
 const log = console.log.bind(console);
 const localStorage = window.localStorage;
 const performance = window.performance;
@@ -774,8 +792,8 @@ function randomReal(min, max) {
     return Math.random() * (max - min) + min;
 }
 
-// Credit: https://stackoverflow.com/a/11985464
 function drawImageRot(img, x, y, width, height, deg) {
+    // Credit: https://stackoverflow.com/a/11985464
     // Convert degrees to radian
     const rad = deg * Math.PI / 180;
 
@@ -795,6 +813,7 @@ function drawImageRot(img, x, y, width, height, deg) {
 }
 
 function clicked(Button) {
+    // handling of the game menu
     let x = document.querySelectorAll('.screen');
     // hides them
     for (let i = 0; i < x.length; i++) {
