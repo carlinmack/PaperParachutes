@@ -294,7 +294,7 @@ class Turret extends Entity {
 
     rotate(x) {
         // 1800 = 90^2, if the absolute value of the new rotation is less than 90
-        if (((this.rotation + x) ** 2) <= 1800) {
+        if (((this.rotation + x) ** 2) <= 8100) {
             this.rotation += x;
         } else if (this.rotation > 0) {
             this.rotation = 90;
