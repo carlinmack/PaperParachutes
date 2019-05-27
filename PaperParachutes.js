@@ -85,7 +85,7 @@ class Helicopter extends Entity {
     }
 
     hit() {
-        clearTimeout(this.trooperSpawnTimer);
+        this.trooperSpawnTimer.clear();
         spawnDebris(this.x / scale, this.y / scale);
         // TODO pass xspeed and yspeed so that display of debris could also
         // display the cover block
@@ -399,7 +399,7 @@ function spawnHeli() {
         // can play around with time out values and use constiables to make them spawn
         // faster as game progresses
         const time = pickNewTime();
-        log(time);
+
         Timer(spawnHeli, time);
     }
 
