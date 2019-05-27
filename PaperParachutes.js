@@ -425,7 +425,7 @@ function spawnHeli() {
             return randomInt(2000, 2500);
         } else if (GameLength < 42500) { // 2.5 secs
             return randomInt(1000, 1750);
-        } else if (GameLength > 42500) { // rest of time
+        } else { // rest of time
             if (coinFlip()) {
                 return randomInt(900, 2000);
             } else {
@@ -832,7 +832,7 @@ window.onkeydown = window.onkeyup = function (e) {
 };
 
 /* ------- HELPER FUNCTIONS ------- */
-const log = console.log.bind(console);
+// const log = console.log.bind(console);
 const localStorage = window.localStorage;
 const performance = window.performance;
 
