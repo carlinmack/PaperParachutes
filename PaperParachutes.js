@@ -15,7 +15,7 @@
 
 // global variables
 let entitiesSet, bulletsSet, helisSet, troopersSet, debrisSet, buttons, timerSet;
-let keyLoop, gameLoop, statusLoop, score, mouseOverCanvas;
+let keyLoop, gameLoop, statusLoop, score, mouseOverCanvas, StartTime;
 
 let focus = true;
 let trooperSpawnProb = 7; // 70% chance of spawning
@@ -93,12 +93,12 @@ class Helicopter extends Entity {
         if (this.alive) {
             this.alive = false;
             let changeSprite;
-            new Timer(changeSprite = () => {
+            Timer(changeSprite = () => {
                 this.ySpeed += 0.04 * scale;
                 this.sprite = this.sprite + 1;
                 if (this.sprite > 6) this.sprite = 4;
 
-                new Timer(changeSprite, 150);
+                Timer(changeSprite, 150);
             }, 0);
         }
     }
@@ -320,12 +320,12 @@ class Debris extends Entity {
         this.width = this.sourceW / 2 * scale;
         this.height = this.sourceH / 2 * scale;
 
-        new Timer(() => this.deleteSelf(), 1000);
+        Timer(() => this.deleteSelf(), 1000);
 
         let gravity;
-        new Timer(gravity = () => {
+        Timer(gravity = () => {
             this.ySpeed += 0.04 * scale;
-            new Timer(gravity, 100);
+            Timer(gravity, 100);
         }, 0);
     }
 
@@ -344,7 +344,9 @@ class Debris extends Entity {
 function Timer(callback, delay) {
     // this is a wrapper for window.setTimeout so that the game can be paused
     // when the window loses focus
-    let timerId, start, remaining = delay;
+    let timerId;
+    let start;
+    let remaining = delay;
 
     this.paused = false;
 
@@ -479,8 +481,70 @@ function spawnHeli() {
         new Helicopter();
         // can play around with time out values and use constiables to make them spawn
         // faster as game progresses
-        const time = randomInt(1000, 5500);
-        new Timer(spawnHeli, time);
+        const time = pickNewTime();
+        log(time);
+        Timer(spawnHeli, time);
+    }
+
+    function pickNewTime() {
+        const GameLength = performance.now() - StartTime;
+
+        if (GameLength < 10000) { // 10 secs
+            // return randomInt(3000, 3500);
+            return randomInt(3000, 3500);
+
+        } else if (GameLength < 20000) { // 5 secs
+            return randomInt(2500, 3000);
+
+        } else if (GameLength < 22500) { // 2.5 secs
+            return randomInt(2000, 3000);
+
+        } else if (GameLength < 25000) { // 2.5 secs
+            doubleHeli(2000, 3000);
+
+        } else if (GameLength < 27500) { // 2.5 secs
+            return randomInt(2500, 3500);
+
+        } else if (GameLength < 30000) { // 2.5 secs
+            return randomInt(1500, 2000);
+
+        } else if (GameLength < 35000) { // 5 secs
+            doubleHeli(1750, 2250);
+
+        } else if (GameLength < 35200) { // 5 secs
+            return randomInt(2000, 2500);
+
+        } else if (GameLength < 42500) { // 2.5 secs
+            return randomInt(1000, 1750);
+
+        } else if (GameLength > 42500) { // rest of time
+            if (coinFlip()) {
+                return randomInt(900, 2000);
+            } else {
+                if (coinFlip()) {
+                    log("happened");
+                    new Helicopter();
+                    return 500;
+                } else {
+                    log("happened 2");
+                    new Helicopter();
+                    Timer(() => {
+                        new Helicopter();
+                    }, 500);
+                    return 1000;
+                }
+            }
+        }
+
+        function doubleHeli(lower, upper) {
+            if (coinFlip()) {
+                return randomInt(lower, upper);
+            } else {
+                log("happened");
+                new Helicopter();
+                return 600;
+            }
+        }
     }
 }
 
@@ -494,17 +558,17 @@ function countdown() {
     ctx.textBaseline = 'middle';
     ctx.textAlign = 'center';
     let num = 3;
-    new Timer(function running() {
+    Timer(function running() {
         clearCanvas();
 
         ctx.fillStyle = 'Black';
-        new Timer(() => {
+        Timer(() => {
             ctx.fillText(num, canv.width / 2, canv.height / 2);
             num--;
         }, 200);
 
         if (num > 0) {
-            new Timer(running, 1000);
+            Timer(running, 1000);
         } else {
             startLoops();
         }
@@ -512,6 +576,7 @@ function countdown() {
 }
 
 function startLoops() {
+    StartTime = performance.now();
     gameLoop = window.requestAnimationFrame(game);
     keyLoop = setInterval(keyPress, 1000 / 50);
     statusLoop = setInterval(status, 1000 / 2);
@@ -766,7 +831,7 @@ function fireBullet() {
         updateScore(-1);
     }
     bulletFlag = false; // set delay so that a stream of bullets isn't fired
-    new Timer(function () {
+    Timer(function () {
         bulletFlag = true;
     }, 150);
 }
@@ -786,6 +851,11 @@ function randomInt(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function coinFlip() {
+    // seems to be biased towards one but *shrug*
+    return Math.floor(Math.random() * 2);
 }
 
 function randomReal(min, max) {
