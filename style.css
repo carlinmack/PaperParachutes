@@ -1,12 +1,20 @@
+:root {
+    --hue: 225.7;
+    --sat: 34.4%;
+    --light: 88%;
+}
+
 body {
     background-color: #d6dbeb;
     min-width: 300px;
     font-size: 200%;
     font-weight: bold;
     font-family: 'Iosevka', sans-serif;
+    margin: 0;
     display: grid;
-    grid-template-rows: 1fr 80px;
+    grid-template-rows: 100vh 80px;
     height: 98vh;
+    overflow-x: hidden;
 }
 
 main {
@@ -39,13 +47,24 @@ h2 {
 
 footer {
     grid-row: 2;
-    font-family: monospace;
+    /* font-family: monospace;
     font-size: 0.8em;
     margin: auto;
     text-align: center;
-    line-height: 1.2rem;
-    font-size: 0.8rem;
+    */
+    font-family: monospace;
     font-weight: normal;
+    line-height: 1.2rem;
+    color: white;
+    font-size: 12px;
+    display: flex;
+    place-content: center;
+    place-items: center;
+    width: 100vw;
+    height: 80px;
+    background: hsl(var(--hue), var(--sat), 27%);
+    position: relative;
+    padding: 10px 0;
 }
 
 button {
@@ -149,7 +168,7 @@ p {
     #controls {
         display: block;
     }
-    
+
     #controls button {
         display: inline-block;
     }
