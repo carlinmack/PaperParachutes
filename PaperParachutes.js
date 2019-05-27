@@ -101,6 +101,14 @@ class Helicopter extends Entity {
                 Timer(changeSprite, 150);
             }, 0);
         }
+
+        function spawnDebris(x, y) {
+            let n = randomInt(1, 3);
+
+            for (let i = 0; i < n; i++) {
+                new Debris(x, y);
+            }
+        }
     }
 
     display() {
@@ -383,97 +391,6 @@ function clearCanvas() {
     ctx.fillRect(0, 0, canv.width, canv.height);
 }
 
-function moveEntities() {
-    for (let e of entitiesSet) {
-        e.move();
-    }
-}
-
-function trooperCollision(b, t) {
-    // log("trooper");
-
-    // hit parachute
-    if (t.alive && b.x > 0 && b.x < 400 * scale &&
-        b.x + b.width * scale > t.x + 2 * scale && b.x < t.x + 27 * scale && b.y < t.y + 19 * scale && b.y > t.y + 2 * scale) {
-        if (!t.naked) {
-            t.hit(true);
-        } else {
-            t.hit(false);
-        }
-        b.deleteSelf();
-        updateScore(2);
-        // hit trooper
-    } else if (t.alive &&
-        b.x > 0 && b.x < 400 * scale &&
-        b.x + b.width * scale > t.x + 11 * scale && b.x < t.x + 18 * scale && b.y < t.y + 25 * scale && b.y > t.y + 18 * scale) {
-        t.hit(false);
-        b.deleteSelf();
-        updateScore(2);
-    }
-}
-
-function checkCollisions() {
-    for (let b of new Set([...bulletsSet, ...debrisSet])) {
-        for (let t of new Set([...troopersSet, ...helisSet])) {
-            if (t instanceof Trooper) {
-                trooperCollision(b, t);
-            } else if (t.alive &&
-                b.x > 0 && b.x < 400 * scale &&
-                b.x < t.x + t.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
-                b.x + b.width > t.x &&
-                b.y < t.y + t.height &&
-                b.height + b.y > t.y) {
-                t.hit();
-                b.deleteSelf();
-                updateScore(2);
-            }
-        }
-    }
-
-    for (let t1 of troopersSet) {
-        if (!t1.alive) {
-            for (let t2 of troopersSet) {
-                if (t2.alive &&
-                    t1.x > 0 && t1.x < 400 * scale &&
-                    t1.x < t2.x + t2.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
-                    t1.x + t1.width > t2.x &&
-                    t1.y < t2.y + t2.height &&
-                    t1.height + t1.y > t2.y) {
-                    t2.hit();
-                    updateScore(2);
-                }
-            }
-        }
-    }
-}
-
-function drawGame() {
-    for (let e of entitiesSet) {
-        e.display();
-    }
-}
-
-function checkFocus() {
-    if (document.hidden || !document.hasFocus()) {
-        // lost focus
-        focus = false;
-        for (const timer of timerSet) {
-            timer.pause();
-        }
-        document.getElementById('gc').style.opacity = 0.2;
-        document.getElementById('pauseScreen').classList.remove('hidden');
-        window.cancelAnimationFrame(gameLoop);
-    }
-}
-
-function deleteEntities() {
-    for (let e of entitiesSet) {
-        if (e.y < (0 - e.height) || e.x < (0 - e.width) || e.x > (400 * scale + e.width)) {
-            e.deleteSelf(this);
-        }
-    }
-}
-
 function spawnHeli() {
     // for reference helis take 4600ms to cross screen
     // they should spawn a max of two if they aren't hit at first
@@ -492,41 +409,30 @@ function spawnHeli() {
         if (GameLength < 10000) { // 10 secs
             // return randomInt(3000, 3500);
             return randomInt(3000, 3500);
-
         } else if (GameLength < 20000) { // 5 secs
             return randomInt(2500, 3000);
-
         } else if (GameLength < 22500) { // 2.5 secs
             return randomInt(2000, 3000);
-
         } else if (GameLength < 25000) { // 2.5 secs
-            doubleHeli(2000, 3000);
-
+            return doubleHeli(2000, 3000);
         } else if (GameLength < 27500) { // 2.5 secs
             return randomInt(2500, 3500);
-
         } else if (GameLength < 30000) { // 2.5 secs
             return randomInt(1500, 2000);
-
         } else if (GameLength < 35000) { // 5 secs
-            doubleHeli(1750, 2250);
-
+            return doubleHeli(1750, 2250);
         } else if (GameLength < 35200) { // 5 secs
             return randomInt(2000, 2500);
-
         } else if (GameLength < 42500) { // 2.5 secs
             return randomInt(1000, 1750);
-
         } else if (GameLength > 42500) { // rest of time
             if (coinFlip()) {
                 return randomInt(900, 2000);
             } else {
                 if (coinFlip()) {
-                    log("happened");
                     new Helicopter();
                     return 500;
                 } else {
-                    log("happened 2");
                     new Helicopter();
                     Timer(() => {
                         new Helicopter();
@@ -540,7 +446,6 @@ function spawnHeli() {
             if (coinFlip()) {
                 return randomInt(lower, upper);
             } else {
-                log("happened");
                 new Helicopter();
                 return 600;
             }
@@ -551,28 +456,6 @@ function spawnHeli() {
 function updateScore(x) {
     score += x;
     currentScore.innerHTML = score;
-}
-
-function countdown() {
-    ctx.font = 3 * scale + 'rem Iosevka';
-    ctx.textBaseline = 'middle';
-    ctx.textAlign = 'center';
-    let num = 3;
-    Timer(function running() {
-        clearCanvas();
-
-        ctx.fillStyle = 'Black';
-        Timer(() => {
-            ctx.fillText(num, canv.width / 2, canv.height / 2);
-            num--;
-        }, 200);
-
-        if (num > 0) {
-            Timer(running, 1000);
-        } else {
-            startLoops();
-        }
-    }, 100);
 }
 
 function startLoops() {
@@ -591,32 +474,6 @@ function startLoops() {
          t1.spawnTrooper()
      }, 2000); */
     spawnHeli();
-}
-
-function noScroll() {
-    if (mouseOverCanvas) { // only prevent scrolling if cursor over canvas
-        window.scrollTo(0, 0);
-    }
-}
-
-function rotateTurret(event) {
-    if (gameLoop !== 0) {
-        let turr = entitiesSet.values().next().value;
-
-        if (event.deltaY > 0) {
-            turr.rotate(3);
-        } else if (event.deltaY < 0) {
-            turr.rotate(-3);
-        }
-    }
-}
-
-function spawnDebris(x, y) {
-    let n = randomInt(1, 3);
-
-    for (let i = 0; i < n; i++) {
-        new Debris(x, y);
-    }
 }
 
 /* ------- ENTRY TO GAME  ------- */
@@ -647,6 +504,28 @@ function startGame() {
     document.getElementById('restart').classList.add('hidden');
 
     countdown();
+
+    function countdown() {
+        ctx.font = 3 * scale + 'rem Iosevka';
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'center';
+        let num = 3;
+        Timer(function running() {
+            clearCanvas();
+
+            ctx.fillStyle = 'Black';
+            Timer(() => {
+                ctx.fillText(num, canv.width / 2, canv.height / 2);
+                num--;
+            }, 200);
+
+            if (num > 0) {
+                Timer(running, 1000);
+            } else {
+                startLoops();
+            }
+        }, 100);
+    }
 }
 
 /* ------- INITIALISE GAME ------- */
@@ -730,9 +609,27 @@ window.onload = function () {
         document.getElementById('fire').style.background = '#c2d0ff';
         if (gameLoop) keys[32] = false;
     });
+
+    function noScroll() {
+        if (mouseOverCanvas) { // only prevent scrolling if cursor over canvas
+            window.scrollTo(0, 0);
+        }
+    }
+
+    function rotateTurret(event) {
+        if (gameLoop !== 0) {
+            let turr = entitiesSet.values().next().value;
+
+            if (event.deltaY > 0) {
+                turr.rotate(3);
+            } else if (event.deltaY < 0) {
+                turr.rotate(-3);
+            }
+        }
+    }
 };
 
-// end game
+/* ------- END GAME ------- */
 function endGame() {
     window.cancelAnimationFrame(gameLoop);
     gameLoop = 0;
@@ -757,6 +654,78 @@ function game() {
     moveEntities();
     checkCollisions();
     drawGame();
+
+    // would be great to test if there is any difference between defining these
+    // locally vs globally seeing as this is ran 60 times a second. If any
+    // performance issues look here
+    function moveEntities() {
+        for (let e of entitiesSet) {
+            e.move();
+        }
+    }
+
+    function checkCollisions() {
+        for (let b of new Set([...bulletsSet, ...debrisSet])) {
+            for (let t of new Set([...troopersSet, ...helisSet])) {
+                if (t instanceof Trooper) {
+                    trooperCollision(b, t);
+                } else if (t.alive &&
+                    b.x > 0 && b.x < 400 * scale &&
+                    b.x < t.x + t.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
+                    b.x + b.width > t.x &&
+                    b.y < t.y + t.height &&
+                    b.height + b.y > t.y) {
+                    t.hit();
+                    b.deleteSelf();
+                    updateScore(2);
+                }
+            }
+        }
+
+        for (let t1 of troopersSet) {
+            if (!t1.alive) {
+                for (let t2 of troopersSet) {
+                    if (t2.alive &&
+                        t1.x > 0 && t1.x < 400 * scale &&
+                        t1.x < t2.x + t2.width && // credit: https://developer.mozilla.org/kab/docs/Games/Techniques/2D_collision_detection
+                        t1.x + t1.width > t2.x &&
+                        t1.y < t2.y + t2.height &&
+                        t1.height + t1.y > t2.y) {
+                        t2.hit();
+                        updateScore(2);
+                    }
+                }
+            }
+        }
+
+        function trooperCollision(b, t) {
+            // log("trooper");
+            // hit parachute
+            if (t.alive && b.x > 0 && b.x < 400 * scale &&
+                b.x + b.width * scale > t.x + 2 * scale && b.x < t.x + 27 * scale && b.y < t.y + 19 * scale && b.y > t.y + 2 * scale) {
+                if (!t.naked) {
+                    t.hit(true);
+                } else {
+                    t.hit(false);
+                }
+                b.deleteSelf();
+                updateScore(2);
+                // hit trooper
+            } else if (t.alive &&
+                b.x > 0 && b.x < 400 * scale &&
+                b.x + b.width * scale > t.x + 11 * scale && b.x < t.x + 18 * scale && b.y < t.y + 25 * scale && b.y > t.y + 18 * scale) {
+                t.hit(false);
+                b.deleteSelf();
+                updateScore(2);
+            }
+        }
+    }
+
+    function drawGame() {
+        for (let e of entitiesSet) {
+            e.display();
+        }
+    }
 }
 
 /* ------- KEY LOOP ------- */
@@ -806,6 +775,27 @@ function status() {
     deleteEntities();
     checkFocus();
     // log(timerSet);
+
+    function checkFocus() {
+        if (document.hidden || !document.hasFocus()) {
+            // lost focus
+            focus = false;
+            for (const timer of timerSet) {
+                timer.pause();
+            }
+            document.getElementById('gc').style.opacity = 0.2;
+            document.getElementById('pauseScreen').classList.remove('hidden');
+            window.cancelAnimationFrame(gameLoop);
+        }
+    }
+
+    function deleteEntities() {
+        for (let e of entitiesSet) {
+            if (e.y < (0 - e.height) || e.x < (0 - e.width) || e.x > (400 * scale + e.width)) {
+                e.deleteSelf(this);
+            }
+        }
+    }
 }
 
 function fireBullet() {
