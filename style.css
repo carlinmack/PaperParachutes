@@ -37,6 +37,38 @@ h2 {
     place-self: center;
 }
 
+footer {
+    grid-row: 2;
+    font-family: monospace;
+    font-size: 0.8em;
+    margin: auto;
+    text-align: center;
+    line-height: 1.2rem;
+    font-size: 0.8rem;
+    font-weight: normal;
+}
+
+button {
+    display: block;
+    background-color: lightgray;
+    border: none;
+    padding: 1rem 2rem;
+    margin: 0 auto;
+    text-decoration: none;
+    color: black;
+    font-family: 'Iosevka', sans-serif;
+    font-size: 2rem;
+    cursor: pointer;
+    text-align: center;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+button:hover,
+button:focus {
+    color: white;
+}
+
 #score,
 #highscore,
 p {
@@ -91,36 +123,8 @@ p {
     width: 100% !important;
 }
 
-footer {
-    grid-row: 2;
-    font-family: monospace;
-    font-size: 0.8em;
-    margin: auto;
-    text-align: center;
-    line-height: 1.2rem;
-    font-size: 0.8rem;
-    font-weight: normal;
-}
-
-button {
-    display: block;
-    background-color: lightgray;
-    border: none;
-    padding: 1rem 2rem;
-    margin: 0 auto;
-    text-decoration: none;
-    color: black;
-    font-family: 'Iosevka', sans-serif;
-    font-size: 2rem;
-    cursor: pointer;
-    text-align: center;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-}
-
-button:hover,
-button:focus {
-    color: white;
+#controls {
+    display: none;
 }
 
 #controls button {
@@ -142,6 +146,10 @@ button:focus {
 }
 
 @media only screen and (max-width: 600px) {
+    #controls {
+        display: block;
+    }
+    
     #controls button {
         display: inline-block;
     }
