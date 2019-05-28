@@ -19,7 +19,7 @@ body {
 }
 
 main {
-    margin: 5% auto;
+    margin: 20px auto;
     grid-row: 1;
     text-align: center;
     position: relative;
@@ -42,9 +42,14 @@ table {
 
 
 table {
-    margin: 2%;
-    font-size: 1.5rem;
+    font-size: 4vmin;
     text-transform: uppercase;
+    margin: 15px auto;
+}
+
+h1 {
+  font-size: 11vmin;
+  line-height: 13vmin;
 }
 
 h2 {
@@ -82,7 +87,7 @@ button {
     text-decoration: none;
     color: black;
     font-family: 'Iosevka', sans-serif;
-    font-size: 2rem;
+    font-size: 6vmin;
     cursor: pointer;
     text-align: center;
     -webkit-appearance: none;
@@ -107,7 +112,7 @@ p {
 
 #pauseScreen {
     position: absolute;
-    top: 50px;
+    top: 65px;
     background-color: transparent;
     display: grid;
 }
@@ -142,6 +147,7 @@ p {
     font-variant: small-caps;
     line-height: 20px;
     display: block;
+    transform: translateY(-40vmin);
 }
 
 #fire {
@@ -193,16 +199,8 @@ p {
         min-width: 300px;
     }
 
-    #pauseScreen {
-        top: 35px;
-    }
-
     main {
         font-size: 0.75em;
-    }
-
-    table {
-        margin: auto;
     }
 
     h1 {
