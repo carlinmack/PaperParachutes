@@ -503,6 +503,7 @@ function startGame() {
     currentScore.innerHTML = 0;
     highScore.innerHTML = localStorage.getItem('highscore') || 0;
 
+    document.getElementById('overlay').classList.add('hidden');
     document.getElementById('restart').classList.add('hidden');
 
     countdown();
@@ -636,6 +637,7 @@ function endGame() {
     window.cancelAnimationFrame(gameLoop);
     gameLoop = 0;
     document.getElementById('restart').classList.remove('hidden');
+    document.getElementById('overlay').classList.remove('hidden');
 
     for (const timer of timerSet) {
         timer.clear();
@@ -751,7 +753,8 @@ function keyPress() {
                 if (timer.paused) timer.resume();
             }
             document.getElementById('gc').style.opacity = 1;
-            document.getElementById('pauseScreen').classList.add('hidden');
+            document.getElementById('overlay').classList.add('hidden');
+            document.getElementById('pauseText').classList.add('hidden');
             gameLoop = window.requestAnimationFrame(game);
             focus = true;
         }
@@ -786,7 +789,8 @@ function status() {
                 timer.pause();
             }
             document.getElementById('gc').style.opacity = 0.2;
-            document.getElementById('pauseScreen').classList.remove('hidden');
+            document.getElementById('overlay').classList.remove('hidden');
+            document.getElementById('pauseText').classList.remove('hidden');
             window.cancelAnimationFrame(gameLoop);
         }
     }

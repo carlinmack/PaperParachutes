@@ -46,9 +46,11 @@
             <p>The game ends when either your turret is hit by a parachuter or 5 land on the ground unharmed</p>
             <button id='back' onclick='clicked("menu")'>Back</button>
         </div>
-        <canvas class='screen hidden' id='gc'></canvas>
-        <div id='pauseScreen' class='screen hidden'>
-            <h2>Fire to Restart</h2>
+        <canvas class='screen hidden' id='gc'>
+        </canvas>
+        <div id='overlay' class='screen hidden'>
+            <h2 id='pauseText' class='hidden'>Fire to Resume</h2>
+            <h2 id='restart' class='hidden'>press R to restart</h2>
         </div><br>
         <div id='controls' class='hidden'>
             <button id='fire'>FIRE</button><br>
@@ -61,7 +63,6 @@
                     <path id='arrowR' fill='#818181' d='M13 8L2 15V2z' />
                 </svg></button>
         </div>
-        <h2 id='restart' class='hidden'>press R to restart</h2>
     </main>
     <footer>This game was written in pure Javascript<br>© Carlin
         MacKenzie & Michael Rimmer 2018 </footer>
