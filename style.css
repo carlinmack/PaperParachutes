@@ -38,6 +38,12 @@ main {
     position: relative;
 }
 
+.screen {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
 canvas,
 .screen {
     border: #596967 10px solid;
@@ -63,6 +69,7 @@ table {
 h1 {
     font-size: 11vmin;
     line-height: 13vmin;
+    margin: 0;
 }
 
 h2 {
@@ -71,11 +78,6 @@ h2 {
 
 footer {
     grid-row: 2;
-    /* font-family: monospace;
-    font-size: 0.8em;
-    margin: auto;
-    text-align: center;
-    */
     font-family: monospace;
     font-weight: normal;
     line-height: 1.2rem;
@@ -95,7 +97,6 @@ button {
     display: block;
     background-color: lightgray;
     border: none;
-    padding: 1rem 2rem;
     margin: 0 auto;
     text-decoration: none;
     color: black;
@@ -120,7 +121,7 @@ p {
 
 #back {
     padding: 0;
-    margin: 6% auto;
+    margin: 0 auto;
 }
 
 #overlay {
@@ -130,17 +131,14 @@ p {
     display: grid;
 }
 
-#instructionsScreen p:first-child {
-    margin-top: 2em;
-}
-
 #instructionsScreen>p {
     font-family: 'Iosevka', sans-serif;
-    font-size: 0.6em;
+    font-size: 3vmin;
     font-weight: 400;
-    margin: 0.7em auto;
+    margin: 0 auto;
     text-align: left;
     width: 80%;
+    line-height: 4.5vmin;
 }
 
 #scoreCell {
@@ -219,6 +217,11 @@ p {
     h1 {
         margin: 8% 0 2% 0;
     }
+
+    #instructionsScreen>p {
+        font-size: 3.5vmin;
+        line-height: 5.5vmin;
+    }
 }
 
 @media only screen and (max-width: 370px) {
@@ -231,9 +234,15 @@ p {
         font-size: revert;
         line-height: 1.2;
     }
-    
+
     button {
         font-size: 1.75rem;
+    }
+
+
+    #instructionsScreen>p {
+        font-size: 0.6em;
+        line-height: 1.3em;
     }
 }
 
