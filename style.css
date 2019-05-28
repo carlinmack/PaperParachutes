@@ -18,6 +18,19 @@ body {
     overflow-x: hidden;
 }
 
+body,
+body.playing {
+    -webkit-transition: 3s;
+    -moz-transition: 3s;
+    -ms-transition: 3s;
+    -o-transition: 3s;
+    transition: 3s
+}
+
+body.playing {
+    background-color: hsl(var(--hue), calc(var(--sat)*0.8), calc(var(--light)*0.8));
+}
+
 main {
     margin: 20px auto;
     grid-row: 1;
@@ -48,8 +61,8 @@ table {
 }
 
 h1 {
-  font-size: 11vmin;
-  line-height: 13vmin;
+    font-size: 11vmin;
+    line-height: 13vmin;
 }
 
 h2 {

@@ -407,7 +407,6 @@ function spawnHeli() {
         const GameLength = performance.now() - StartTime;
 
         if (GameLength < 10000) { // 10 secs
-            // return randomInt(3000, 3500);
             return randomInt(3000, 3500);
         } else if (GameLength < 20000) { // 5 secs
             return randomInt(2500, 3000);
@@ -480,9 +479,12 @@ function startLoops() {
 function startGame() {
     document.getElementById('menu').classList.add('hidden');
     document.getElementById('gc').classList.remove('hidden');
+    document.body.classList.add('playing');
+
     if (window.innerWidth < 600) {
         document.getElementById('controls').classList.remove('hidden');
     }
+
     entitiesSet = new Set();
     bulletsSet = new Set();
     helisSet = new Set();
