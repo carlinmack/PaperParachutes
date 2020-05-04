@@ -2,6 +2,8 @@
     --hue: 225.7;
     --sat: 34.4%;
     --light: 88%;
+
+    --background-footer: hsl(var(--hue), var(--sat), 27%);
 }
 
 body {
@@ -18,17 +20,9 @@ body {
     overflow-x: hidden;
 }
 
-body,
 body.playing {
-    -webkit-transition: 3s;
-    -moz-transition: 3s;
-    -ms-transition: 3s;
-    -o-transition: 3s;
-    transition: 3s
-}
-
-body.playing {
-    background-color: hsl(var(--hue), calc(var(--sat)*0.8), calc(var(--light)*0.8));
+    background-color: hsl(var(--hue), calc(var(--sat) * 0.8), calc(var(--light) * 0.8));
+    transition: background-color 3s;
 }
 
 main {
@@ -42,6 +36,7 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
+    transform: translateX(-10px);
 }
 
 canvas,
@@ -53,15 +48,19 @@ canvas,
     height: 70vmin;
 }
 
-canvas,
-.screen,
-table {
+main {
     width: 70vmin;
 }
 
+canvas,
+table,
+.screen,
+#fire {
+    width: 100%;
+}
 
 table {
-    font-size: 4vmin;
+    font-size: 1.75rem;
     text-transform: uppercase;
     margin: 15px auto;
 }
@@ -74,6 +73,7 @@ h1 {
 
 h2 {
     place-self: center;
+    font-size: 8vmin;
 }
 
 footer {
@@ -106,11 +106,24 @@ button {
     text-align: center;
     -webkit-appearance: none;
     -moz-appearance: none;
+    transition: transform 0.05s ease;
 }
 
 button:hover,
-button:focus {
+button:focus,
+#exit:hover,
+#exit:focus {
     color: white;
+}
+
+button:active,
+#exit:active {
+    transform: scale(0.95);
+    color: #eee;
+}
+
+#exit {
+    color: #0007;
 }
 
 #score,
@@ -126,14 +139,15 @@ p {
 
 #overlay {
     position: absolute;
-    top: 65px;
+    top: 70px;
     background-color: transparent;
     display: grid;
+    align-content: center;
 }
 
 #instructionsScreen>p {
     font-family: 'Iosevka', sans-serif;
-    font-size: 3vmin;
+    font-size: 3.25vmin;
     font-weight: 400;
     margin: 0 auto;
     text-align: left;
@@ -153,12 +167,9 @@ p {
     display: none !important;
 }
 
-#restart {
+#restart,
+#highscoreAlert {
     font-variant: small-caps;
-}
-
-#fire {
-    width: 100% !important;
 }
 
 #controls {
@@ -170,26 +181,36 @@ p {
     border: none;
     border-radius: 15px;
     padding: 0.8rem 2rem;
-    margin: 7px 0;
+    margin: 0.5rem;
     text-decoration: none;
     background: #c2d0ff;
     cursor: pointer;
     -webkit-appearance: none;
     -moz-appearance: none;
-    width: 48%;
 }
 
 #controls button:hover {
     background: #8fa9ff;
 }
 
+#left,
+#right {
+    flex-grow: 1;
+}
+
 @media only screen and (max-width: 600px) {
     #controls {
-        display: block;
+        display: flex;
+        flex-wrap: wrap;
     }
 
     #controls button {
         display: inline-block;
+    }
+
+    main {
+        width: 80vmin;
+        min-width: 300px;
     }
 
     canvas,
@@ -199,28 +220,30 @@ p {
         overflow: hidden;
     }
 
-    canvas,
-    .screen,
-    table {
-        width: 80vmin;
-        min-width: 300px;
-    }
-
     table {
         font-size: 1.5rem;
     }
 
-    main {
-        font-size: 0.75em;
+    h1 {
+        font-size: 14vmin;
+        line-height: 15vmin;
     }
 
-    h1 {
-        margin: 8% 0 2% 0;
+    h2 {
+        font-size: 10vmin;
+    }
+
+    button {
+        font-size: 8vmin;
     }
 
     #instructionsScreen>p {
-        font-size: 3.5vmin;
+        font-size: 4vmin;
         line-height: 5.5vmin;
+    }
+
+    #overlay {
+        top: 65px;
     }
 }
 
@@ -230,28 +253,28 @@ p {
     }
 
     h1 {
-        margin: 8% 0 2% 0;
-        font-size: revert;
-        line-height: 1.2;
+        font-size: 3.25rem;
+        line-height: 3.5rem;
+    }
+
+    h2 {
+        font-size: 2.3rem;
     }
 
     button {
-        font-size: 1.75rem;
+        font-size: 1.875rem;
     }
 
-
     #instructionsScreen>p {
-        font-size: 0.6em;
+        font-size: 1rem;
         line-height: 1.3em;
     }
 }
 
-
 @font-face {
     font-family: 'Iosevka';
     font-display: swap;
-    src: url('resources/fonts/iosevka-ss11-regular-webfont.woff2') format('woff2'),
-        url('resources/fonts/iosevka-ss11-regular-webfont.woff') format('woff');
+    src: url('../resources/fonts/iosevka-ss11-regular-webfont.woff2') format('woff2'), url('../resources/fonts/iosevka-ss11-regular-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
