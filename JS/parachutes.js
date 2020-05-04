@@ -500,7 +500,7 @@ function startGame() {
     highScore.innerHTML = window.localStorage.getItem('highscore') || 0;
 
     document.getElementById('overlay').classList.add('hidden');
-    document.getElementsByTagName('my-footer')[0].classList.add('hidden');
+    document.getElementsByTagName('footer')[0].classList.add('hidden');
     document.getElementById('restart').classList.add('hidden');
     document.getElementById('highscoreAlert').classList.add('hidden');
 
@@ -634,9 +634,6 @@ window.onload = () => {
     document.getElementById('back').onclick = () => {
         clicked("menu")
     };
-    document.getElementById('exit').onclick = () => {
-        window.location.href = '/';
-    };
 
     function noScroll() {
         if (mouseOverCanvas) { // only prevent scrolling if cursor over canvas
@@ -663,7 +660,7 @@ function endGame() {
     gameLoop = 0;
     document.getElementById('restart').classList.remove('hidden');
     document.getElementById('overlay').classList.remove('hidden');
-    document.getElementsByTagName('my-footer')[0].classList.remove('hidden');
+    document.getElementsByTagName('footer')[0].classList.remove('hidden');
 
     for (const timer of timerSet) {
         timer.clear();
@@ -781,7 +778,7 @@ function keyPress() {
             }
             document.getElementById('gc').style.opacity = 1;
             document.getElementById('overlay').classList.add('hidden');
-            document.getElementsByTagName('my-footer')[0].classList.add('hidden');
+            document.getElementsByTagName('footer')[0].classList.add('hidden');
             document.getElementById('pauseText').classList.add('hidden');
             gameLoop = window.requestAnimationFrame(game);
             focus = true;
@@ -818,7 +815,7 @@ function status() {
             }
             document.getElementById('gc').style.opacity = 0.2;
             document.getElementById('overlay').classList.remove('hidden');
-            document.getElementsByTagName('my-footer')[0].classList.remove('hidden');
+            document.getElementsByTagName('footer')[0].classList.remove('hidden');
             document.getElementById('pauseText').classList.remove('hidden');
             window.cancelAnimationFrame(gameLoop);
         }
