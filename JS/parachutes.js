@@ -29,7 +29,7 @@ let bulletFlag;
 let currentScore, highScore, canv, ctx;
 
 /* ------- CLASSES  ------- */
-class Entity {
+class baseEntity {
     constructor(src, x, y, w, h) {
         this.image = new Image();
         this.image.src = src;
@@ -58,7 +58,7 @@ class Entity {
     deleteSelf() {}
 }
 
-class Helicopter extends Entity {
+class Helicopter extends baseEntity {
     constructor() {
         super('./resources/helicopter.png', 0, 0, 75, 35);
         helisSet.add(this);
@@ -149,7 +149,7 @@ class Helicopter extends Entity {
     }
 }
 
-class Trooper extends Entity {
+class Trooper extends baseEntity {
     constructor(x, y) {
         super('./resources/para.png', x, y, 30, 40);
         troopersSet.add(this);
@@ -269,7 +269,7 @@ class Trooper extends Entity {
     }
 }
 
-class Bullet extends Entity {
+class Bullet extends baseEntity {
     constructor(x, y, xVec, yVec, rotation) {
         super('./resources/bullet.png', x, y, 10, 10);
         bulletsSet.add(this);
@@ -289,7 +289,7 @@ class Bullet extends Entity {
     }
 }
 
-class Turret extends Entity {
+class Turret extends baseEntity {
     constructor() {
         super('./resources/turret.png', 165, 315, 50, 120);
         entitiesSet.add(this);
@@ -312,7 +312,7 @@ class Turret extends Entity {
     }
 }
 
-class Debris extends Entity {
+class Debris extends baseEntity {
     constructor(x, y) {
         super('./resources/debris.png', x, y, 0, 0);
         entitiesSet.add(this);
@@ -358,17 +358,17 @@ function Timer(callback, delay) {
 
     this.paused = false;
 
-    this.pause = function () {
+    this.pause = () => {
         this.paused = true;
 
         window.clearTimeout(timerId);
-        remaining -= performance.now() - start;
+        remaining -= window.performance.now() - start;
     };
 
-    this.resume = function () {
+    this.resume = () => {
         this.paused = false;
 
-        start = performance.now();
+        start = window.performance.now();
         window.clearTimeout(timerId);
         timerId = window.setTimeout(() => {
             callback();
@@ -376,7 +376,7 @@ function Timer(callback, delay) {
         }, remaining);
     };
 
-    this.clear = function () {
+    this.clear = () => {
         window.clearTimeout(timerId);
         timerSet.delete(this);
     };
@@ -394,7 +394,7 @@ function clearCanvas() {
 function spawnHeli() {
     // for reference helis take 4600ms to cross screen
     // they should spawn a max of two if they aren't hit at first
-    if (gameLoop !== 0) {
+    if (gameLoop !== 0 && focus === true) {
         new Helicopter();
         // can play around with time out values and use constiables to make them spawn
         // faster as game progresses
@@ -404,7 +404,7 @@ function spawnHeli() {
     }
 
     function pickNewTime() {
-        const GameLength = performance.now() - StartTime;
+        const GameLength = window.performance.now() - StartTime;
 
         if (GameLength < 10000) { // 10 secs
             return randomInt(3000, 3500);
@@ -458,7 +458,7 @@ function updateScore(x) {
 }
 
 function startLoops() {
-    StartTime = performance.now();
+    StartTime = window.performance.now();
     gameLoop = window.requestAnimationFrame(game);
     keyLoop = setInterval(keyPress, 1000 / 50);
     statusLoop = setInterval(status, 1000 / 2);
@@ -485,28 +485,41 @@ function startGame() {
         document.getElementById('controls').classList.remove('hidden');
     }
 
-    entitiesSet = new Set();
-    bulletsSet = new Set();
-    helisSet = new Set();
-    troopersSet = new Set();
-    debrisSet = new Set();
-    timerSet = new Set();
-    // log(timerSet);
+    initSets();
+    loadAssets();
+    initSets();
     keys.length = 0;
 
     new Turret();
     // turret base
-    entitiesSet.add(new Entity('./resources/base.png', 150, 375, 80, 25));
+    entitiesSet.add(new baseEntity('./resources/base.png', 150, 375, 80, 25));
     bulletFlag = true; // todo: find a place or way to set this privately
     score = 0;
 
     currentScore.innerHTML = 0;
-    highScore.innerHTML = localStorage.getItem('highscore') || 0;
+    highScore.innerHTML = window.localStorage.getItem('highscore') || 0;
 
     document.getElementById('overlay').classList.add('hidden');
+    document.getElementsByTagName('my-footer')[0].classList.add('hidden');
     document.getElementById('restart').classList.add('hidden');
+    document.getElementById('highscoreAlert').classList.add('hidden');
 
     countdown();
+
+    function initSets() {
+        entitiesSet = new Set();
+        bulletsSet = new Set();
+        troopersSet = new Set();
+        helisSet = new Set();
+        debrisSet = new Set();
+        timerSet = new Set();
+    }
+
+    function loadAssets() {
+        new Bullet();
+        new Trooper();
+        new Helicopter();
+    }
 
     function countdown() {
         ctx.font = 3 * scale + 'rem Iosevka';
@@ -532,7 +545,7 @@ function startGame() {
 }
 
 /* ------- INITIALISE GAME ------- */
-window.onload = function () {
+window.onload = () => {
     canv = document.getElementById('gc');
 
     canv.addEventListener('click', function (event) { // fire bullet when canvas is clicked
@@ -582,7 +595,7 @@ window.onload = function () {
     highScore = document.getElementById('highscore');
     currentScore = document.getElementById('score');
     currentScore.innerHTML = 0;
-    highScore.innerHTML = localStorage.getItem('highscore') || 0;
+    highScore.innerHTML = window.localStorage.getItem('highscore') || 0;
 
     document.getElementById('restart').addEventListener('click', () => {
         keys[82] = true;
@@ -613,6 +626,18 @@ window.onload = function () {
         if (gameLoop) keys[32] = false;
     });
 
+    // menu buttons
+    document.getElementById('play').onclick = startGame;
+    document.getElementById('instructions').onclick = () => {
+        clicked("instructionsScreen")
+    };
+    document.getElementById('back').onclick = () => {
+        clicked("menu")
+    };
+    document.getElementById('exit').onclick = () => {
+        window.location.href = '/';
+    };
+
     function noScroll() {
         if (mouseOverCanvas) { // only prevent scrolling if cursor over canvas
             window.scrollTo(0, 0);
@@ -638,6 +663,7 @@ function endGame() {
     gameLoop = 0;
     document.getElementById('restart').classList.remove('hidden');
     document.getElementById('overlay').classList.remove('hidden');
+    document.getElementsByTagName('my-footer')[0].classList.remove('hidden');
 
     for (const timer of timerSet) {
         timer.clear();
@@ -646,8 +672,9 @@ function endGame() {
     clearInterval(statusLoop);
 
     // set highscore
-    if (localStorage.getItem('highscore') < score) {
-        localStorage.setItem('highscore', score);
+    if (window.localStorage.getItem('highscore') < score) {
+        document.getElementById('highscoreAlert').classList.remove('hidden');
+        window.localStorage.setItem('highscore', score);
     }
 }
 
@@ -661,7 +688,7 @@ function game() {
 
     // would be great to test if there is any difference between defining these
     // locally vs globally seeing as this is ran 60 times a second. If any
-    // performance issues look here
+    // window.performance issues look here
     function moveEntities() {
         for (let e of entitiesSet) {
             e.move();
@@ -754,6 +781,7 @@ function keyPress() {
             }
             document.getElementById('gc').style.opacity = 1;
             document.getElementById('overlay').classList.add('hidden');
+            document.getElementsByTagName('my-footer')[0].classList.add('hidden');
             document.getElementById('pauseText').classList.add('hidden');
             gameLoop = window.requestAnimationFrame(game);
             focus = true;
@@ -770,8 +798,8 @@ function keyPress() {
     }
 
     if (keys[90]) {
-        localStorage.setItem('highscore', 0);
-        highScore.innerHTML = localStorage.getItem('highscore');
+        window.localStorage.setItem('highscore', 0);
+        highScore.innerHTML = window.localStorage.getItem('highscore');
     }
 }
 
@@ -790,6 +818,7 @@ function status() {
             }
             document.getElementById('gc').style.opacity = 0.2;
             document.getElementById('overlay').classList.remove('hidden');
+            document.getElementsByTagName('my-footer')[0].classList.remove('hidden');
             document.getElementById('pauseText').classList.remove('hidden');
             window.cancelAnimationFrame(gameLoop);
         }
@@ -827,7 +856,7 @@ function fireBullet() {
         updateScore(-1);
     }
     bulletFlag = false; // set delay so that a stream of bullets isn't fired
-    Timer(function () {
+    Timer(() => {
         bulletFlag = true;
     }, 150);
 }
@@ -839,8 +868,6 @@ window.onkeydown = window.onkeyup = function (e) {
 
 /* ------- HELPER FUNCTIONS ------- */
 // const log = console.log.bind(console);
-const localStorage = window.localStorage;
-const performance = window.performance;
 
 function randomInt(min, max) {
     // https://stackoverflow.com/a/1527820
