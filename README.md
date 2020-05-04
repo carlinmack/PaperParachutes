@@ -4,7 +4,7 @@ Paper Parachutes is a remake of the classic iPod game in Javascript. It started 
 
 <a href="https://github.com/carlinmack/PaperParachutes"><img src="resources/PaperParachutes.png" alt="Paper Parachutes Screenshot"/></a>
 
-
+> In tribute to paper.js and version 1
 
 ## Contributions
 
