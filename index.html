@@ -2,7 +2,7 @@
 <html lang='en'>
 
 <head>
-    <link rel='stylesheet' type='text/css' href='style.css'>
+    <link rel='stylesheet' type='text/css' href='CSS/parachutes.css?v=1.47'>
     <link rel='manifest' href='manifest.json'>
     <meta charset='utf-8' />
 
@@ -20,36 +20,51 @@
     <meta name='msapplication-config' content='./resources/icons/browserconfig.xml'>
     <meta name='theme-color' content='#d3d3d3'>
     <meta name='viewport' content='width=device-width, initial-scale=1, user-scalable=no'>
+    <noscript>
+        <style>
+            main {
+                display: none;
+            }
+        </style>
+    </noscript>
 </head>
 
 <body>
+    <!-- Start No Javascript -->
+    <noscript>
+        <div>
+            <p>Please enable Javascript to play this game</p>
+        </div>
+    </noscript>
     <main>
         <table>
             <tr>
                 <td id='highscoreCell'>
-                    highscore <div id='highscore'>0</div>
+                    highscore&nbsp<div id='highscore'>0</div>
                 </td>
                 <td id='scoreCell'>
-                    score <div id='score'>0</div>
+                    score&nbsp<div id='score'>0</div>
                 </td>
             </tr>
         </table>
         <div id='menu' class='screen'>
             <h1>Paper Parachutes</h1>
-            <button id='play' onclick='startGame()'>Play!</button>
-            <button id='instructions' onclick='clicked("instructionsScreen")'>Instructions</button>
+            <button id='play'>Play!</button>
+            <button id='instructions'>Instructions</button>
+            <button id='exit'>Exit</button>
         </div>
         <div id='instructionsScreen' class='hidden screen'>
             <p>Everything which is destroyed awards you two points</p>
             <p>Every bullet you fire takes one point away</p>
             <p>Falling debris and troopers can hit other parachutes</p>
             <p>The game ends when five troopers land on the ground unharmed</p>
-            <button id='back' onclick='clicked("menu")'>Back</button>
+            <button id='back'>Back</button>
         </div>
         <canvas class='screen hidden' id='gc'>
         </canvas>
         <div id='overlay' class='screen hidden'>
             <h2 id='pauseText' class='hidden'>Fire to Resume</h2>
+            <h2 id='highscoreAlert' class='hidden'>new highscore!</h2>
             <h2 id='restart' class='hidden'>press R to restart</h2>
         </div><br>
         <div id='controls' class='hidden'>
@@ -65,9 +80,8 @@
         </div>
     </main>
     <footer>This game was written in pure Javascript<br>© Carlin
-        MacKenzie & Michael Rimmer 2018 </footer>
-
-    <script src='PaperParachutes.js'></script>
+        MacKenzie & Michael Rimmer 2018-2020 </footer>
+    <script src='JS/parachutes.js?v=1.112'></script>
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker
